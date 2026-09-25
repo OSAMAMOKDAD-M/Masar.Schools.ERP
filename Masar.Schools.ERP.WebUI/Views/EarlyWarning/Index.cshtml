@@ -1,0 +1,153 @@
+@model Masar.Schools.ERP.AI.DTOs.EarlyWarningDashboardDto
+@{
+    ViewData["Title"] = "مُساعد مَسَار الذكي للتنبؤ ومتابعة الطلاب";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-shield-check"></i> مُساعد مَسَار الذكي للتنبؤ ومتابعة الطلاب
+        </h1>
+        <p class="text-muted">نظام الإنذار المبكر والتحليلات التنبؤية للطلاب</p>
+    </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card @(Model.CriticalStudentsCount > 0 ? "bg-danger" : "bg-secondary") text-white">
+            <div class="card-body text-center">
+                <h3>@Model.CriticalStudentsCount</h3>
+                <p class="mb-0">طلاب في خطر حرج</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card @(Model.AtRiskStudentsCount > 0 ? "bg-warning text-dark" : "bg-secondary text-white")">
+            <div class="card-body text-center">
+                <h3>@Model.AtRiskStudentsCount</h3>
+                <p class="mb-0">طلاب معرضون للخطر</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <h3>@Model.PredictedCollectionPercentage.ToString("N1")%</h3>
+                <p class="mb-0">نسبة التحصيل المتوقعة</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h3>@Model.AlertsSentCount</h3>
+                <p class="mb-0">تنبيهات مُرسلة</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form id="filterForm" class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">الفصل</label>
+                        <select class="form-select" id="classFilter">
+                            <option value="">جميع الفصول</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">مستوى الخطر</label>
+                        <select class="form-select" id="riskLevelFilter">
+                            <option value="">الكل المستويات</option>
+                            <option value="0">آمن</option>
+                            <option value="1">تحذير</option>
+                            <option value="2">خطر حرج</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">نطاق درجة الخطر</label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input type="number" class="form-control" id="minRiskScore" placeholder="الحد الأدنى" min="0" max="100">
+                            </div>
+                            <div class="col-6">
+                                <input type="number" class="form-control" id="maxRiskScore" placeholder="الحد الأقصى" min="0" max="100">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="button" class="btn btn-primary w-100" onclick="applyFilters()">
+                            <i class="bi bi-filter"></i> تطبيق الفلاتر
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Risk Matrix -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">مصفوفة مخاطر الطلاب</h5>
+                <button class="btn btn-sm btn-outline-primary" onclick="refreshData()">
+                    <i class="bi bi-arrow-clockwise"></i> تحديث
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="riskMatrixTable">
+                        <thead>
+                            <tr>
+                                <th>رقم الطالب</th>
+                                <th>الاسم</th>
+                                <th>الفصل</th>
+                                <th>المرحلة</th>
+                                <th>درجة الخطر</th>
+                                <th>الحضور</th>
+                                <th>الأداء</th>
+                                <th>المالي</th>
+                                <th>آخر تحديث</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="riskMatrixBody">
+                            <!-- سيتم تحميل البيانات بالجافاسكريبت -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Student Details Modal -->
+<div class="modal fade" id="studentDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title">تفاصيل خطر الطالب</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="studentDetailsContent">
+                <!-- سيتم تحميل التفاصيل ديناميكياً -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                <button type="button" class="btn btn-primary" onclick="triggerNotification()">إرسال تنبيه</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/early-warning.js" asp-append-version="true"></script>
+}

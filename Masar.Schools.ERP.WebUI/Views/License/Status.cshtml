@@ -1,0 +1,151 @@
+@model Masar.Schools.ERP.WebUI.Controllers.LicenseStatusViewModel
+@{
+    ViewData["Title"] = "حالة الترخيص";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm @(Model.IsValid ? "border-success" : "border-danger")">
+                <div class="card-header @(Model.IsValid ? "bg-success" : "bg-danger") text-white">
+                    <h5 class="mb-0">
+                        <i class="bi @(Model.IsValid ? "bi-shield-check" : "bi-shield-x")"></i>
+                        @(Model.IsValid ? "الترخيص ساري المفعول" : "الترخيص غير صالح")
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.IsValid && Model.License != null)
+                    {
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle"></i>
+                            @Model.Message
+                        </div>
+
+                        <div class="mb-4">
+                            <h6 class="fw-bold">معلومات الترخيص:</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>المدرسة:</strong></td>
+                                    <td>@Model.License.ClientName</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>نوع الترخيص:</strong></td>
+                                    <td>@Model.License.LicenseType</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>فترة الصلاحية:</strong></td>
+                                    <td>من @Model.License.ValidFrom.ToString("yyyy-MM-dd") إلى @Model.License.ValidUntil.ToString("yyyy-MM-dd")</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>الأيام المتبقية:</strong></td>
+                                    <td class="@(Model.License.ValidUntil - DateTime.UtcNow).Days > 30 ? "text-success" : "text-warning">
+                                        @((Model.License.ValidUntil - DateTime.UtcNow).Days) يوم
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>الحد الأقصى للطلاب:</strong></td>
+                                    <td>@Model.License.MaxStudents طالب</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>الحد الأقصى للمستخدمين:</strong></td>
+                                    <td>@Model.License.MaxUsers مستخدم</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="mb-4">
+                            <h6 class="fw-bold">الموديولات المفعلة:</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                @if (Model.License.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.Core))
+                                {<span class="badge bg-primary">الوحدات الأساسية</span>}
+                                @if (Model.License.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.ZATCA))
+                                {<span class="badge bg-info">ZATCA</span>}
+                                @if (Model.License.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.WhatsApp))
+                                {<span class="badge bg-success">واتساب</span>}
+                                @if (Model.License.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.Transport))
+                                {<span class="badge bg-warning">النقل</span>}
+                                @if (Model.License.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.Clinic))
+                                {<span class="badge bg-danger">العيادة</span>}
+                                @if (Model.License.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.Canteen))
+                                {<span class="badge bg-secondary">المقصف</span>}
+                                @if (Model.License.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.Timetable))
+                                {<span class="badge bg-dark">الجدول</span>}
+                                @if (Model.License.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.Behavior))
+                                {<span class="badge bg-light text-dark">السلوك</span>}
+                                @if (Model.License.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.AdvancedReporting))
+                                {<span class="badge bg-info text-dark">التقارير المتقدمة</span>}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h6 class="fw-bold">معلومات الجهاز:</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>كود الجهاز:</strong></td>
+                                    <td><code class="font-monospace">@Model.MachineId</code></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>اسم الجهاز:</strong></td>
+                                    <td>@Model.HardwareInfo.MachineName</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>نظام التشغيل:</strong></td>
+                                    <td>@Model.HardwareInfo.OsVersion</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                                <i class="bi bi-house-door"></i> الدخول للنظام
+                            </a>
+                            <form asp-action="Deactivate" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger w-100" onclick="return confirm('هل أنت متأكد من إلغاء تفعيل الترخيص؟')">
+                                    <i class="bi bi-x-circle"></i> إلغاء التفعيل
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            @Model.Message
+                        </div>
+
+                        <div class="mb-4">
+                            <h6 class="fw-bold">حالة الترخيص:</h6>
+                            <div class="alert alert-@(Model.Status switch
+                            {
+                                LicenseStatus.Expired => "warning",
+                                LicenseStatus.HardwareMismatch => "danger",
+                                LicenseStatus.InvalidSignature => "danger",
+                                LicenseStatus.NotActivated => "info",
+                                _ => "secondary"
+                            })">
+                                <strong>@Model.Status</strong>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <a asp-action="Activation" class="btn btn-primary btn-lg">
+                                <i class="bi bi-shield-plus"></i> تفعيل ترخيص جديد
+                            </a>
+                            <a asp-action="DownloadTemplate" class="btn btn-outline-secondary">
+                                <i class="bi bi-file-earmark-text"></i> تنزيل نموذج طلب ترخيص
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer text-muted border-top py-3 text-center bg-light mt-auto">
+    <div class="container-fluid">
+        <span>© 2026 <strong>نظام مَسَار للمدارس</strong> - جميع الحقوق محفوظة - شركة مسار للبرمجيات mokdadvipr@gmail.com .. 01006765664 (نسخة 1.0.0)</span>
+    </div>
+</footer>

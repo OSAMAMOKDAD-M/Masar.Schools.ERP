@@ -1,0 +1,325 @@
+@{
+    ViewData["Title"] = "الأدوار والصلاحيات";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-shield-lock"></i> الأدوار والصلاحيات
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للإعدادات
+        </a>
+        <button class="btn btn-primary" onclick="createRole()">
+            <i class="bi bi-plus-circle"></i> إنشاء دور
+        </button>
+        <button class="btn btn-success" onclick="createUser()">
+            <i class="bi bi-person-plus"></i> إنشاء مستخدم
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">أدوار النظام</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>اسم الدور</th>
+                                <th>عدد المستخدمين</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>مدير النظام</td>
+                                <td>1</td>
+                                <td><span class="status-badge success">نشط</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="editRole(1)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary" onclick="viewPermissions(1)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>مدير المدرسة</td>
+                                <td>3</td>
+                                <td><span class="status-badge success">نشط</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="editRole(2)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary" onclick="viewPermissions(2)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>معلم</td>
+                                <td>25</td>
+                                <td><span class="status-badge success">نشط</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="editRole(3)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary" onclick="viewPermissions(3)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>محاسب</td>
+                                <td>2</td>
+                                <td><span class="status-badge success">نشط</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="editRole(4)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary" onclick="viewPermissions(4)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>ولي أمر</td>
+                                <td>150</td>
+                                <td><span class="status-badge success">نشط</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="editRole(5)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary" onclick="viewPermissions(5)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">مستخدمو النظام</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>اسم المستخدم</th>
+                                <th>الاسم</th>
+                                <th>الدور</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>superadmin</td>
+                                <td>مدير النظام</td>
+                                <td>مدير النظام</td>
+                                <td><span class="status-badge success">نشط</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="editUser(1)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" onclick="resetPassword(1)">
+                                        <i class="bi bi-key"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>schooladmin1</td>
+                                <td>أحمد محمد</td>
+                                <td>مدير المدرسة</td>
+                                <td><span class="status-badge success">نشط</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="editUser(2)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" onclick="resetPassword(2)">
+                                        <i class="bi bi-key"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>teacher1</td>
+                                <td>محمد علي</td>
+                                <td>معلم</td>
+                                <td><span class="status-badge success">نشط</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="editUser(3)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" onclick="resetPassword(3)">
+                                        <i class="bi bi-key"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>accountant1</td>
+                                <td>سارة أحمد</td>
+                                <td>محاسب</td>
+                                <td><span class="status-badge success">نشط</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="editUser(4)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" onclick="resetPassword(4)">
+                                        <i class="bi bi-key"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">مصفوفة الصلاحيات</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>الصلاحية</th>
+                                <th>مدير النظام</th>
+                                <th>مدير المدرسة</th>
+                                <th>معلم</th>
+                                <th>محاسب</th>
+                                <th>ولي أمر</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>الوصول للوحة التحكم</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-success">✓</td>
+                            </tr>
+                            <tr>
+                                <td>إدارة الطلاب</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-muted">-</td>
+                                <td class="text-center text-muted">-</td>
+                            </tr>
+                            <tr>
+                                <td>إدارة الدرجات</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-muted">-</td>
+                                <td class="text-center text-success">✓</td>
+                            </tr>
+                            <tr>
+                                <td>إدارة الحضور</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-muted">-</td>
+                                <td class="text-center text-success">✓</td>
+                            </tr>
+                            <tr>
+                                <td>إدارة الفواتير</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-muted">-</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-success">✓</td>
+                            </tr>
+                            <tr>
+                                <td>تكامل ZATCA</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-muted">-</td>
+                                <td class="text-center text-muted">-</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-muted">-</td>
+                            </tr>
+                            <tr>
+                                <td>إدارة المستخدمين</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-muted">-</td>
+                                <td class="text-center text-muted">-</td>
+                                <td class="text-center text-muted">-</td>
+                            </tr>
+                            <tr>
+                                <td>إعدادات النظام</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-muted">-</td>
+                                <td class="text-center text-muted">-</td>
+                                <td class="text-center text-muted">-</td>
+                                <td class="text-center text-muted">-</td>
+                            </tr>
+                            <tr>
+                                <td>تصدير التقارير</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-success">✓</td>
+                                <td class="text-center text-muted">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function createRole() {
+            const roleName = prompt('أدخل اسم الدور الجديد:');
+            if (roleName) {
+                alert('تم إنشاء الدور "' + roleName + '" بنجاح!');
+            }
+        }
+
+        function createUser() {
+            alert('جاري فتح نموذج إنشاء المستخدم...');
+        }
+
+        function editRole(roleId) {
+            alert('جاري فتح محرر الدور #' + roleId);
+        }
+
+        function viewPermissions(roleId) {
+            alert('جاري فتح عارض الصلاحيات للدور #' + roleId);
+        }
+
+        function editUser(userId) {
+            alert('جاري فتح محرر المستخدم #' + userId);
+        }
+
+        function resetPassword(userId) {
+            if (confirm('هل أنت متأكد من إعادة تعيين كلمة المرور للمستخدم #' + userId + '؟')) {
+                alert('تم إرسال رابط إعادة تعيين كلمة المرور إلى بريد المستخدم.');
+            }
+        }
+    </script>
+}

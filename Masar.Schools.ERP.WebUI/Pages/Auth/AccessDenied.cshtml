@@ -1,0 +1,128 @@
+@page
+@model Masar.Schools.ERP.WebUI.Pages.Auth.AccessDeniedModel
+@{
+    ViewData["Title"] = "غير مصرح - مَسَسار للمدارس";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link href="~/css/fonts.css" rel="stylesheet">
+    <link href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --masar-primary: #1a5f7a;
+            --masar-secondary: #159895;
+            --masar-accent: #57c5b6;
+            --masar-light: #f0f8ff;
+            --masar-dark: #0d3b4c;
+        }
+
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--masar-light) 0%, #e8f4f8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .error-container {
+            max-width: 500px;
+            width: 100%;
+            padding: 2rem;
+        }
+
+        .error-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            border-top: 5px solid #dc3545;
+            text-align: center;
+        }
+
+        .error-icon {
+            font-size: 5rem;
+            color: #dc3545;
+            margin-bottom: 1.5rem;
+        }
+
+        .error-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #dc3545;
+            margin-bottom: 1rem;
+        }
+
+        .error-message {
+            color: var(--masar-dark);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--masar-primary) 0%, var(--masar-secondary) 100%);
+            border: none;
+            padding: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(26, 95, 122, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+            padding: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-card">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h1 class="error-title">غير مصرح بالوصول</h1>
+            <p class="error-message">
+                عذراً، ليس لديك الصلاحية المطلوبة للوصول إلى هذه الصفحة.
+                يرجى التواصل مع المسؤول عن النظام للحصول على الصلاحيات المناسبة.
+            </p>
+
+            <div class="d-grid gap-2">
+                <a asp-page="/Auth/Login" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    تسجيل الدخول
+                </a>
+                <a asp-page="/Home/Index" class="btn btn-secondary">
+                    <i class="fas fa-home me-2"></i>
+                    الصفحة الرئيسية
+                </a>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <p class="text-muted small">
+                © 2026 مَسَار للمدارس - جميع الحقوق محفوظة - شركة مسار للبرمجيات mokdadvipr@gmail.com .. 01006765664
+            </p>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

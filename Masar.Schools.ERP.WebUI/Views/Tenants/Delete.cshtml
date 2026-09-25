@@ -1,0 +1,73 @@
+@model Tenant
+@{
+    ViewData["Title"] = "حذف المؤسسة";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-trash"></i> حذف المؤسسة
+        </h1>
+        <p class="text-muted">هل أنت متأكد من حذف هذه المؤسسة؟</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <i class="bi bi-exclamation-triangle"></i> تأكيد الحذف
+            </div>
+            <div class="card-body">
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <strong>تحذير:</strong> حذف المؤسسة سيؤدي إلى حذف جميع البيانات المرتبطة بها.
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>اسم المؤسسة:</strong> @Model.NameArabic
+                    </div>
+                    <div class="mb-3">
+                        <strong>رقم الترخيص:</strong> @Model.LicenseNumber
+                    </div>
+                    <div class="mb-3">
+                        <strong>عدد المدارس:</strong> @Model.Schools.Count
+                    </div>
+                    <div class="mb-3">
+                        <strong>عدد المستخدمين:</strong> @Model.MasarUsers.Count
+                    </div>
+                    <div class="mb-3">
+                        <strong>عدد الأدوار:</strong> @Model.MasarRoles.Count
+                    </div>
+
+                    @if (Model.Schools.Count > 0 || Model.MasarUsers.Count > 0 || Model.MasarRoles.Count > 0)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="bi bi-x-circle"></i>
+                            <strong>لا يمكن الحذف:</strong> المؤسسة تحتوي على مدارس أو مستخدمين أو أدوار.
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> رجوع
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> تأكيد الحذف
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> رجوع
+                            </a>
+                        </div>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

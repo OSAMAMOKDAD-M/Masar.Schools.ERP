@@ -1,0 +1,55 @@
+@{
+    ViewData["Title"] = "تخرج الطالب";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3"><i class="bi bi-mortarboard"></i> تخرج الطالب</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h4><i class="bi bi-info-circle"></i> عملية التخرج</h4>
+                        <p>سيتم تنفيذ الخطوات التالية:</p>
+                        <ul>
+                            <li>تحديث حالة الطالب إلى متخرج</li>
+                            <li>إنشاء سجل خريج جديد</li>
+                            <li>إنشاء سجل إبراء التخرج</li>
+                            <li>التحقق من الإبراء المالي</li>
+                            <li>منع التسجيل في فصول جديدة</li>
+                        </ul>
+                    </div>
+
+                    <form asp-action="GraduateStudent" method="post">
+                        <input type="hidden" name="studentId" value="@ViewBag.StudentId" />
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">سنة التخرج</label>
+                                <input name="graduationYear" class="form-control" type="number" value="@ViewBag.GraduationYear" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">المعدل النهائي (اختياري)</label>
+                                <input name="finalGPA" class="form-control" type="number" step="0.01" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> تنفيذ عملية التخرج
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> إلغاء
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

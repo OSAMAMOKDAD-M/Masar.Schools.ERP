@@ -1,0 +1,124 @@
+@model IEnumerable<Masar.Schools.ERP.Domain.DTOs.AlumniRecordDto>
+
+@{
+    ViewData["Title"] = "دليل الخريجين";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3"><i class="bi bi-mortarboard"></i> دليل الخريجين</h2>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="Search" method="get" class="d-flex gap-2">
+                        <input type="text" name="searchTerm" class="form-control" placeholder="ابحث عن خريج بالاسم أو الجامعة أو التخصص...">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i> بحث
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> إلغاء
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alumni List -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">سجلات الخريجين</h5>
+                    <div>
+                        <a asp-action="Create" class="btn btn-success">
+                            <i class="bi bi-plus-circle"></i> إضافة خريج
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>رقم الخريج</th>
+                                        <th>اسم الطالب</th>
+                                        <th>سنة التخرج</th>
+                                        <th>الجامعة</th>
+                                        <th>التخصص</th>
+                                        <th>حالة التوظيف</th>
+                                        <th>حالة التحقق</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var alumni in Model)
+                                    {
+                                        <tr>
+                                            <td>@alumni.AlumniNumber</td>
+                                            <td>@alumni.StudentName</td>
+                                            <td>@alumni.GraduationYear</td>
+                                            <td>@alumni.UniversityArabic</td>
+                                            <td>@alumni.MajorArabic</td>
+                                            <td>
+                                                <span class="badge @(alumni.EmploymentStatus == "Employed" ? "bg-success" : "bg-secondary")">
+                                                    @alumni.EmploymentStatusArabic
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if (alumni.IsVerified)
+                                                {
+                                                    <span class="badge bg-success">موثق</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning">غير موثق</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="Details" asp-route-id="@alumni.Id" class="btn btn-sm btn-info" title="التفاصيل">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <a asp-action="Edit" asp-route-id="@alumni.Id" class="btn btn-sm btn-primary" title="تعديل">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <a asp-action="Documents" asp-route-alumniRecordId="@alumni.Id" class="btn btn-sm btn-secondary" title="الوثائق">
+                                                        <i class="bi bi-file-earmark"></i>
+                                                    </a>
+                                                    <a asp-action="Delete" asp-route-id="@alumni.Id" class="btn btn-sm btn-danger" title="حذف">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> لا توجد سجلات خريجين حالياً
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Add any index-specific JavaScript here
+    </script>
+}

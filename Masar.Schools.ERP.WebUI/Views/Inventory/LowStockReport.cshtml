@@ -1,0 +1,53 @@
+@model List<Masar.Schools.ERP.Domain.DTOs.InventoryItemDto>
+
+@{
+    ViewData["Title"] = "تقرير المخزون المنخفض";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">تقرير المخزون المنخفض</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>الصنف</th>
+                                <th>الكود</th>
+                                <th>حد إعادة الطلب</th>
+                                <th>الكمية المقترحة</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                @foreach (var item in Model.Where(i => i.CurrentStock <= i.ReorderLevel))
+                                {
+                                    <tr>
+                                        <td>@item.NameArabic</td>
+                                        <td>@item.SKU</td>
+                                        <td>@item.ReorderLevel</td>
+                                        <td>@item.ReorderQuantity</td>
+                                        <td>
+                                            <span class="badge bg-danger">منخفض</span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center">لا توجد أصناف منخفضة</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

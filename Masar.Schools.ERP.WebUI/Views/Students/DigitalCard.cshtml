@@ -1,0 +1,132 @@
+@model Student
+@{
+    ViewData["Title"] = "البطاقة الرقمية للطالب";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-card-heading"></i> البطاقة الرقمية للطالب
+        </h1>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للتفاصيل
+        </a>
+        <button onclick="window.print()" class="btn btn-primary">
+            <i class="bi bi-printer"></i> طباعة البطاقة
+        </button>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card student-card">
+            <div class="card-header text-center">
+                <h4 class="mb-0">نظام مَسَار للمدارس</h4>
+                <small class="text-muted">Masar For Schools System</small>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <div class="student-photo">
+                            @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+                            {
+                                <img src="@Model.ProfileImagePath" alt="صورة الطالب" class="img-fluid rounded">
+                            }
+                            else
+                            {
+                                <div class="placeholder-photo">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <table class="table table-sm table-borderless">
+                            <tr>
+                                <td><strong>رقم الطالب:</strong></td>
+                                <td>@Model.StudentNumber</td>
+                            </tr>
+                            <tr>
+                                <td><strong>الاسم (عربي):</strong></td>
+                                <td>@Model.FullNameArabic</td>
+                            </tr>
+                            <tr>
+                                <td><strong>الاسم (إنجليزي):</strong></td>
+                                <td>@Model.FullName</td>
+                            </tr>
+                            <tr>
+                                <td><strong>الفصل:</strong></td>
+                                <td>@Model.ClassRoom?.NameArabic</td>
+                            </tr>
+                            <tr>
+                                <td><strong>المدرسة:</strong></td>
+                                <td>@Model.School?.NameArabic</td>
+                            </tr>
+                            <tr>
+                                <td><strong>العام الدراسي:</strong></td>
+                                <td>@DateTime.Now.Year - @(DateTime.Now.Year + 1)</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="mt-3 text-center">
+                    <div class="qr-code">
+                        @if (ViewBag.QRCodeUrl != null)
+                        {
+                            <img src="@ViewBag.QRCodeUrl" alt="QR Code" style="width: 150px; height: 150px;" />
+                        }
+                        <p class="mb-0 mt-2">رمز الاستجابة السريع: @Model.StudentNumber</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <small class="text-muted">
+                    © 2026 نظام مَسَار للمدارس - جميع الحقوق محفوظة - شركة مسار للبرمجيات mokdadvipr@gmail.com .. 01006765664
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .student-card {
+        border: 2px solid #007bff;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .student-photo img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border: 2px solid #007bff;
+    }
+    
+    .placeholder-photo {
+        width: 120px;
+        height: 120px;
+        background-color: #e9ecef;
+        border: 2px solid #007bff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        color: #6c757d;
+        margin: 0 auto;
+    }
+    
+    .qr-code {
+        font-size: 48px;
+        color: #007bff;
+    }
+    
+    @@media print {
+        .no-print {
+            display: none;
+        }
+        .student-card {
+            border: 2px solid #000;
+        }
+    }
+</style>

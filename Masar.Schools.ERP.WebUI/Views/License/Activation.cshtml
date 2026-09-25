@@ -1,0 +1,131 @@
+@model Masar.Schools.ERP.WebUI.Controllers.LicenseActivationViewModel
+@{
+    ViewData["Title"] = "تفعيل الترخيص";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0"><i class="bi bi-shield-lock"></i> تفعيل نظام مَسَار للمدارس</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        يرجى تفعيل الترخيص للاستمرار في استخدام النظام
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="fw-bold">معلومات الجهاز:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <tr>
+                                    <td><strong>كود الجهاز (Machine ID):</strong></td>
+                                    <td><code class="font-monospace">@Model.MachineId</code></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>اسم الجهاز:</strong></td>
+                                    <td>@Model.HardwareInfo.MachineName</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>نظام التشغيل:</strong></td>
+                                    <td>@Model.HardwareInfo.OsVersion</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>المعالج:</strong></td>
+                                    <td>@Model.HardwareInfo.ProcessorCount أنوية</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="mt-2">
+                            <button class="btn btn-sm btn-outline-primary" onclick="copyMachineId()">
+                                <i class="bi bi-clipboard"></i> نسخ كود الجهاز
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <form asp-action="Activation" method="post">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="mb-3">
+                            <label asp-for="LicenseKey" class="form-label">مفتاح الترخيص</label>
+                            <textarea asp-for="LicenseKey" class="form-control font-monospace" rows="5" 
+                                      placeholder="الصق مفتاح الترخيص هنا..." required></textarea>
+                            <span asp-validation-for="LicenseKey" class="text-danger"></span>
+                            <small class="text-muted">أو ارفع ملف الترخيص (.masarlic)</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <input type="file" class="form-control" id="licenseFile" accept=".masarlic" />
+                            <small class="text-muted">اختياري: رفع ملف الترخيص بدلاً من اللصق</small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> تفعيل الترخيص
+                            </button>
+                            <a asp-action="DownloadTemplate" class="btn btn-outline-secondary">
+                                <i class="bi bi-file-earmark-text"></i> تنزيل نموذج طلب ترخيص
+                            </a>
+                        </div>
+                    </form>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger mt-3">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <p class="mb-0">@error.ErrorMessage</p>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="card-footer text-muted text-center">
+                    <small>للحصول على ترخيص، تواصل مع فريق الدعم الفني</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyMachineId() {
+    const machineId = '@Model.MachineId';
+    navigator.clipboard.writeText(machineId).then(() => {
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="bi bi-check"></i> تم النسخ';
+        btn.classList.remove('btn-outline-primary');
+        btn.classList.add('btn-success');
+        
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-primary');
+        }, 2000);
+    });
+}
+
+// Handle file upload
+document.getElementById('licenseFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('LicenseKey').value = e.target.result;
+        };
+        reader.readAsText(file);
+    }
+});
+</script>
+
+<footer class="footer text-muted border-top py-3 text-center bg-light mt-auto">
+    <div class="container-fluid">
+        <span>© 2026 <strong>نظام مَسَار للمدارس</strong> - جميع الحقوق محفوظة - شركة مسار للبرمجيات mokdadvipr@gmail.com .. 01006765664 (نسخة 1.0.0)</span>
+    </div>
+</footer>

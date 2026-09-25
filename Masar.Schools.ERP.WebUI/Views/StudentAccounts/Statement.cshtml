@@ -1,0 +1,229 @@
+@model StudentAccount
+@{
+    ViewData["Title"] = "كشف حساب الطالب";
+    var statementEntries = ViewBag.StatementEntries as List<StatementEntry>;
+    var schoolName = ViewBag.SchoolName as string ?? "مَسَار للمدارس";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-file-text"></i> كشف حساب الطالب
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للحسابات
+        </a>
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="bi bi-printer"></i> طباعة الكشف
+        </button>
+        <button class="btn btn-success" onclick="exportPdf()">
+            <i class="bi bi-file-earmark-pdf"></i> تصدير PDF
+        </button>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">معلومات الطالب</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <p><strong>رقم الحساب:</strong> @Model.AccountNumber</p>
+                        <p><strong>اسم الطالب:</strong> @Model.Student.FullNameArabic</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>الفصل:</strong> @Model.Student.ClassRoom?.NameArabic</p>
+                        <p><strong>المدرسة:</strong> @schoolName</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>ولي الأمر:</strong> @Model.Student.Guardian?.FullNameArabic</p>
+                        <p><strong>معفى من الضريبة:</strong> @(Model.IsVatExempt ? "نعم" : "لا")</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>حالة الحساب:</strong> @Model.Status</p>
+                        <p><strong>رمز الإعفاء:</strong> @Model.VatExemptionCode</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">إجمالي الفواتير</h5>
+                <h3 class="text-primary">@Model.TotalBalance.ToString("N2") ريال</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">المدفوع</h5>
+                <h3 class="text-success">@Model.PaidBalance.ToString("N2") ريال</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">المتبقي</h5>
+                <h3 class="text-danger">@Model.OutstandingBalance.ToString("N2") ريال</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">الخصومات</h5>
+                <h3 class="text-warning">@Model.DiscountBalance.ToString("N2") ريال</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">سجل المعاملات</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>المرجع</th>
+                                <th>الوصف</th>
+                                <th>النوع</th>
+                                <th>مدين</th>
+                                <th>دائن</th>
+                                <th>الرصيد</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (statementEntries != null && statementEntries.Any())
+                            {
+                                @foreach (var entry in statementEntries)
+                                {
+                                    <tr>
+                                        <td>@entry.Date.ToString("yyyy-MM-dd")</td>
+                                        <td>@entry.ReferenceNumber</td>
+                                        <td>@entry.Description</td>
+                                        <td>
+                                            @switch (entry.Type)
+                                            {
+                                                case "Invoice":
+                                                    <span class="badge bg-danger">فاتورة</span>
+                                                    break;
+                                                case "Payment":
+                                                    <span class="badge bg-success">دفعة</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-secondary">@entry.Type</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td class="text-end">
+                                            @(entry.Debit > 0 ? entry.Debit.ToString("N2") : "-")
+                                        </td>
+                                        <td class="text-end">
+                                            @(entry.Credit > 0 ? entry.Credit.ToString("N2") : "-")
+                                        </td>
+                                        <td class="text-end fw-bold">@entry.RunningBalance.ToString("N2") ريال</td>
+                                        <td>
+                                            @switch (entry.Status)
+                                            {
+                                                case "Paid":
+                                                case "Completed":
+                                                    <span class="status-badge success">مدفوع</span>
+                                                    break;
+                                                case "Issued":
+                                                case "Pending":
+                                                    <span class="status-badge warning">قيد الانتظار</span>
+                                                    break;
+                                                default:
+                                                    <span class="status-badge">@entry.Status</span>
+                                                    break;
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted">
+                                        لا توجد معاملات
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="6" class="text-end fw-bold">الرصيد الحالي:</td>
+                                <td class="text-end fw-bold text-danger">@Model.OutstandingBalance.ToString("N2") ريال</td>
+                                <td>-</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">إجراءات سريعة</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a asp-action="CreatePayment" asp-controller="Invoices" asp-route-studentAccountId="@Model.AccountId" class="btn btn-primary w-100">
+                            <i class="bi bi-cash"></i> تسجيل دفعة
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a asp-action="GenerateBulkInvoices" asp-route-classId="@Model.Student.ClassRoomId" asp-route-issueDate="@DateTime.Now" class="btn btn-info w-100">
+                            <i class="bi bi-file-earmark-plus"></i> إنشاء فاتورة
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a asp-action="ApplyDiscountForm" asp-route-studentAccountId="@Model.AccountId" class="btn btn-warning w-100">
+                            <i class="bi bi-percent"></i> تطبيق خصم
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a asp-action="ZatcaStatus" asp-controller="Invoices" class="btn btn-success w-100">
+                            <i class="bi bi-file-earmark-text"></i> حالة ZATCA
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer text-center mt-4">
+    <p class="text-muted">
+        © 2026 نظام مَسَار للمدارس - جميع الحقوق محفوظة - شركة مسار للبرمجيات mokdadvipr@gmail.com .. 01006765664 (نسخة 1.0.0)
+    </p>
+</div>
+
+@section Scripts {
+    <script>
+        function exportPdf() {
+            alert('سيتم تنفيذ تصدير PDF هنا باستخدام مكتبة مثل QuestPDF أو Rotativa.');
+        }
+    </script>
+}

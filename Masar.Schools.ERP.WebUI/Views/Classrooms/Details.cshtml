@@ -1,0 +1,152 @@
+@model Masar.Schools.ERP.WebUI.ViewModels.ClassroomListVM
+@{
+    ViewData["Title"] = "تفاصيل الفصل";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index")">إدارة الفصول</a></li>
+                <li class="breadcrumb-item active">تفاصيل الفصل</li>
+            </ol>
+        </nav>
+        <h1 class="h3 mb-3">
+            <i class="bi bi-door-open"></i> تفاصيل الفصل الدراسي
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> معلومات الفصل</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted">اسم الفصل</label>
+                        <h5>@Model.NameArabic</h5>
+                        <small class="text-muted">@Model.Name</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted">كود الفصل</label>
+                        <h5><span class="badge bg-secondary">@Model.Code</span></h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted">المرحلة</label>
+                        <h5>@Model.GradeLevel</h5>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted">الشعبة</label>
+                        <h5>@Model.Section</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted">السعة</label>
+                        <h5>@Model.Capacity طالب</h5>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted">عدد الطلاب الحالي</label>
+                        <h5>@Model.CurrentCount طالب</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted">السعة المتاحة</label>
+                        <h5>
+                            <span class="badge @(Model.AvailableCapacity > 0 ? "bg-success" : "bg-danger")">
+                                @Model.AvailableCapacity متاح
+                            </span>
+                        </h5>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted">الحالة</label>
+                        <h5>
+                            @if (Model.IsActive)
+                            {
+                                <span class="badge bg-success">نشط</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">غير نشط</span>
+                            }
+                        </h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted">المدرسة</label>
+                        <h5>@Model.SchoolName</h5>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted">المؤسسة</label>
+                        <h5>@Model.TenantName</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted">معلم الفصل</label>
+                        <h5>@Model.ClassTeacherName</h5>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted">تاريخ الإنشاء</label>
+                        <h5>@Model.CreatedAt.ToString("yyyy/MM/dd HH:mm")</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <label class="text-muted">تم الإنشاء بواسطة</label>
+                        <h5>@Model.CreatedBy</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="@Url.Action("Index")" class="btn btn-secondary">
+                    <i class="bi bi-arrow-right"></i> العودة للقائمة
+                </a>
+                <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> تعديل
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-pie-chart"></i> إحصائيات الفصل</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="text-muted">نسبة الامتلاء</label>
+                    <div class="progress" style="height: 25px;">
+                        <div class="progress-bar @(Model.AvailableCapacity < 5 ? "bg-danger" : Model.AvailableCapacity < 10 ? "bg-warning" : "bg-success")" 
+                             role="progressbar" 
+                             style="width: @((Model.CurrentCount * 100) / Model.Capacity)%">
+                            @((Model.CurrentCount * 100) / Model.Capacity)%
+                        </div>
+                    </div>
+                </div>
+                <div class="alert @(Model.AvailableCapacity > 10 ? "alert-success" : Model.AvailableCapacity > 0 ? "alert-warning" : "alert-danger")">
+                    <i class="bi @(Model.AvailableCapacity > 10 ? "bi-check-circle" : Model.AvailableCapacity > 0 ? "bi-exclamation-circle" : "bi-x-circle")"></i>
+                    @if (Model.AvailableCapacity > 10)
+                    {
+                        <strong>الفصل متاح للتسجيل</strong>
+                    }
+                    else if (Model.AvailableCapacity > 0)
+                    {
+                        <strong>الفصل على وشك الامتلاء</strong>
+                    }
+                    else
+                    {
+                        <strong>الفصل ممتلئ بالكامل</strong>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

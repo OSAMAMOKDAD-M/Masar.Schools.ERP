@@ -1,0 +1,96 @@
+@model IEnumerable<Masar.Schools.ERP.WebUI.Controllers.TrialBalanceEntry>
+@using Masar.Schools.ERP.Domain.Entities
+@{
+    ViewData["Title"] = "ميزان المراجعة";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">دفتر الأستاذ العام</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">ميزان المراجعة</li>
+                </ol>
+            </nav>
+            
+            <h2 class="text-end mb-3">ميزان المراجعة</h2>
+            
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">كحتى تاريخ</label>
+                            <input type="date" name="asOfDate" class="form-control" value="@ViewBag.AsOfDate?.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">عرض ميزان المراجعة</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>رقم الحساب</th>
+                                    <th>اسم الحساب (عربي)</th>
+                                    <th>اسم الحساب (إنجليزي)</th>
+                                    <th>نوع الحساب</th>
+                                    <th class="text-end">مدين</th>
+                                    <th class="text-end">دائن</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var entry in Model)
+                                {
+                                    <tr>
+                                        <td>@entry.AccountCode</td>
+                                        <td>@entry.AccountNameAr</td>
+                                        <td>@entry.AccountNameEn</td>
+                                        <td>
+                                            @switch (entry.AccountType)
+                                            {
+                                                case AccountType.Asset: <span class="badge bg-primary">أصول</span>; break;
+                                                case AccountType.Liability: <span class="badge bg-warning">التزامات</span>; break;
+                                                case AccountType.Equity: <span class="badge bg-info">حقوق الملكية</span>; break;
+                                                case AccountType.Revenue: <span class="badge bg-success">إيرادات</span>; break;
+                                                case AccountType.Expense: <span class="badge bg-danger">مصروفات</span>; break;
+                                            }
+                                        </td>
+                                        <td class="text-end">@entry.Debit.ToString("N2")</td>
+                                        <td class="text-end">@entry.Credit.ToString("N2")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot class="table-light fw-bold">
+                                <tr>
+                                    <td colspan="4" class="text-end">الإجمالي:</td>
+                                    <td class="text-end">@ViewBag.TotalDebit?.ToString("N2")</td>
+                                    <td class="text-end">@ViewBag.TotalCredit?.ToString("N2")</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    
+                    @if (ViewBag.TotalDebit == ViewBag.TotalCredit)
+                    {
+                        <div class="alert alert-success mt-3 text-center">
+                            <i class="fas fa-check-circle"></i> ميزان المراجعة متوازن (المدين = الدائن)
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger mt-3 text-center">
+                            <i class="fas fa-exclamation-triangle"></i> ميزان المراجعة غير متوازن! الفرق: @((ViewBag.TotalDebit - ViewBag.TotalCredit)?.ToString("N2"))
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,136 @@
+@model List<Masar.Schools.ERP.Domain.DTOs.BusRouteDto>
+@{
+    ViewData["Title"] = "إدارة خطوط السير";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">إدارة خطوط السير</h3>
+                    <div class="card-tools">
+                        <a href="@Url.Action("CreateRoute", "Transport")" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> إضافة خط سير جديد
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="routesTable">
+                            <thead>
+                                <tr>
+                                    <th>اسم الخط</th>
+                                    <th>كود الخط</th>
+                                    <th>نقطة البداية</th>
+                                    <th>نقطة النهاية</th>
+                                    <th>المسافة الكلية</th>
+                                    <th>المدة المقدرة</th>
+                                    <th>الاتجاه</th>
+                                    <th>عدد المحطات</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    @foreach (var route in Model)
+                                    {
+                                        <tr>
+                                            <td>@route.RouteName</td>
+                                            <td>@route.RouteCode</td>
+                                            <td>@route.StartLocation</td>
+                                            <td>@route.EndLocation</td>
+                                            <td>@route.TotalDistance كم</td>
+                                            <td>@route.EstimatedDuration دقيقة</td>
+                                            <td>
+                                                @if (route.Direction == "Outbound")
+                                                {
+                                                    <span class="badge badge-primary">ذاهب</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-secondary">عائد</span>
+                                                }
+                                            </td>
+                                            <td>@route.Stops.Count</td>
+                                            <td>
+                                                @if (route.IsActive)
+                                                {
+                                                    <span class="badge badge-success">نشط</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">غير نشط</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a href="@Url.Action("EditRoute", "Transport", new { id = route.Id })" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="@Url.Action("DeleteRoute", "Transport", new { id = route.Id })" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من حذف هذا الخط؟')">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="10" class="text-center">لا توجد خطوط سير مسجلة</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof $ !== 'undefined') {
+                $(document).ready(function() {
+                    $('#routesTable').DataTable({
+                        "language": {
+                            "sEmptyTable": "لا توجد بيانات",
+                            "sInfo": "عرض _START_ إلى _END_ من _TOTAL_ سجل",
+                            "sInfoEmpty": "عرض 0 إلى 0 من 0 سجل",
+                            "sInfoFiltered": "(مفلترة من _MAX_ سجل)",
+                            "sInfoPostFix": "",
+                            "sInfoThousands": ",",
+                            "sLengthMenu": "عرض _MENU_ سجلات",
+                            "sLoadingRecords": "جاري التحميل...",
+                            "sProcessing": "جاري المعالجة...",
+                            "sSearch": "بحث:",
+                            "sZeroRecords": "لا توجد نتائج",
+                            "oPaginate": {
+                                "sFirst": "الأول",
+                                "sLast": "الأخير",
+                                "sNext": "التالي",
+                                "sPrevious": "السابق"
+                            },
+                            "oAria": {
+                                "sSortAscending": ": تفعيل لترتيب العمود تصاعدياً",
+                                "sSortDescending": ": تفعيل لترتيب العمود تنازلياً"
+                            }
+                        },
+                        "order": [[0, "asc"]]
+                    });
+                });
+            } else {
+                console.error('jQuery is not loaded');
+            }
+        });
+    </script>
+}

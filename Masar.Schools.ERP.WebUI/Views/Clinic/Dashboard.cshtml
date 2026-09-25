@@ -1,0 +1,215 @@
+@model Masar.Schools.ERP.Domain.DTOs.ClinicDashboardDto
+
+@{
+    ViewData["Title"] = "لوحة العيادة المدرسية";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3"><i class="bi bi-hospital"></i> لوحة العيادة المدرسية</h2>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">زيارات اليوم</h5>
+                    <h2 class="card-text">@Model.TotalVisitsToday</h2>
+                    <small class="text-white-50">زيارات شهر هذا: @Model.TotalVisitsThisMonth</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">حالات طارئة</h5>
+                    <h2 class="card-text">@Model.EmergencyVisitsToday</h2>
+                    <small class="text-white-50">اليوم</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">تحويل للمستشفى</h5>
+                    <h2 class="card-text">@Model.PatientsReferredToHospitalToday</h2>
+                    <small class="text-white-50">اليوم</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">إجازات نشطة</h5>
+                    <h2 class="card-text">@Model.ActiveMedicalExcuses</h2>
+                    <small class="text-white-50">حالياً</small>
+                </div>
+            </div>
+    </div>
+
+    <!-- Additional Stats -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-box-seam"></i> المخزون الطبي</h5>
+                    <div class="d-flex justify-content-between">
+                        <span>كمية منخفضة</span>
+                        <span class="badge bg-danger">@Model.LowStockItems</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>منتهية الصلاحية</span>
+                        <span class="badge bg-danger">@Model.ExpiredItems</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>قرب من الانتهاء</span>
+                        <span class="badge bg-warning">@Model.NearExpiryItems</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-heart-pulse"></i> الحالات الصحية</h5>
+                    <div class="d-flex justify-content-between">
+                        <span>أمراض مزمنة</span>
+                        <span class="badge bg-warning">@Model.ChronicDiseaseStudents</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>حساسية</span>
+                        <span class="badge bg-warning">@Model.AllergyStudents</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-house"></i> حالات اليوم</h5>
+                    <div class="d-flex justify-content-between">
+                        <span>محوّلين للمنزل</span>
+                        <span class="badge bg-warning">@Model.PatientsSentHomeToday</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">إجراءات سريعة</h5>
+                    <div class="d-flex gap-2">
+                        <a asp-action="QuickVisit" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> تسجيل زيارة جديدة
+                        </a>
+                        <a asp-action="HealthProfiles" class="btn btn-success">
+                            <i class="bi bi-heart-pulse"></i> السجلات الصحية
+                        </a>
+                        <a asp-action="Inventory" class="btn btn-warning">
+                            <i class="bi bi-box-seam"></i> المخزون الطبي
+                        </a>
+                        <a asp-action="MedicalExcuses" class="btn btn-info">
+                            <i class="bi bi-file-medical"></i> الإجازات الطبية
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tables -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">أكثر الطلاب زيارة</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.TopVisitingStudents.Any())
+                    {
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>الطالب</th>
+                                    <th>عدد الزيارات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in Model.TopVisitingStudents)
+                                {
+                                    <tr>
+                                        <td>@student.StudentName</td>
+                                        <td><span class="badge bg-primary">@student.VisitCount</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">لا توجد بيانات</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">أحدث الزيارات</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentVisits.Any())
+                    {
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>الطالب</th>
+                                    <th>السبب</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var visit in Model.RecentVisits)
+                                {
+                                    <tr>
+                                        <td>@visit.StudentName</td>
+                                        <td>@visit.VisitReason</td>
+                                        <td>
+                                            @if (visit.IsEmergency)
+                                            {
+                                                <span class="badge bg-danger">طارئة</span>
+                                                @if (visit.ReferredToHospital)
+                                                {
+                                                    <span class="badge bg-warning ms-1">مستشفى</span>
+                                                }
+                                                @if (visit.SentHome)
+                                                {
+                                                    <span class="badge bg-info ms-1">منزل</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">عادية</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">لا توجد بيانات</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

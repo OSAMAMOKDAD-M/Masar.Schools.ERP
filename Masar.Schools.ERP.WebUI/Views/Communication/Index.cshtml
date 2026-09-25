@@ -1,0 +1,81 @@
+@model List<ChatRoom>
+@{
+    ViewData["Title"] = "التواصل مع أولياء الأمور";
+    Layout = "_Layout";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-chat-dots"></i> التواصل مع أولياء الأمور
+        </h1>
+        <a asp-action="NewConversation" class="btn btn-primary">
+            <i class="bi bi-plus"></i> محادثة جديدة
+        </a>
+        <a asp-action="Broadcast" class="btn btn-info">
+            <i class="bi bi-broadcast"></i> إشعار عام
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                @if (Model != null && Model.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>المحادثة</th>
+                                    <th>آخر رسالة</th>
+                                    <th>التاريخ</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var chatRoom in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <strong>@chatRoom.Name</strong>
+                                            <br>
+                                            <small class="text-muted">@chatRoom.Type</small>
+                                        </td>
+                                        <td>
+                                            @if (chatRoom.Messages.Any())
+                                            {
+                                                var lastMessage = chatRoom.Messages.First();
+                                                <small>@lastMessage.Content.Substring(0, Math.Min(50, lastMessage.Content.Length))...</small>
+                                            }
+                                            else
+                                            {
+                                                <small class="text-muted">لا توجد رسائل</small>
+                                            }
+                                        </td>
+                                        <td>
+                                            @(chatRoom.UpdatedAt?.ToString("yyyy-MM-dd HH:mm") ?? "-")
+                                        </td>
+                                        <td>
+                                            <a asp-action="Conversation" asp-route-id="@chatRoom.Id" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-chat"></i> فتح
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        لا توجد محادثات حالياً. ابدأ محادثة جديدة مع ولي أمر.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

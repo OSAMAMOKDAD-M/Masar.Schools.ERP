@@ -1,0 +1,178 @@
+@model Masar.Schools.ERP.Domain.DTOs.CreateInventoryItemRequest
+
+@{
+    ViewData["Title"] = "إنشاء صنف جديد";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">إنشاء صنف جديد</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateItem" method="post">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Name" class="control-label">الاسم</label>
+                                    <input asp-for="Name" class="form-control" required />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="NameArabic" class="control-label">الاسم بالعربية</label>
+                                    <input asp-for="NameArabic" class="form-control" required />
+                                    <span asp-validation-for="NameArabic" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="SKU" class="control-label">الكود (SKU)</label>
+                                    <input asp-for="SKU" class="form-control" required />
+                                    <span asp-validation-for="SKU" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Barcode" class="control-label">الباركود</label>
+                                    <input asp-for="Barcode" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Category" class="control-label">التصنيف</label>
+                                    <input asp-for="Category" class="form-control" required />
+                                    <span asp-validation-for="Category" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="CategoryArabic" class="control-label">التصنيف بالعربية</label>
+                                    <input asp-for="CategoryArabic" class="form-control" required />
+                                    <span asp-validation-for="CategoryArabic" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="UnitOfMeasure" class="control-label">وحدة القياس</label>
+                                    <select asp-for="UnitOfMeasure" class="form-control">
+                                        <option value="Unit">وحدة</option>
+                                        <option value="Kg">كيلوغرام</option>
+                                        <option value="Liter">لتر</option>
+                                        <option value="Meter">متر</option>
+                                        <option value="Box">صندوق</option>
+                                        <option value="Pack">حزمة</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Currency" class="control-label">العملة</label>
+                                    <select asp-for="Currency" class="form-control">
+                                        <option value="SAR">ريال سعودي</option>
+                                        <option value="USD">دولار أمريكي</option>
+                                        <option value="EUR">يورو</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="ReorderLevel" class="control-label">الحد الأدنى لإعادة الطلب</label>
+                                    <input asp-for="ReorderLevel" class="form-control" type="number" step="0.01" required />
+                                    <span asp-validation-for="ReorderLevel" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="MaxStockLevel" class="control-label">الحد الأقصى للمخزون</label>
+                                    <input asp-for="MaxStockLevel" class="form-control" type="number" step="0.01" required />
+                                    <span asp-validation-for="MaxStockLevel" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="ReorderQuantity" class="control-label">كمية الطلب المقترحة</label>
+                                    <input asp-for="ReorderQuantity" class="form-control" type="number" step="0.01" required />
+                                    <span asp-validation-for="ReorderQuantity" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="AverageCost" class="control-label">التكلفة المتوسطة</label>
+                                    <input asp-for="AverageCost" class="form-control" type="number" step="0.01" required />
+                                    <span asp-validation-for="AverageCost" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="SellingPrice" class="control-label">سعر البيع</label>
+                                    <input asp-for="SellingPrice" class="form-control" type="number" step="0.01" required />
+                                    <span asp-validation-for="SellingPrice" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input asp-for="IsStockItem" class="form-check-input" type="checkbox" />
+                                <label asp-for="IsStockItem" class="form-check-label">يصرف من المخزون</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Description" class="control-label">الوصف</label>
+                                    <textarea asp-for="Description" class="form-control" rows="2"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="DescriptionArabic" class="control-label">الوصف بالعربية</label>
+                                    <textarea asp-for="DescriptionArabic" class="form-control" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Notes" class="control-label">ملاحظات</label>
+                            <textarea asp-for="Notes" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> حفظ
+                            </button>
+                            <a asp-action="Items" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> رجوع
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,499 @@
+@model Masar.Schools.ERP.Domain.DTOs.OpenAcademicTermRequest
+@{
+    ViewData["Title"] = "فتح فصل دراسي جديد";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">فتح فصل دراسي جديد - معالج الإعداد</h3>
+                    <div class="card-tools">
+                        <a href="@Url.Action("Index", "AcademicTerm")" class="btn btn-secondary">
+                            <i class="fas fa-arrow-right"></i> العودة
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Progress Steps -->
+                    <div class="wizard">
+                        <div class="wizard-inner">
+                            <div class="connecting-line"></div>
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link active" href="#step1" data-toggle="tab" aria-selected="true">
+                                        <span class="current-info badge badge-secondary">1</span>
+                                        <span class="step-title">الإعدادات الأكاديمية</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" href="#step2" data-toggle="tab" aria-selected="false">
+                                        <span class="current-info badge badge-secondary">2</span>
+                                        <span class="step-title">الهيكل الدراسي</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" href="#step3" data-toggle="tab" aria-selected="false">
+                                        <span class="current-info badge badge-secondary">3</span>
+                                        <span class="step-title">الخيارات المتقدمة</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" href="#step4" data-toggle="tab" aria-selected="false">
+                                        <span class="current-info badge badge-secondary">4</span>
+                                        <span class="step-title">المراجعة والاعتماد</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Wizard Content -->
+                    <div class="tab-content">
+                        <!-- Step 1: Academic Settings -->
+                        <div class="tab-pane active" id="step1" role="tabpanel">
+                            <h4>الخطوة 1: الإعدادات الأكاديمية</h4>
+                            <p class="text-muted">قم بتحديد المعلومات الأساسية للفصل الدراسي</p>
+                            
+                            <div class="form-group">
+                                <label>المدرسة <span class="text-danger">*</span></label>
+                                <select asp-for="SchoolId" class="form-control" required>
+                                    <option value="">اختر المدرسة</option>
+                                    @if (ViewBag.Schools != null)
+                                    {
+                                        @foreach (var sch in ViewBag.Schools)
+                                        {
+                                            <option value="@sch.Value">@sch.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>اسم الفصل الدراسي <span class="text-danger">*</span></label>
+                                <select asp-for="TermName" class="form-control" required>
+                                    <option value="">اختر الفصل</option>
+                                    <option value="Term 1">الفصل الأول</option>
+                                    <option value="Term 2">الفصل الثاني</option>
+                                    <option value="Term 3">الفصل الثالث</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>اسم الفصل بالعربية <span class="text-danger">*</span></label>
+                                <input asp-for="TermNameArabic" class="form-control" required placeholder="مثال: الفصل الأول" />
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>تاريخ البدء <span class="text-danger">*</span></label>
+                                        <input asp-for="StartDate" type="date" class="form-control" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>تاريخ الانتهاء <span class="text-danger">*</span></label>
+                                        <input asp-for="EndDate" type="date" class="form-control" required />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>ملاحظات</label>
+                                <textarea asp-for="Notes" class="form-control" rows="3" placeholder="أي ملاحظات إضافية..."></textarea>
+                            </div>
+
+                            <button type="button" class="btn btn-primary float-right" onclick="nextStep(1)">
+                                التالي <i class="fas fa-arrow-left"></i>
+                            </button>
+                        </div>
+
+                        <!-- Step 2: Academic Structure -->
+                        <div class="tab-pane" id="step2" role="tabpanel">
+                            <h4>الخطوة 2: الهيكل الدراسي</h4>
+                            <p class="text-muted">اختر المراحل والصفوف والشعب المراد ربطها</p>
+                            
+                            <div class="form-group">
+                                <label>المراحل الدراسية</label>
+                                <div class="checkbox-list">
+                                    @if (ViewBag.GradeLevels != null)
+                                    {
+                                        @foreach (var gradeLevel in ViewBag.GradeLevels)
+                                        {
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="SelectedGradeLevels" value="@gradeLevel.Value" class="grade-level-checkbox" />
+                                                    @(@gradeLevel.Text)
+                                                </label>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>الصفوف الدراسية</label>
+                                <div class="checkbox-list">
+                                    @if (ViewBag.Grades != null)
+                                    {
+                                        @foreach (var grd in ViewBag.Grades)
+                                        {
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="SelectedGrades" value="@grd.Value" class="grade-checkbox" />
+                                                    @(@grd.Text)
+                                                </label>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>الشعب</label>
+                                <div class="checkbox-list">
+                                    @if (ViewBag.Sections != null)
+                                    {
+                                        @foreach (var sec in ViewBag.Sections)
+                                        {
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="SelectedSections" value="@sec.Value" class="section-checkbox" />
+                                                    @(@sec.Text)
+                                                </label>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-secondary" onclick="prevStep(2)">
+                                <i class="fas fa-arrow-right"></i> السابق
+                            </button>
+                            <button type="button" class="btn btn-primary float-right" onclick="nextStep(2)">
+                                التالي <i class="fas fa-arrow-left"></i>
+                            </button>
+                        </div>
+
+                        <!-- Step 3: Advanced Options -->
+                        <div class="tab-pane" id="step3" role="tabpanel">
+                            <h4>الخطوة 3: الخيارات المتقدمة</h4>
+                            <p class="text-muted">اختر الخيارات الإضافية للفتح التلقائي</p>
+                            
+                            <div class="form-group">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input asp-for="AutoPromoteStudents" class="form-check-input" />
+                                            <label class="form-check-label">نقل الطلاب تلقائياً للفصل الجديد</label>
+                                        </div>
+                                        <small class="text-muted">سيتم نقل جميع الطلاب النشطين للصفوف التالية</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input asp-for="AutoGenerateFees" class="form-check-input" />
+                                            <label class="form-check-label">توليد جدول الرسوم تلقائياً</label>
+                                        </div>
+                                        <small class="text-muted">سيتم إنشاء فواتير الأقساط للطلاب</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input asp-for="EnableBiometricAttendance" class="form-check-input" />
+                                            <label class="form-check-label">تفعيل نظام الحضور بالبصمة</label>
+                                        </div>
+                                        <small class="text-muted">سيتم تفعيل تسجيل الحضور عبر البصمة</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input asp-for="EnableRiskPrediction" class="form-check-input" />
+                                            <label class="form-check-label">تفعيل محرك التنبؤ بالمخاطر</label>
+                                        </div>
+                                        <small class="text-muted">سيتم تفعيل نظام تحليل المخاطر للطلاب</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-secondary" onclick="prevStep(3)">
+                                <i class="fas fa-arrow-right"></i> السابق
+                            </button>
+                            <button type="button" class="btn btn-primary float-right" onclick="getSummary()">
+                                الحصول على الملخص <i class="fas fa-info-circle"></i>
+                            </button>
+                        </div>
+
+                        <!-- Step 4: Review and Confirm -->
+                        <div class="tab-pane" id="step4" role="tabpanel">
+                            <h4>الخطوة 4: المراجعة والاعتماد</h4>
+                            <p class="text-muted">راجع البيانات قبل الاعتماد النهائي</p>
+                            
+                            <div id="summary-container" style="display: none;">
+                                <div class="alert alert-info">
+                                    <h5><i class="fas fa-info-circle"></i> ملخص البيانات</h5>
+                                    <ul id="summary-list"></ul>
+                                </div>
+
+                                <div class="alert alert-warning">
+                                    <h5><i class="fas fa-exclamation-triangle"></i> تحذير</h5>
+                                    <p>سيتم تنفيذ جميع الخطوات في معاملة واحدة. بعد الاعتماد، لا يمكن التراجع عن العملية.</p>
+                                </div>
+                            </div>
+
+                            <div id="loading-summary" style="display: none;">
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="sr-only">جاري التحميل...</span>
+                                    </div>
+                                    <p>جاري تحميل الملخص...</p>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-secondary" onclick="prevStep(4)">
+                                <i class="fas fa-arrow-right"></i> السابق
+                            </button>
+                            <button type="button" class="btn btn-success float-right" id="confirm-btn" onclick="confirmOpen()" disabled>
+                                <i class="fas fa-check"></i> اعتماد وفتح الفصل
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        function nextStep(step) {
+            // Validate current step before proceeding
+            if (!validateStep(step)) {
+                return;
+            }
+
+            if (step < totalSteps) {
+                $(`.nav-link[href="#step${step}"]`).removeClass('active').attr('aria-selected', 'false');
+                $(`.nav-link[href="#step${step + 1}"]`).addClass('active').attr('aria-selected', 'true');
+                $(`#step${step}`).removeClass('active');
+                $(`#step${step + 1}`).addClass('active');
+                currentStep = step + 1;
+            }
+        }
+
+        function prevStep(step) {
+            if (step > 1) {
+                $(`.nav-link[href="#step${step}"]`).removeClass('active').attr('aria-selected', 'false');
+                $(`.nav-link[href="#step${step - 1}"]`).addClass('active').attr('aria-selected', 'true');
+                $(`#step${step}`).removeClass('active');
+                $(`#step${step - 1}`).addClass('active');
+                currentStep = step - 1;
+            }
+        }
+
+        function validateStep(step) {
+            switch(step) {
+                case 1:
+                    const schoolId = $('#SchoolId').val();
+                    const termName = $('#TermName').val();
+                    const termNameArabic = $('#TermNameArabic').val();
+                    const startDate = $('#StartDate').val();
+                    const endDate = $('#EndDate').val();
+
+                    if (!schoolId || !termName || !termNameArabic || !startDate || !endDate) {
+                        alert('يرجى ملء جميع الحقول المطلوبة');
+                        return false;
+                    }
+
+                    if (new Date(startDate) >= new Date(endDate)) {
+                        alert('تاريخ الانتهاء يجب أن يكون بعد تاريخ البدء');
+                        return false;
+                    }
+
+                    return true;
+
+                case 2:
+                    const selectedGradeLevels = $('input[name="SelectedGradeLevels"]:checked').length;
+                    const selectedGrades = $('input[name="SelectedGrades"]:checked').length;
+                    const selectedSections = $('input[name="SelectedSections"]:checked').length;
+
+                    if (selectedGradeLevels === 0 && selectedGrades === 0 && selectedSections === 0) {
+                        alert('يرجى اختيار عنصر واحد على الأقل من الهيكل الدراسي');
+                        return false;
+                    }
+
+                    return true;
+
+                default:
+                    return true;
+            }
+        }
+
+        function getSummary() {
+            if (!validateStep(3)) {
+                return;
+            }
+
+            // Collect form data
+            const formData = {
+                SchoolId: $('#SchoolId').val(),
+                TermName: $('#TermName').val(),
+                TermNameArabic: $('#TermNameArabic').val(),
+                StartDate: $('#StartDate').val(),
+                EndDate: $('#EndDate').val(),
+                SelectedGradeLevels: [],
+                SelectedGrades: [],
+                SelectedSections: [],
+                AutoPromoteStudents: $('#AutoPromoteStudents').is(':checked'),
+                AutoGenerateFees: $('#AutoGenerateFees').is(':checked'),
+                EnableBiometricAttendance: $('#EnableBiometricAttendance').is(':checked'),
+                EnableRiskPrediction: $('#EnableRiskPrediction').is(':checked'),
+                Notes: $('#Notes').val()
+            };
+
+            $('input[name="SelectedGradeLevels"]:checked').each(function() {
+                formData.SelectedGradeLevels.push($(this).val());
+            });
+
+            $('input[name="SelectedGrades"]:checked').each(function() {
+                formData.SelectedGrades.push($(this).val());
+            });
+
+            $('input[name="SelectedSections"]:checked').each(function() {
+                formData.SelectedSections.push($(this).val());
+            });
+
+            // Show loading
+            $('#loading-summary').show();
+            $('#summary-container').hide();
+
+            // AJAX call to get summary
+            $.ajax({
+                url: '@Url.Action("GetSummary", "AcademicTerm")',
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    $('#loading-summary').hide();
+                    
+                    if (response.success) {
+                        const summary = response.data;
+                        const summaryList = $('#summary-list');
+                        summaryList.empty();
+                        
+                        summaryList.append(`<li>المراحل الدراسية: ${summary.totalGradeLevels}</li>`);
+                        summaryList.append(`<li>الصفوف الدراسية: ${summary.totalGrades}</li>`);
+                        summaryList.append(`<li>الشعب: ${summary.totalSections}</li>`);
+                        summaryList.append(`<li>الطلاب المتوقع نقلهم: ${summary.totalStudentsToPromote}</li>`);
+                        summaryList.append(`<li>المعلمين المتاحين: ${summary.totalTeachers}</li>`);
+                        summaryList.append(`<li>المواد الدراسية: ${summary.totalSubjects}</li>`);
+                        summaryList.append(`<li>القيمة المالية المتوقعة: ${summary.expectedFeesAmount} ريال</li>`);
+                        
+                        $('#summary-container').show();
+                        $('#confirm-btn').prop('disabled', false);
+                        
+                        // Move to step 4
+                        nextStep(3);
+                    } else {
+                        alert('فشل الحصول على الملخص: ' + response.message);
+                    }
+                },
+                error: function() {
+                    $('#loading-summary').hide();
+                    alert('حدث خطأ أثناء الحصول على الملخص');
+                }
+            });
+        }
+
+        function confirmOpen() {
+            if (!confirm('هل أنت متأكد من فتح الفصل الدراسي؟ سيتم تنفيذ جميع الخطوات في معاملة واحدة.')) {
+                return;
+            }
+
+            // Submit the form
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '@Url.Action("OpenTerm", "AcademicTerm")';
+
+            // Add all form fields
+            const fields = [
+                'SchoolId', 'TermName', 'TermNameArabic', 'StartDate', 'EndDate',
+                'AutoPromoteStudents', 'AutoGenerateFees', 'EnableBiometricAttendance',
+                'EnableRiskPrediction', 'Notes'
+            ];
+
+            fields.forEach(field => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = field;
+                input.value = $(`#${field}`).val() || $(`#${field}`).is(':checked');
+                form.appendChild(input);
+            });
+
+            // Add arrays
+            $('input[name="SelectedGradeLevels"]:checked').each(function() {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'SelectedGradeLevels';
+                input.value = $(this).val();
+                form.appendChild(input);
+            });
+
+            $('input[name="SelectedGrades"]:checked').each(function() {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'SelectedGrades';
+                input.value = $(this).val();
+                form.appendChild(input);
+            });
+
+            $('input[name="SelectedSections"]:checked').each(function() {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'SelectedSections';
+                input.value = $(this).val();
+                form.appendChild(input);
+            });
+
+            // Add anti-forgery token
+            const token = $('input[name="__RequestVerificationToken"]').val();
+            if (token) {
+                const tokenInput = document.createElement('input');
+                tokenInput.type = 'hidden';
+                tokenInput.name = '__RequestVerificationToken';
+                tokenInput.value = token;
+                form.appendChild(tokenInput);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Auto-update Arabic name when English name changes
+        $('#TermName').on('change', function() {
+            const arabicNames = {
+                'Term 1': 'الفصل الأول',
+                'Term 2': 'الفصل الثاني',
+                'Term 3': 'الفصل الثالث'
+            };
+            $('#TermNameArabic').val(arabicNames[this.value] || '');
+        });
+    </script>
+}

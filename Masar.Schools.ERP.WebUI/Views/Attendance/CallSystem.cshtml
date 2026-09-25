@@ -1,0 +1,202 @@
+@{
+    ViewData["Title"] = "نظام الاستدعاء";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-broadcast"></i> نظام الاستدعاء
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للحضور
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">استدعاء طالب</h5>
+            </div>
+            <div class="card-body">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="studentNumberInput"
+                           placeholder="أدخل رقم الطالب">
+                    <button class="btn btn-primary" onclick="callStudent()">
+                        <i class="bi bi-broadcast"></i> استدعاء
+                    </button>
+                </div>
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    أدخل رقم الطالب لاستدعائه إلى البوابة/المكتب
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">حالة النظام</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <p><strong>نظام العرض:</strong> <span class="status-badge success">نشط</span></p>
+                        <p><strong>نظام الصوت:</strong> <span class="status-badge success">نشط</span></p>
+                    </div>
+                    <div class="col-6">
+                        <p><strong>شاشة البوابة:</strong> <span class="status-badge success">متصل</span></p>
+                        <p><strong>SignalR:</strong> <span class="status-badge success">متصل</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">الاستدعاءات الأخيرة</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="callsTable">
+                        <thead>
+                            <tr>
+                                <th>الوقت</th>
+                                <th>رقم الطالب</th>
+                                <th>الاسم</th>
+                                <th>الفصل</th>
+                                <th>الاستدعاء بواسطة</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="callsBody">
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">
+                                    <i class="bi bi-broadcast"></i> لا توجد استدعاءات حديثة
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">العرض المباشر</h5>
+            </div>
+            <div class="card-body text-center">
+                <div id="liveDisplay" class="display-screen">
+                    <div class="waiting-message">
+                        <i class="bi bi-broadcast" style="font-size: 48px;"></i>
+                        <p class="mt-3">في انتظار الاستدعاء...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">قوالب الاستدعاء السريع</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <button class="btn btn-outline-primary w-100" onclick="quickCall('all-present')">
+                            <i class="bi bi-people"></i> استدعاء جميع الحاضرين
+                        </button>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <button class="btn btn-outline-warning w-100" onclick="quickCall('late')">
+                            <i class="bi bi-clock"></i> استدعاء الطلاب المتأخرين
+                        </button>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <button class="btn btn-outline-danger w-100" onclick="quickCall('absent')">
+                            <i class="bi bi-x-circle"></i> استدعاء الطلاب الغائبين
+                        </button>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <button class="btn btn-outline-info w-100" onclick="quickCall('class')">
+                            <i class="bi bi-building"></i> استدعاء حسب الفصل
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .display-screen {
+        background-color: #000;
+        color: #0f0;
+        padding: 20px;
+        border-radius: 8px;
+        min-height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Courier New', monospace;
+    }
+    
+    .waiting-message {
+        text-align: center;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function callStudent() {
+            const studentNumber = document.getElementById('studentNumberInput').value;
+            if (studentNumber) {
+                // In real implementation, this would call the API
+                alert('جاري استدعاء الطالب: ' + studentNumber);
+
+                // Add to recent calls
+                const tbody = document.getElementById('callsBody');
+                const now = new Date().toLocaleTimeString();
+                const newRow = `
+                    <tr>
+                        <td>${now}</td>
+                        <td>${studentNumber}</td>
+                        <td>اسم الطالب</td>
+                        <td>الفصل</td>
+                        <td>المستخدم الحالي</td>
+                        <td><span class="status-badge success">تم الاستدعاء</span></td>
+                    </tr>
+                `;
+
+                if (tbody.querySelector('td[colspan]')) {
+                    tbody.innerHTML = newRow;
+                } else {
+                    tbody.insertAdjacentHTML('afterbegin', newRow);
+                }
+
+                // Update display
+                document.getElementById('liveDisplay').innerHTML = `
+                    <div style="text-align: center;">
+                        <h2>رقم الطالب: ${studentNumber}</h2>
+                        <p>يرجى التوجه إلى البوابة</p>
+                    </div>
+                `;
+
+                document.getElementById('studentNumberInput').value = '';
+            }
+        }
+
+        function quickCall(type) {
+            alert('استدعاء سريع: ' + type);
+        }
+    </script>
+}

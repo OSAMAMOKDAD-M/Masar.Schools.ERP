@@ -1,0 +1,155 @@
+@model List<AttendanceRecord>
+@{
+    ViewData["Title"] = "الحضور والغياب";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-calendar-check"></i> الحضور والغياب
+        </h1>
+        <p class="text-muted">سجل الحضور والغياب اليومي</p>
+    </div>
+</div>
+
+<!-- Date Filter -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Index" method="get" class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">التاريخ</label>
+                        <input type="date" class="form-control" name="date" value="@ViewBag.SelectedDate?.ToString("yyyy-MM-dd")">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i> عرض
+                        </button>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="btn-group w-100">
+                            <a asp-action="LiveLog" class="btn btn-info">
+                                <i class="bi bi-broadcast"></i> المتابعة اللحظية
+                            </a>
+                            <a asp-action="CallSystem" class="btn btn-warning">
+                                <i class="bi bi-bell"></i> نظام المناداة
+                            </a>
+                            <a asp-action="ManualTake" class="btn btn-success">
+                                <i class="bi bi-calendar-plus"></i> رصد يدوي
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Stats -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <h3>@Model.Count</h3>
+                <p class="mb-0">إجمالي السجلات</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h3>@Model.Count(a => a.Status == "Present")</h3>
+                <p class="mb-0">حضور</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body text-center">
+                <h3>@Model.Count(a => a.Status == "Absent")</h3>
+                <p class="mb-0">غياب</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body text-center">
+                <h3>@Model.Count(a => a.Status == "Late")</h3>
+                <p class="mb-0">تأخير</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Attendance Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>الطالب</th>
+                                <th>الفصل</th>
+                                <th>الحالة</th>
+                                <th>وقت الدخول</th>
+                                <th>وقت الخروج</th>
+                                <th>ولي الأمر</th>
+                                <th>إشعار الواتساب</th>
+                                <th>الجهاز</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var record in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@record.Student?.FullNameArabic</strong><br>
+                                        <small class="text-muted">@record.Student?.StudentNumber</small>
+                                    </td>
+                                    <td>@record.Student?.ClassRoom?.NameArabic</td>
+                                    <td>
+                                        @if (record.Status == "Present")
+                                        {
+                                            <span class="status-badge success">حاضر</span>
+                                        }
+                                        else if (record.Status == "Absent")
+                                        {
+                                            <span class="status-badge danger">غائب</span>
+                                        }
+                                        else if (record.Status == "Late")
+                                        {
+                                            <span class="status-badge warning">تأخير</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge info">@record.Status</span>
+                                        }
+                                    </td>
+                                    <td>@record.CheckInTime?.ToString("HH:mm")</td>
+                                    <td>@record.CheckOutTime?.ToString("HH:mm")</td>
+                                    <td>@record.Student?.Guardian?.FullNameArabic</td>
+                                    <td>
+                                        @if (record.WhatsAppNotificationSent)
+                                        {
+                                            <span class="status-badge success">
+                                                <i class="bi bi-check-circle"></i> تم الإرسال
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge warning">لم يُرسل</span>
+                                        }
+                                    </td>
+                                    <td>@record.DeviceId</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

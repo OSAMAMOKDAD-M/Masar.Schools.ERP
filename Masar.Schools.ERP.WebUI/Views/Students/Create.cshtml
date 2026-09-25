@@ -1,0 +1,160 @@
+@model StudentCreateDto
+@{
+    ViewData["Title"] = "إضافة طالب جديد";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-person-plus"></i> إضافة طالب جديد
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للقائمة
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="FirstNameArabic" class="form-label">الاسم الأول (عربي)</label>
+                            <input asp-for="FirstNameArabic" class="form-control" required>
+                            <span asp-validation-for="FirstNameArabic" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="LastNameArabic" class="form-label">اسم العائلة (عربي)</label>
+                            <input asp-for="LastNameArabic" class="form-control" required>
+                            <span asp-validation-for="LastNameArabic" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="FirstName" class="form-label">الاسم الأول (إنجليزي)</label>
+                            <input asp-for="FirstName" class="form-control" required>
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="LastName" class="form-label">اسم العائلة (إنجليزي)</label>
+                            <input asp-for="LastName" class="form-control" required>
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="NationalId" class="form-label">رقم الهوية الوطنية</label>
+                            <input asp-for="NationalId" class="form-control">
+                            <span asp-validation-for="NationalId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="BirthDate" class="form-label">تاريخ الميلاد</label>
+                            <input asp-for="BirthDate" type="date" class="form-control">
+                            <span asp-validation-for="BirthDate" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Gender" class="form-label">الجنس</label>
+                            <select asp-for="Gender" class="form-select">
+                                <option value="">اختر</option>
+                                <option value="Male">ذكر</option>
+                                <option value="Female">أنثى</option>
+                            </select>
+                            <span asp-validation-for="Gender" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="SchoolId" class="form-label">المدرسة</label>
+                            <select asp-for="SchoolId" class="form-select" asp-items="ViewBag.Schools" required>
+                                <option value="">اختر المدرسة</option>
+                            </select>
+                            <span asp-validation-for="SchoolId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ClassRoomId" class="form-label">الفصل</label>
+                            <select asp-for="ClassRoomId" class="form-select" asp-items="ViewBag.ClassRooms">
+                                <option value="">اختر الفصل</option>
+                            </select>
+                            <span asp-validation-for="ClassRoomId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="GuardianId" class="form-label">ولي الأمر</label>
+                            <select asp-for="GuardianId" class="form-select" asp-items="ViewBag.Guardians">
+                                <option value="">اختر ولي الأمر</option>
+                            </select>
+                            <span asp-validation-for="GuardianId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="BranchId" class="form-label">الفرع</label>
+                            <select asp-for="BranchId" class="form-select" asp-items="ViewBag.Branches">
+                                <option value="">اختر الفرع</option>
+                            </select>
+                            <span asp-validation-for="BranchId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label asp-for="Address" class="form-label">العنوان</label>
+                            <textarea asp-for="Address" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label">رقم الهاتف</label>
+                            <input asp-for="PhoneNumber" class="form-control">
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label">البريد الإلكتروني</label>
+                            <input asp-for="Email" type="email" class="form-control">
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="EmergencyContactName" class="form-label">اسم جهة الاتصال للطوارئ</label>
+                            <input asp-for="EmergencyContactName" class="form-control">
+                            <span asp-validation-for="EmergencyContactName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="EmergencyContactPhone" class="form-label">رقم جهة الاتصال للطوارئ</label>
+                            <input asp-for="EmergencyContactPhone" class="form-control">
+                            <span asp-validation-for="EmergencyContactPhone" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label asp-for="MedicalNotes" class="form-label">ملاحظات طبية</label>
+                            <textarea asp-for="MedicalNotes" class="form-control" rows="2"></textarea>
+                            <span asp-validation-for="MedicalNotes" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> حفظ الطالب
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> إلغاء
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

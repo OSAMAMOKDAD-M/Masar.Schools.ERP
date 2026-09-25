@@ -1,0 +1,71 @@
+@{
+    ViewData["Title"] = "استيراد بيانات الحضور";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-primary">
+                <i class="bi bi-upload"></i> استيراد بيانات الحضور
+            </h2>
+            <p class="text-muted">استيراد سجلات الحضور من ملف Excel</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="ImportAttendance" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label">ملف Excel</label>
+                            <input type="file" name="file" class="form-control" accept=".xlsx,.xls" required>
+                            <div class="form-text">يدعم ملفات Excel (.xlsx, .xls)</div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <h5 class="alert-heading"><i class="bi bi-info-circle"></i> تنسيق الملف المطلوب:</h5>
+                            <ul class="mb-0">
+                                <li>العمود الأول: المعرف البصري (Biometric ID)</li>
+                                <li>العمود الثاني: التاريخ (YYYY-MM-DD)</li>
+                                <li>العمود الثالث: الوقت (HH:mm:ss)</li>
+                                <li>العمود الرابع: الاتجاه (IN/OUT)</li>
+                            </ul>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-upload"></i> استيراد
+                            </button>
+                            <a asp-action="Attendance" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> إلغاء
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">تعليمات</h5>
+                    <ol class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-1-circle"></i> قم بتحميل ملف Excel من جهاز البصمة</li>
+                        <li class="mb-2"><i class="bi bi-2-circle"></i> تأكد من تطابق تنسيق الملف مع المطلوب</li>
+                        <li class="mb-2"><i class="bi bi-3-circle"></i> اختر الملف واضغط على استيراد</li>
+                        <li class="mb-2"><i class="bi bi-4-circle"></i> سيتم ربط السجلات تلقائياً بالموظفين</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">تحميل نموذج</h5>
+                    <a href="/HR/DownloadAttendanceTemplate" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-download"></i> تحميل نموذج Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

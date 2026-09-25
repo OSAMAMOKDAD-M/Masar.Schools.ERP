@@ -1,0 +1,160 @@
+@model Masar.Schools.ERP.Domain.DTOs.AlumniDashboardDto
+
+@{
+    ViewData["Title"] = "لوحة إدارة الخريجين";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3"><i class="bi bi-mortarboard"></i> لوحة إدارة الخريجين</h2>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">إجمالي الخريجين</h5>
+                    <h2 class="card-text">@Model.TotalAlumni</h2>
+                    <small class="text-white-50">في النظام</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">خريجين هذا العام</h5>
+                    <h2 class="card-text">@Model.AlumniThisYear</h2>
+                    <small class="text-white-50">@DateTime.Now.Year</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">إبراء معلق</h5>
+                    <h2 class="card-text">@Model.PendingClearance</h2>
+                    <small class="text-white-50">بانتظار الموافقة</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">وثائق صادرة</h5>
+                    <h2 class="card-text">@Model.DocumentsIssued</h2>
+                    <small class="text-white-50">هذا الشهر</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employment Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="bi bi-briefcase"></i> حالة التوظيف</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.EmploymentStats != null && Model.EmploymentStats.Any())
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>الحالة</th>
+                                    <th>العدد</th>
+                                    <th>النسبة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var stat in Model.EmploymentStats)
+                                {
+                                    <tr>
+                                        <td>@stat.CategoryArabic</td>
+                                        <td>@stat.Count</td>
+                                        <td>@stat.Percentage.ToString("F1")%</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">لا توجد بيانات متاحة</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="bi bi-building"></i> الجامعات الأكثر شيوعاً</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.UniversityStats != null && Model.UniversityStats.Any())
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>الجامعة</th>
+                                    <th>العدد</th>
+                                    <th>النسبة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var stat in Model.UniversityStats)
+                                {
+                                    <tr>
+                                        <td>@stat.CategoryArabic</td>
+                                        <td>@stat.Count</td>
+                                        <td>@stat.Percentage.ToString("F1")%</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">لا توجد بيانات متاحة</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="bi bi-lightning"></i> إجراءات سريعة</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a asp-action="Index" class="btn btn-primary">
+                            <i class="bi bi-people"></i> دليل الخريجين
+                        </a>
+                        <a asp-action="Clearance" class="btn btn-warning">
+                            <i class="bi bi-check-circle"></i> إبراء التخرج
+                        </a>
+                        <a asp-action="PendingClearance" class="btn btn-danger">
+                            <i class="bi bi-clock"></i> إبراء معلق
+                        </a>
+                        <a asp-action="Search" class="btn btn-info">
+                            <i class="bi bi-search"></i> بحث في الخريجين
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Add any dashboard-specific JavaScript here
+    </script>
+}

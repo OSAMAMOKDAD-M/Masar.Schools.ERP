@@ -1,0 +1,687 @@
+@model List<Masar.Schools.ERP.WebUI.Controllers.TableDefinition>
+@{
+    ViewData["Title"] = "مُنشئ التقارير المخصصة";
+    @Html.AntiForgeryToken()
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-tools"></i> مُنشئ التقارير المخصصة
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- خطوة 1: اختيار الجدول -->
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="bi bi-table"></i> خطوة 1: اختيار الجدول
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="form-label fw-bold">اختر الجدول:</label>
+                                        <select class="form-select" id="tableSelect" onchange="loadTableColumns()">
+                                            <option value="">-- اختر جدول --</option>
+                                            @foreach (var table in Model)
+                                            {
+                                                <option value="@table.Name">@table.DisplayNameArabic (@table.DisplayName)</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- خطوة 2: اختيار الحقول -->
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="bi bi-list-check"></i> خطوة 2: اختيار الحقول
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="form-label fw-bold">اختر الحقول:</label>
+                                        <div id="columnsContainer" class="border p-2 rounded" style="max-height: 200px; overflow-y: auto;">
+                                            <p class="text-muted">اختر جدول أولاً لعرض الحقول</p>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary mt-2" onclick="selectAllColumns()">
+                                            <i class="bi bi-check-all"></i> تحديد الكل
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary mt-2" onclick="deselectAllColumns()">
+                                            <i class="bi bi-x"></i> إلغاء التحديد
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- خطوة 3: إضافة الفلاتر -->
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">
+                                        <i class="bi bi-funnel"></i> خطوة 3: إضافة الفلاتر
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="form-label fw-bold">الفلاتر:</label>
+                                        <div id="filtersContainer" class="border p-2 rounded" style="max-height: 200px; overflow-y: auto;">
+                                            <p class="text-muted">أضف فلاتر لتخصيص التقرير</p>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-success mt-2" onclick="addFilter()">
+                                            <i class="bi bi-plus"></i> إضافة فلتر
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- خطوة 4: اسم التقرير وتوليد -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label fw-bold">اسم التقرير:</label>
+                                <input type="text" class="form-control" id="reportName" placeholder="أدخل اسم التقرير">
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end">
+                            <div class="btn-group w-100">
+                                <button class="btn btn-success" onclick="generateReport()">
+                                    <i class="bi bi-play"></i> توليد التقرير
+                                </button>
+                                <button class="btn btn-info" onclick="saveReportTemplate()">
+                                    <i class="bi bi-save"></i> حفظ النموذج
+                                </button>
+                                <button class="btn btn-secondary" onclick="loadSavedReports()">
+                                    <i class="bi bi-bookmark"></i> نماذج محفوظة
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- نتائج التقرير -->
+                    <div id="reportResults" class="mt-4" style="display: none;">
+                        <div class="card">
+                            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-file-earmark-bar-graph"></i> نتائج التقرير
+                                </h5>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-light" onclick="exportReport('pdf')">
+                                        <i class="bi bi-file-earmark-pdf"></i> PDF
+                                    </button>
+                                    <button class="btn btn-sm btn-light" onclick="exportReport('excel')">
+                                        <i class="bi bi-file-earmark-excel"></i> Excel
+                                    </button>
+                                    <button class="btn btn-sm btn-light" onclick="exportReport('print')">
+                                        <i class="bi bi-printer"></i> طباعة
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover" id="reportTable">
+                                        <thead id="reportTableHead"></thead>
+                                        <tbody id="reportTableBody"></tbody>
+                                    </table>
+                                </div>
+                                <div class="mt-3">
+                                    <p class="text-muted">إجمالي السجلات: <span id="totalRecords">0</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- نموذج إضافة فلتر -->
+<div class="modal fade" id="filterModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">إضافة فلتر</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group mb-3">
+                    <label class="form-label">الحقل:</label>
+                    <select class="form-select" id="filterColumn">
+                        <option value="">-- اختر حقل --</option>
+                    </select>
+                </div>
+                <div class="form-group mb-3">
+                    <label class="form-label">العملية:</label>
+                    <select class="form-select" id="filterOperator">
+                        <option value="equals">يساوي</option>
+                        <option value="notEquals">لا يساوي</option>
+                        <option value="contains">يحتوي على</option>
+                        <option value="notContains">لا يحتوي على</option>
+                        <option value="startsWith">يبدأ بـ</option>
+                        <option value="endsWith">ينتهي بـ</option>
+                        <option value="greaterThan">أكبر من</option>
+                        <option value="lessThan">أقل من</option>
+                        <option value="between">بين</option>
+                    </select>
+                </div>
+                <div class="form-group mb-3" id="filterValueGroup">
+                    <label class="form-label">القيمة:</label>
+                    <input type="text" class="form-control" id="filterValue" placeholder="أدخل القيمة">
+                </div>
+                <div class="form-group mb-3" id="filterValue2Group" style="display: none;">
+                    <label class="form-label">القيمة الثانية:</label>
+                    <input type="text" class="form-control" id="filterValue2" placeholder="أدخل القيمة الثانية">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-primary" onclick="confirmAddFilter()">إضافة</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- نموذج النماذج المحفوظة -->
+<div class="modal fade" id="savedReportsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">النماذج المحفوظة</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>الجدول</th>
+                                <th>تاريخ الإنشاء</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="savedReportsTableBody">
+                            <tr>
+                                <td colspan="4" class="text-center">لا توجد نماذج محفوظة</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let tableColumns = [];
+        let filters = [];
+        let currentFilterIndex = -1;
+
+        // Load saved report template if exists
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTemplate = sessionStorage.getItem('loadedReportTemplate');
+            if (savedTemplate) {
+                try {
+                    const template = JSON.parse(savedTemplate);
+                    loadReportTemplate(template);
+                    sessionStorage.removeItem('loadedReportTemplate');
+                } catch (error) {
+                    console.error('Error loading saved template:', error);
+                }
+            }
+        });
+
+        // Load report template into the form
+        function loadReportTemplate(template) {
+            // Set table name
+            document.getElementById('tableSelect').value = template.tableName;
+            document.getElementById('reportName').value = template.name;
+
+            // Load columns
+            loadTableColumns().then(() => {
+                setTimeout(() => {
+                    // Select columns
+                    template.selectedColumns.forEach(colName => {
+                        const checkbox = document.querySelector(`.column-checkbox[value="${colName}"]`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+
+                    // Load filters
+                    filters = template.filters || [];
+                    updateFiltersDisplay();
+                }, 500);
+            });
+        }
+
+        // الحصول على الأعمدة عند اختيار الجدول
+        async function loadTableColumns() {
+            const tableName = document.getElementById('tableSelect').value;
+            if (!tableName) {
+                document.getElementById('columnsContainer').innerHTML = '<p class="text-muted">اختر جدول أولاً لعرض الحقول</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch('/Reports/GetTableColumns', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ TableName: tableName })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (!data || !Array.isArray(data)) {
+                    throw new Error('Invalid response format');
+                }
+
+                tableColumns = data;
+                console.log('Loaded columns:', data);
+
+                const columnsHtml = data.map(col => {
+                    const displayName = col.DisplayName || col.Name;
+                    const displayNameArabic = col.DisplayNameArabic || col.Name;
+                    return `
+                    <div class="form-check">
+                        <input class="form-check-input column-checkbox" type="checkbox" value="${col.Name}" data-type="${col.DataType}">
+                        <label class="form-check-label">${displayNameArabic} (${displayName})</label>
+                    </div>
+                `;
+                }).join('');
+
+                document.getElementById('columnsContainer').innerHTML = columnsHtml;
+            } catch (error) {
+                console.error('Error loading columns:', error);
+                document.getElementById('columnsContainer').innerHTML = `<p class="text-danger">خطأ: ${error.message}</p>`;
+            }
+        }
+
+        // تحديد جميع الأعمدة
+        function selectAllColumns() {
+            document.querySelectorAll('.column-checkbox').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        }
+
+        // إلغاء تحديد جميع الأعمدة
+        function deselectAllColumns() {
+            document.querySelectorAll('.column-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+
+        // إضافة فلتر
+        function addFilter() {
+            const tableName = document.getElementById('tableSelect').value;
+            if (!tableName) {
+                alert('اختر جدول أولاً');
+                return;
+            }
+
+            // تحديث قائمة الحقول في النموذج
+            const filterColumnSelect = document.getElementById('filterColumn');
+            filterColumnSelect.innerHTML = '<option value="">-- اختر حقل --</option>';
+            tableColumns.forEach(col => {
+                filterColumnSelect.innerHTML += `<option value="${col.Name}">${col.DisplayNameArabic}</option>`;
+            });
+
+            // إعادة تعيين القيم
+            document.getElementById('filterValue').value = '';
+            document.getElementById('filterValue2').value = '';
+            document.getElementById('filterValue2Group').style.display = 'none';
+
+            // فتح النموذج
+            const modal = new bootstrap.Modal(document.getElementById('filterModal'));
+            modal.show();
+        }
+
+        // تغيير عملية الفلتر
+        document.getElementById('filterOperator').addEventListener('change', function() {
+            const operator = this.value;
+            if (operator === 'between') {
+                document.getElementById('filterValue2Group').style.display = 'block';
+            } else {
+                document.getElementById('filterValue2Group').style.display = 'none';
+            }
+        });
+
+        // تأكيد إضافة الفلتر
+        function confirmAddFilter() {
+            const columnName = document.getElementById('filterColumn').value;
+            const operator = document.getElementById('filterOperator').value;
+            const value = document.getElementById('filterValue').value;
+            const value2 = document.getElementById('filterValue2').value;
+
+            if (!columnName || !operator || !value) {
+                alert('يرجى ملء جميع الحقول المطلوبة');
+                return;
+            }
+
+            if (operator === 'between' && !value2) {
+                alert('يرجى إدخال القيمة الثانية للعملية "بين"');
+                return;
+            }
+
+            const filter = {
+                columnName,
+                operator,
+                value,
+                value2: operator === 'between' ? value2 : null
+            };
+
+            filters.push(filter);
+            updateFiltersDisplay();
+
+            // إغلاق النموذج
+            const modal = bootstrap.Modal.getInstance(document.getElementById('filterModal'));
+            modal.hide();
+        }
+
+        // تحديث عرض الفلاتر
+        function updateFiltersDisplay() {
+            const container = document.getElementById('filtersContainer');
+            if (filters.length === 0) {
+                container.innerHTML = '<p class="text-muted">أضف فلاتر لتخصيص التقرير</p>';
+                return;
+            }
+
+            const filtersHtml = filters.map((filter, index) => {
+                const columnDef = tableColumns.find(c => c.Name === filter.columnName);
+                const columnName = columnDef ? columnDef.DisplayNameArabic : filter.columnName;
+                const operatorText = getOperatorText(filter.operator);
+
+                return `
+                    <div class="alert alert-info alert-dismissible fade show mb-2">
+                        <strong>${columnName}</strong> ${operatorText} ${filter.value}
+                        ${filter.value2 ? ` و ${filter.value2}` : ''}
+                        <button type="button" class="btn-close" onclick="removeFilter(${index})"></button>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = filtersHtml;
+        }
+
+        // الحصول على نص العملية
+        function getOperatorText(operator) {
+            const operators = {
+                'equals': 'يساوي',
+                'notEquals': 'لا يساوي',
+                'contains': 'يحتوي على',
+                'notContains': 'لا يحتوي على',
+                'startsWith': 'يبدأ بـ',
+                'endsWith': 'ينتهي بـ',
+                'greaterThan': 'أكبر من',
+                'lessThan': 'أقل من',
+                'between': 'بين'
+            };
+            return operators[operator] || operator;
+        }
+
+        // إزالة فلتر
+        function removeFilter(index) {
+            filters.splice(index, 1);
+            updateFiltersDisplay();
+        }
+
+        // توليد التقرير
+        async function generateReport() {
+            const tableName = document.getElementById('tableSelect').value;
+            const reportName = document.getElementById('reportName').value;
+
+            if (!tableName) {
+                alert('يرجى اختيار جدول');
+                return;
+            }
+
+            const selectedColumns = Array.from(document.querySelectorAll('.column-checkbox:checked'))
+                .map(checkbox => checkbox.value);
+
+            if (selectedColumns.length === 0) {
+                alert('يرجى اختيار حقل واحد على الأقل');
+                return;
+            }
+
+            const request = {
+                tableName,
+                selectedColumns,
+                filters,
+                reportName: reportName || 'تقرير مخصص'
+            };
+
+            try {
+                const response = await fetch('/Reports/GenerateCustomReport', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    },
+                    body: JSON.stringify(request)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayReportResults(data.data);
+                } else {
+                    alert('فشل توليد التقرير: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error generating report:', error);
+                alert('حدث خطأ أثناء توليد التقرير');
+            }
+        }
+
+        // عرض نتائج التقرير
+        function displayReportResults(data) {
+            const resultsDiv = document.getElementById('reportResults');
+            const tableHead = document.getElementById('reportTableHead');
+            const tableBody = document.getElementById('reportTableBody');
+            const totalRecords = document.getElementById('totalRecords');
+
+            // إنشاء رأس الجدول
+            const headerRow = data.selectedColumns.map(col => {
+                const columnDef = tableColumns.find(c => c.Name === col);
+                return `<th>${columnDef ? columnDef.DisplayNameArabic : col}</th>`;
+            }).join('');
+
+            tableHead.innerHTML = `<tr>${headerRow}</tr>`;
+
+            // إنشاء محتوى الجدول
+            const bodyRows = data.results.map(row => {
+                const cells = data.selectedColumns.map(col => {
+                    const value = row[col];
+                    if (value === null || value === undefined) return '<td>-</td>';
+                    if (typeof value === 'object') return '<td>' + JSON.stringify(value) + '</td>';
+                    return `<td>${value}</td>`;
+                }).join('');
+                return `<tr>${cells}</tr>`;
+            }).join('');
+
+            tableBody.innerHTML = bodyRows || '<tr><td colspan="' + data.selectedColumns.length + '" class="text-center">لا توجد بيانات</td></tr>';
+            totalRecords.textContent = data.totalRecords;
+
+            resultsDiv.style.display = 'block';
+        }
+
+        // تصدير التقرير
+        async function exportReport(format) {
+            const tableName = document.getElementById('tableSelect').value;
+            const reportName = document.getElementById('reportName').value;
+
+            if (!tableName) {
+                alert('يرجى اختيار جدول');
+                return;
+            }
+
+            const selectedColumns = Array.from(document.querySelectorAll('.column-checkbox:checked'))
+                .map(checkbox => checkbox.value);
+
+            if (selectedColumns.length === 0) {
+                alert('يرجى اختيار حقل واحد على الأقل');
+                return;
+            }
+
+            const request = {
+                tableName,
+                selectedColumns,
+                filters,
+                reportName: reportName || 'تقرير مخصص'
+            };
+
+            try {
+                const response = await fetch(`/Reports/ExportCustomReport?format=${format}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    },
+                    body: JSON.stringify(request)
+                });
+
+                if (format === 'print') {
+                    const html = await response.text();
+                    const printWindow = window.open('', '_blank');
+                    printWindow.document.write(html);
+                    printWindow.document.close();
+                    printWindow.print();
+                } else {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${reportName || 'custom_report'}.${format === 'pdf' ? 'pdf' : 'xlsx'}`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                }
+            } catch (error) {
+                console.error('Error exporting report:', error);
+                alert('حدث خطأ أثناء تصدير التقرير');
+            }
+        }
+
+        // حفظ نموذج التقرير
+        async function saveReportTemplate() {
+            const tableName = document.getElementById('tableSelect').value;
+            const reportName = document.getElementById('reportName').value;
+
+            if (!tableName || !reportName) {
+                alert('يرجى اختيار جدول وإدخال اسم التقرير');
+                return;
+            }
+
+            const selectedColumns = Array.from(document.querySelectorAll('.column-checkbox:checked'))
+                .map(checkbox => checkbox.value);
+
+            if (selectedColumns.length === 0) {
+                alert('يرجى اختيار حقل واحد على الأقل');
+                return;
+            }
+
+            const template = {
+                name: reportName,
+                tableName,
+                selectedColumns,
+                filters,
+                createdAt: new Date().toISOString(),
+                createdBy: 'current_user' // TODO: Get actual user
+            };
+
+            try {
+                const response = await fetch('/Reports/SaveCustomReport', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    },
+                    body: JSON.stringify(template)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('تم حفظ نموذج التقرير بنجاح');
+                } else {
+                    alert('فشل حفظ النموذج: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error saving template:', error);
+                alert('حدث خطأ أثناء حفظ النموذج');
+            }
+        }
+
+        // تحميل النماذج المحفوظة
+        async function loadSavedReports() {
+            try {
+                const response = await fetch('/Reports/SavedReports');
+                const html = await response.text();
+
+                // تحديث محتوى النموذج
+                const modalBody = document.querySelector('#savedReportsModal .modal-body');
+                modalBody.innerHTML = html;
+
+                // فتح النموذج
+                const modal = new bootstrap.Modal(document.getElementById('savedReportsModal'));
+                modal.show();
+            } catch (error) {
+                console.error('Error loading saved reports:', error);
+                alert('حدث خطأ أثناء تحميل النماذج المحفوظة');
+            }
+        }
+
+        // تحميل نموذج محفوظ
+        async function loadSavedReport(reportId) {
+            try {
+                const response = await fetch('/Reports/LoadSavedReport', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    },
+                    body: JSON.stringify({ reportId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // تحميل البيانات في النموذج
+                    // TODO: Implement loading saved report data
+                    alert('تم تحميل النموذج بنجاح');
+
+                    // إغلاق النموذج
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('savedReportsModal'));
+                    modal.hide();
+                } else {
+                    alert('فشل تحميل النموذج: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error loading saved report:', error);
+                alert('حدث خطأ أثناء تحميل النموذج');
+            }
+        }
+    </script>
+}

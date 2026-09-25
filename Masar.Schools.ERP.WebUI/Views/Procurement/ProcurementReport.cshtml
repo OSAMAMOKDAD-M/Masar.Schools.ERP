@@ -1,0 +1,62 @@
+@model List<Masar.Schools.ERP.Domain.DTOs.ProcurementReportDto>
+
+@{
+    ViewData["Title"] = "تقرير المشتريات";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">تقرير المشتريات</h3>
+                    <a asp-action="SupplierPerformanceReport" class="btn btn-info">
+                        <i class="fas fa-chart-line"></i> تقرير أداء الموردين
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>المورد</th>
+                                    <th>عدد الأوامر</th>
+                                    <th>الإجمالي</th>
+                                    <th>المدفوع</th>
+                                    <th>المتبقي</th>
+                                    <th>التقييم</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var report in Model)
+                                {
+                                    <tr>
+                                        <td>@report.SupplierName</td>
+                                        <td>@report.TotalOrders</td>
+                                        <td>@report.TotalAmount @report.Currency</td>
+                                        <td>@report.PaidAmount @report.Currency</td>
+                                        <td>@report.PendingAmount @report.Currency</td>
+                                        <td>
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= report.Rating)
+                                                {
+                                                    <i class="fas fa-star text-warning"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="far fa-star text-muted"></i>
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

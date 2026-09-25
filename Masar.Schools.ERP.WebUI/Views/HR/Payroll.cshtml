@@ -1,0 +1,149 @@
+@model List<Masar.Schools.ERP.Domain.Entities.HR.PayrollProfile>
+@{
+    ViewData["Title"] = "نظام الرواتب المتقدم";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-primary">
+                <i class="bi bi-cash-coin"></i> نظام الرواتب المتقدم
+            </h2>
+            <p class="text-muted">إدارة ملفات الرواتب مع دعم GOSI الكامل</p>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <a asp-action="CreatePayroll" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> إنشاء ملف راتب جديد
+            </a>
+            <button class="btn btn-success" onclick="archiveSelected()">
+                <i class="bi bi-archive"></i> أرشفة المحددة
+            </button>
+            <button class="btn btn-info" onclick="exportToExcel()">
+                <i class="bi bi-file-excel"></i> تصدير Excel
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th><input type="checkbox" id="selectAll" onchange="toggleAll()"></th>
+                            <th>الموظف</th>
+                            <th>الراتب الأساسي</th>
+                            <th>بدل السكن</th>
+                            <th>بدل النقل</th>
+                            <th>الإجمالي</th>
+                            <th>الخصومات</th>
+                            <th>GOSI</th>
+                            <th>صافي الراتب</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var payroll in Model)
+                        {
+                            var gross = payroll.Basic + payroll.Housing + payroll.Transport + payroll.OtherEarnings + payroll.VariableEarnings;
+                            var totalDeductions = payroll.Deductions + payroll.LateDeduction + payroll.GosiEmployeeContribution;
+                            var net = gross - totalDeductions;
+                            
+                            <tr>
+                                <td><input type="checkbox" class="payroll-checkbox" value="@payroll.Id"></td>
+                                <td>@payroll.Employee?.FullNameArabic</td>
+                                <td>@payroll.Basic.ToString("N0")</td>
+                                <td>@payroll.Housing.ToString("N0")</td>
+                                <td>@payroll.Transport.ToString("N0")</td>
+                                <td>@gross.ToString("N0")</td>
+                                <td>@totalDeductions.ToString("N0")</td>
+                                <td>
+                                    @if (payroll.GosiEnabled)
+                                    {
+                                        <span class="badge bg-info">GOSI: @payroll.GosiEmployeeContribution.ToString("N0")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">غير مفعل</span>
+                                    }
+                                </td>
+                                <td class="fw-bold">@net.ToString("N0")</td>
+                                <td>
+                                    @if (payroll.Approved)
+                                    {
+                                        <span class="badge bg-success">معتمد</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">قيد المراجعة</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@payroll.Id" class="btn btn-sm btn-info">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@payroll.Id" class="btn btn-sm btn-warning">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    @if (!payroll.Approved)
+                                    {
+                                        <button class="btn btn-sm btn-success" onclick="approvePayroll('@payroll.Id')">
+                                            <i class="bi bi-check"></i>
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.payroll-checkbox');
+            checkboxes.forEach(cb => cb.checked = selectAll.checked);
+        }
+
+        function archiveSelected() {
+            const selected = Array.from(document.querySelectorAll('.payroll-checkbox:checked'))
+                .map(cb => cb.value);
+            
+            if (selected.length === 0) {
+                alert('يرجى تحديد ملفات الرواتب المراد أرشفتها');
+                return;
+            }
+
+            if (confirm(`هل تريد أرشفة ${selected.length} ملف راتب؟`)) {
+                // Send to server for archiving
+                fetch('/HR/ArchivePayroll', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(selected)
+                }).then(() => location.reload());
+            }
+        }
+
+        function exportToExcel() {
+            window.location.href = '/HR/ExportPayrollToExcel';
+        }
+
+        function approvePayroll(id) {
+            if (confirm('هل تريد اعتماد ملف الراتب هذا؟')) {
+                fetch(`/HR/ApprovePayroll/${id}`, {
+                    method: 'POST'
+                }).then(() => location.reload());
+            }
+        }
+    </script>
+}

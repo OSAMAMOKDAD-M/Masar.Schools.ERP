@@ -1,0 +1,156 @@
+@model Guardian
+@{
+    ViewData["Title"] = "تفاصيل ولي الأمر";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-person"></i> تفاصيل ولي الأمر
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للقائمة
+        </a>
+        <a asp-action="LinkStudent" asp-route-guardianId="@Model.Id" class="btn btn-primary">
+            <i class="bi bi-person-plus"></i> ربط طالب
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">معلومات ولي الأمر</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm table-borderless">
+                    <tr>
+                        <td><strong>الاسم (عربي):</strong></td>
+                        <td>@Model.FullNameArabic</td>
+                    </tr>
+                    <tr>
+                        <td><strong>الاسم (إنجليزي):</strong></td>
+                        <td>@Model.FullName</td>
+                    </tr>
+                    <tr>
+                        <td><strong>الهوية الوطنية:</strong></td>
+                        <td>@Model.NationalId</td>
+                    </tr>
+                    <tr>
+                        <td><strong>الهاتف:</strong></td>
+                        <td>@Model.PhoneNumber</td>
+                    </tr>
+                    <tr>
+                        <td><strong>واتساب:</strong></td>
+                        <td>@Model.WhatsAppNumber</td>
+                    </tr>
+                    <tr>
+                        <td><strong>البريد الإلكتروني:</strong></td>
+                        <td>@Model.Email</td>
+                    </tr>
+                    <tr>
+                        <td><strong>صلة القرابة:</strong></td>
+                        <td>@Model.RelationshipArabic / @Model.Relationship</td>
+                    </tr>
+                    <tr>
+                        <td><strong>المهنة:</strong></td>
+                        <td>@Model.OccupationArabic / @Model.Occupation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>العنوان:</strong></td>
+                        <td>@Model.Address</td>
+                    </tr>
+                    <tr>
+                        <td><strong>المستأجر:</strong></td>
+                        <td>@Model.Tenant?.NameArabic</td>
+                    </tr>
+                    <tr>
+                        <td><strong>الحالة:</strong></td>
+                        <td>
+                            @if (Model.IsActive)
+                            {
+                                <span class="status-badge success">نشط</span>
+                            }
+                            else
+                            {
+                                <span class="status-badge danger">غير نشط</span>
+                            }
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">الطلاب المرتبطون</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Students != null && Model.Students.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>رقم الطالب</th>
+                                    <th>الاسم</th>
+                                    <th>الفصل</th>
+                                    <th>المدرسة</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in Model.Students)
+                                {
+                                    <tr>
+                                        <td>@student.StudentNumber</td>
+                                        <td>
+                                            <strong>@student.FullNameArabic</strong><br>
+                                            <small class="text-muted">@student.FullName</small>
+                                        </td>
+                                        <td>@student.ClassRoom?.NameArabic</td>
+                                        <td>@student.School?.NameArabic</td>
+                                        <td>
+                                            @if (student.IsActive)
+                                            {
+                                                <span class="status-badge success">نشط</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="status-badge danger">غير نشط</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-controller="Students" asp-action="Details" asp-route-id="@student.Id" class="btn btn-sm btn-info" title="عرض التفاصيل">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <form asp-action="UnlinkStudent" method="post" style="display: inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="guardianId" value="@Model.Id" />
+                                                <input type="hidden" name="studentId" value="@student.Id" />
+                                                <button type="submit" class="btn btn-sm btn-danger" title="فك الربط" onclick="return confirm('هل أنت متأكد من فك ربط الطالب @student.FullNameArabic من ولي الأمر؟')">
+                                                    <i class="bi bi-link-break"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        لا يوجد طلاب مرتبطين بهذا ولي الأمر. انقر على "ربط طالب" لإضافة طلاب.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

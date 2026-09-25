@@ -1,0 +1,27 @@
+@model dynamic
+
+@if (Model != null && ((IEnumerable<dynamic>)Model).Any())
+{
+    <li class="nav-item">
+        <span class="nav-link fw-bold text-muted ps-3">الفصول الدراسية</span>
+    </li>
+    
+    @foreach (var classroom in Model)
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Classrooms" asp-action="Details" asp-route-id="@classroom.Id">
+                <i class="bi bi-door-open"></i> @classroom.NameArabic
+                @if (!string.IsNullOrEmpty(classroom.GradeLevel))
+                {
+                    <span class="badge bg-secondary ms-auto">@classroom.GradeLevel</span>
+                }
+            </a>
+        </li>
+    }
+}
+else
+{
+    <li class="nav-item">
+        <span class="nav-link text-muted ps-3">لا توجد فصول</span>
+    </li>
+}

@@ -1,0 +1,427 @@
+@model Masar.Schools.ERP.WebUI.Controllers.ManageRolePermissionsViewModel
+@{
+    ViewData["Title"] = "إدارة صلاحيات الدور";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var permissionsByModule = Masar.Schools.ERP.Domain.Constants.PermissionConstants.GetPermissionsByModule();
+    var moduleNames = new Dictionary<string, string>
+    {
+        ["Students"] = "الطلاب",
+        ["Guardians"] = "أولياء الأمور",
+        ["Employees"] = "الموظفون",
+        ["Attendance"] = "الحضور",
+        ["Grades"] = "المراحل الدراسية",
+        ["Invoices"] = "الفواتير",
+        ["Financial"] = "المالية",
+        ["Transport"] = "النقل",
+        ["Clinic"] = "العيادة",
+        ["Canteen"] = "المقصف",
+        ["Timetable"] = "الجدول المدرسي",
+        ["Behavior"] = "السلوك",
+        ["Reports"] = "التقارير",
+        ["Settings"] = "الإعدادات",
+        ["Chat"] = "المحادثات",
+        ["Admin"] = "الإدارة",
+        ["Classrooms"] = "الفصول الدراسية",
+        ["StudentAccounts"] = "حسابات الطلاب",
+        ["GeneralLedger"] = "دفتر الأستاذ",
+        ["FinancialYearClosing"] = "الإغلاق المالي",
+        ["EarlyWarning"] = "الإنذار المبكر",
+        ["License"] = "التراخيص"
+    };
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="text-end">إدارة صلاحيات الدور</h2>
+            <p class="text-muted mb-0">
+                <strong>@Model.RoleName</strong> - @Model.RoleDescription
+            </p>
+        </div>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة
+        </a>
+    </div>
+
+    <!-- شريط الأدوات العلوي -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">البحث</label>
+                    <input type="text" class="form-control" id="searchInput" placeholder="ابحث عن صلاحية...">
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" onclick="selectAll()">
+                            <i class="bi bi-check-all"></i> تحديد الكل
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="unselectAll()">
+                            <i class="bi bi-x-square"></i> إلغاء التحديد
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="toggleExcludeMode()" id="excludeModeBtn">
+                            <i class="bi bi-shield-x"></i> وضع الاستثناء
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- شبكة الشاشات -->
+    <form asp-action="UpdateRolePermissions" method="post" id="rolePermissionsForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="RoleId" />
+
+        <div class="row g-3" id="modulesGrid">
+            @foreach (var module in permissionsByModule)
+            {
+                var moduleName = module.Key;
+                var modulePermissions = module.Value;
+                var moduleDisplayName = moduleNames.ContainsKey(moduleName) ? moduleNames[moduleName] : moduleName;
+
+                <div class="col-lg-6 col-xl-4 module-card" data-module="@moduleName">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center" id="card-@moduleName">
+                            <h6 class="mb-0 fw-bold">
+                                <i class="bi bi-grid"></i> @moduleDisplayName
+                            </h6>
+                            <div class="form-check">
+                                <input class="form-check-input module-checkbox" type="checkbox" 
+                                       data-module="@moduleName"
+                                       onchange="toggleModule('@moduleName')">
+                                <label class="form-check-label ms-1 small">اختيار الموديول</label>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-2">
+                                @foreach (var permission in modulePermissions)
+                                {
+                                    var permissionName = permission.Split('.')[1];
+                                    var permissionDisplayName = GetPermissionDisplayName(permissionName);
+                                    var isExcluded = Model.ExcludedPermissions.Contains(permission);
+
+                                    <div class="col-6 permission-item" data-permission="@permission">
+                                        <div class="form-check">
+                                            <input class="form-check-input permission-checkbox" 
+                                                   type="checkbox" 
+                                                   name="SelectedPermissions" 
+                                                   value="@permission"
+                                                   data-module="@moduleName"
+                                                   @(Model.CurrentPermissions.Contains(permission) && !isExcluded ? "checked" : "")>
+                                            <label class="form-check-label small @(isExcluded ? "text-danger text-decoration-line-through" : "")">
+                                                @permissionDisplayName
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div id="noResults" class="text-center py-5" style="display: none;">
+            <i class="bi bi-search fs-1 text-muted"></i>
+            <p class="text-muted mt-2">لا توجد نتائج مطابقة للبحث</p>
+        </div>
+
+        <!-- حقول الاستثناءات -->
+        <div class="card shadow-sm mt-4 border-danger" id="excludedSection" style="display: none;">
+            <div class="card-header bg-danger text-white">
+                <h6 class="mb-0"><i class="bi bi-shield-x"></i> الصلاحيات المستثناة</h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    الصلاحيات المحددة هنا سيتم استثناؤها من الدور حتى لو كانت ممنوحة بشكل افتراضي.
+                </div>
+                <div class="row g-2">
+                    @foreach (var module in permissionsByModule)
+                    {
+                        foreach (var permission in module.Value)
+                        {
+                            <div class="col-6 col-md-4 col-lg-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" 
+                                           name="ExcludedPermissions" 
+                                           value="@permission"
+                                           @(Model.ExcludedPermissions.Contains(permission) ? "checked" : "")>
+                                    <label class="form-check-label small">
+                                        @permission.Split('.')[1]
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- زر الحفظ العائم -->
+        <div class="position-fixed bottom-0 start-0 end-0 bg-light border-top p-3 shadow">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-muted">الصلاحيات المحددة: </span>
+                        <span class="badge bg-primary" id="selectedCount">0</span>
+                        @if (Model.ExcludedPermissions.Any())
+                        {
+                            <span class="ms-2 text-muted">المستثناة: </span>
+                            <span class="badge bg-danger">@Model.ExcludedPermissions.Count</span>
+                        }
+                    </div>
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="bi bi-save"></i> حفظ التغييرات
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+let excludeMode = false;
+
+function selectAll() {
+    document.querySelectorAll('.permission-checkbox').forEach(cb => cb.checked = true);
+    document.querySelectorAll('.module-checkbox').forEach(cb => cb.checked = true);
+    updateSelectedCount();
+}
+
+function unselectAll() {
+    document.querySelectorAll('.permission-checkbox').forEach(cb => cb.checked = false);
+    document.querySelectorAll('.module-checkbox').forEach(cb => cb.checked = false);
+    updateSelectedCount();
+}
+
+function toggleModule(moduleName) {
+    const moduleCheckbox = document.querySelector(`.module-checkbox[data-module="${moduleName}"]`);
+    const moduleItems = document.querySelectorAll(`.permission-checkbox[data-module="${moduleName}"]`);
+    
+    moduleItems.forEach(cb => cb.checked = moduleCheckbox.checked);
+    updateSelectedCount();
+}
+
+function toggleExcludeMode() {
+    excludeMode = !excludeMode;
+    const excludedSection = document.getElementById('excludedSection');
+    const btn = document.getElementById('excludeModeBtn');
+    
+    if (excludeMode) {
+        excludedSection.style.display = 'block';
+        btn.classList.remove('btn-outline-danger');
+        btn.classList.add('btn-danger');
+        
+        // Update card headers
+        document.querySelectorAll('.card-header').forEach(header => {
+            header.classList.remove('bg-primary');
+            header.classList.add('bg-danger');
+        });
+    } else {
+        excludedSection.style.display = 'none';
+        btn.classList.remove('btn-danger');
+        btn.classList.add('btn-outline-danger');
+        
+        // Reset card headers
+        document.querySelectorAll('.card-header').forEach(header => {
+            header.classList.remove('bg-danger');
+            header.classList.add('bg-primary');
+        });
+    }
+}
+
+function updateSelectedCount() {
+    const count = document.querySelectorAll('.permission-checkbox:checked').length;
+    document.getElementById('selectedCount').textContent = count;
+}
+
+// Search functionality
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const query = e.target.value.toLowerCase();
+    const moduleCards = document.querySelectorAll('.module-card');
+    const permissionItems = document.querySelectorAll('.permission-item');
+    
+    if (!query) {
+        moduleCards.forEach(card => card.style.display = '');
+        permissionItems.forEach(item => item.style.display = '');
+        document.getElementById('noResults').style.display = 'none';
+        return;
+    }
+    
+    let hasResults = false;
+    
+    moduleCards.forEach(card => {
+        const moduleName = card.dataset.module;
+        const matchingPermissions = card.querySelectorAll('.permission-item');
+        let hasMatchingPermissions = false;
+        
+        matchingPermissions.forEach(item => {
+            const permission = item.dataset.permission;
+            if (permission.toLowerCase().includes(query)) {
+                item.style.display = '';
+                hasMatchingPermissions = true;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        if (hasMatchingPermissions) {
+            card.style.display = '';
+            hasResults = true;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    document.getElementById('noResults').style.display = hasResults ? 'none' : 'block';
+});
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    updateSelectedCount();
+    
+    // Show excluded section if there are excluded permissions
+    if (@Model.ExcludedPermissions.Count > 0) {
+        toggleExcludeMode();
+    }
+});
+</script>
+
+<style>
+.permission-checkbox:checked + label {
+    font-weight: 600;
+    color: #0d6efd;
+}
+
+.position-fixed {
+    z-index: 1000;
+}
+</style>
+
+<footer class="footer text-muted border-top py-3 text-center bg-light mt-5 mb-5">
+    <div class="container-fluid">
+        <span>© 2026 <strong>نظام مَسَار للمدارس</strong> - جميع الحقوق محفوظة - شركة مسار للبرمجيات mokdadvipr@gmail.com .. 01006765664 (نسخة 1.0.0)</span>
+    </div>
+</footer>
+
+@functions {
+    private string GetPermissionDisplayName(string permissionName)
+    {
+        return permissionName switch
+        {
+            "View" => "عرض",
+            "Create" => "إضافة",
+            "Edit" => "تعديل",
+            "Delete" => "حذف",
+            "Promote" => "ترقية",
+            "ViewDocuments" => "عرض الوثائق",
+            "ManageDocuments" => "إدارة الوثائق",
+            "ViewAcademic" => "عرض الأكاديمي",
+            "ManageAcademic" => "إدارة الأكاديمي",
+            "Export" => "تصدير",
+            "Import" => "استيراد",
+            "LinkStudent" => "ربط طالب",
+            "UnlinkStudent" => "فك ربط طالب",
+            "ViewContact" => "عرض التواصل",
+            "ManageContact" => "إدارة التواصل",
+            "ManageLeaves" => "إدارة الإجازات",
+            "ViewSalary" => "عرض الراتب",
+            "ManageSalary" => "إدارة الراتب",
+            "ViewAttendance" => "عرض الحضور",
+            "ManageAttendance" => "إدارة الحضور",
+            "TakeAttendance" => "تسجيل حضور",
+            "LiveLog" => "سجل حي",
+            "ManualEntry" => "إدخال يدوي",
+            "EditAttendance" => "تعديل حضور",
+            "ViewReports" => "عرض تقارير",
+            "ManageNotifications" => "إدارة إشعارات",
+            "ManageLevels" => "إدارة مستويات",
+            "AssignClasses" => "تعيين فصول",
+            "Pay" => "دفع",
+            "Refund" => "استرداد",
+            "ViewLedger" => "عرض دفتر",
+            "ManageAccounts" => "إدارة حسابات",
+            "CreateJournal" => "إنشاء قيد",
+            "EditJournal" => "تعديل قيد",
+            "DeleteJournal" => "حذف قيد",
+            "ZatcaSubmit" => "إرسال ZATCA",
+            "ManageBuses" => "إدارة حافلات",
+            "ManageRoutes" => "إدارة مسارات",
+            "ManageDrivers" => "إدارة سائقين",
+            "AssignStudents" => "تعيين طلاب",
+            "TrackLive" => "تتبع حي",
+            "ViewSchedule" => "عرض جدول",
+            "ManageVisits" => "إدارة زيارات",
+            "ManageMedicine" => "إدارة أدوية",
+            "ViewRecords" => "عرض سجلات",
+            "CreatePrescription" => "إنشاء وصفة",
+            "ManageInsurance" => "إدارة تأمين",
+            "ManageItems" => "إدارة عناصر",
+            "ManageSales" => "إدارة مبيعات",
+            "ManageInventory" => "إدارة مخزون",
+            "ManageSuppliers" => "إدارة موردين",
+            "ManageClasses" => "إدارة فصول",
+            "ManageSubjects" => "إدارة مواد",
+            "AssignTeachers" => "تعيين معلمين",
+            "RecordIncident" => "تسجيل حادث",
+            "ManageCategories" => "إدارة فئات",
+            "IssueWarning" => "إصدار تحذير",
+            "IssueReward" => "إصدار مكافأة",
+            "StudentReports" => "تقارير طلاب",
+            "FinancialReports" => "تقارير مالية",
+            "AttendanceReports" => "تقارير حضور",
+            "AcademicReports" => "تقارير أكاديمية",
+            "CustomReports" => "تقارير مخصصة",
+            "ExportReports" => "تصدير تقارير",
+            "ManageSchool" => "إدارة مدرسة",
+            "ManageBranches" => "إدارة فروع",
+            "ManageUsers" => "إدارة مستخدمين",
+            "ManageRoles" => "إدارة أدوار",
+            "ManagePermissions" => "إدارة صلاحيات",
+            "SystemConfig" => "إعدادات نظام",
+            "BackupRestore" => "نسخ احتياطي",
+            "SendMessage" => "إرسال رسالة",
+            "ManageRooms" => "إدارة غرف",
+            "ManageMembers" => "إدارة أعضاء",
+            "ViewHistory" => "عرض سجل",
+            "ManageTenants" => "إدارة مستأجرين",
+            "SystemLogs" => "سجلات نظام",
+            "ManageLicenses" => "إدارة تراخيص",
+            "SuperAdmin" => "سوبر أدمن",
+            "OverrideClosedPeriods" => "تجاوز فترات مغلقة",
+            // Classrooms
+            "ManageCapacity" => "إدارة السعة",
+            "AssignTeacher" => "تعيين معلم",
+            // StudentAccounts
+            "ViewStatement" => "عرض كشف حساب",
+            "ApplyDiscount" => "تطبيق خصم",
+            "GenerateInvoices" => "إنشاء فواتير",
+            "ManageBalance" => "إدارة الرصيد",
+            // GeneralLedger
+            "AccountBalance" => "رصيد الحساب",
+            "TrialBalance" => "ميزان المراجعة",
+            "IncomeStatement" => "قائمة الدخل",
+            "BalanceSheet" => "الميزانية العمومية",
+            "CreateManualEntry" => "إنشاء قيد يدوي",
+            "ViewJournalEntry" => "عرض قيد",
+            // FinancialYearClosing
+            "CreateOpeningEntry" => "إنشاء قيد افتتاحي",
+            "ViewAuditLogs" => "عرض سجلات التدقيق",
+            "PostUnpostedEntries" => "ترحيل القيود",
+            // EarlyWarning
+            "ViewDashboard" => "عرض لوحة التحكم",
+            "ViewStudentDetails" => "عرض تفاصيل الطالب",
+            "ViewRiskMatrix" => "عرض مصفوفة المخاطر",
+            "ViewRevenuePrediction" => "عرض توقعات الإيرادات",
+            "TriggerNotification" => "إرسال تنبيه",
+            // License
+            "Activate" => "تفعيل",
+            "Deactivate" => "إلغاء التفعيل",
+            "ViewStatus" => "عرض الحالة",
+            "DownloadTemplate" => "تنزيل نموذج",
+            _ => permissionName
+        };
+    }
+}

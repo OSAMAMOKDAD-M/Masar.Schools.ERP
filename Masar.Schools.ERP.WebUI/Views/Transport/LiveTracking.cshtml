@@ -1,0 +1,537 @@
+@model List<Masar.Schools.ERP.Domain.DTOs.BusDto>
+@{
+    ViewData["Title"] = "التتبع اللحظي للحافلات";
+    Layout = "_Layout";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>التتبع اللحظي للحافلات</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #map {
+            height: 600px;
+            width: 100%;
+            border-radius: 8px;
+        }
+        .bus-panel {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            max-height: 400px;
+            overflow-y: auto;
+            width: 300px;
+        }
+        .bus-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        .bus-item:hover {
+            background: #f5f5f5;
+        }
+        .bus-item.active {
+            background: #e3f2fd;
+        }
+        .bus-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+        .status-active { background: #4caf50; }
+        .status-maintenance { background: #ff9800; }
+        .status-inactive { background: #f44336; }
+        .legend {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        .refresh-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+        }
+        .tracking-controls {
+            position: absolute;
+            top: 60px;
+            left: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">التتبع اللحظي للحافلات - GPS Live Tracking</h3>
+                        <div class="card-tools">
+                            <span class="badge badge-success">SignalR Active</span>
+                            <span class="badge badge-info">Real-time Updates</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="map"></div>
+                        
+                        <div class="bus-panel">
+                            <h5>الحافلات النشطة</h5>
+                            <div id="busList">
+                                @if (Model != null && Model.Any())
+                                {
+                                    @foreach (var bus in Model.Where(b => b.IsActive && b.Status == "Active"))
+                                    {
+                                        <div class="bus-item" data-bus-id="@bus.Id" onclick="focusOnBus('@bus.Id')">
+                                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                <strong>@bus.BusNumber</strong>
+                                                <span class="bus-status status-active"></span>
+                                            </div>
+                                            <small>@bus.PlateNumber</small>
+                                            <div>
+                                                <small>السائق: @(bus.DriverName ?? "غير معين")</small>
+                                            </div>
+                                            <div id="bus-@bus.Id-status">
+                                                <small>الحالة: جاري التتبع...</small>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>لا توجد حافلات نشطة للتتبع</p>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="legend">
+                            <h6>مفتاح الخريطة</h6>
+                            <div><span class="bus-status status-active"></span> حافلة نشطة</div>
+                            <div><span class="bus-status status-maintenance"></span> حافلة في الصيانة</div>
+                            <div><span class="bus-status status-inactive"></span> حافلة غير نشطة</div>
+                        </div>
+
+                        <button class="btn btn-primary refresh-btn" onclick="refreshBusLocations()">
+                            <i class="fas fa-sync"></i> تحديث المواقع
+                        </button>
+
+                        <div class="tracking-controls">
+                            <h6>إعدادات التتبع</h6>
+                            <div class="form-group">
+                                <label>تحديث تلقائي:</label>
+                                <select id="refreshInterval" class="form-control form-control-sm">
+                                    <option value="5000">كل 5 ثواني</option>
+                                    <option value="10000" selected>كل 10 ثواني</option>
+                                    <option value="30000">كل 30 ثانية</option>
+                                    <option value="60000">كل دقيقة</option>
+                                </select>
+                            </div>
+                            <div class="form-group mt-2">
+                                <label>عرض الحافلات:</label>
+                                <select id="busFilter" class="form-control form-control-sm">
+                                    <option value="all">جميع الحافلات</option>
+                                    <option value="active">الحافلات النشطة فقط</option>
+                                    <option value="moving">الحافلات المتحركة فقط</option>
+                                </select>
+                            </div>
+                            <div class="form-check mt-2">
+                                <input type="checkbox" id="showRoutes" checked>
+                                <label for="showRoutes">عرض خطوط السير</label>
+                            </div>
+                            <div class="form-check mt-1">
+                                <input type="checkbox" id="showStops" checked>
+                                <label for="showStops">عرض المحطات</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDemoKey&callback=initMap" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+    
+    <script>
+        let map;
+        let busMarkers = {};
+        let routePolylines = {};
+        let stopMarkers = {};
+        let connection;
+        let refreshInterval;
+        let selectedBusId = null;
+
+        // Initialize Google Map
+        function initMap() {
+            // Default center (Saudi Arabia)
+            const center = { lat: 24.7136, lng: 46.6753 };
+            
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: center,
+                mapTypeId: 'roadmap',
+                styles: [
+                    {
+                        featureType: "poi",
+                        elementType: "labels",
+                        stylers: [{ visibility: "off" }]
+                    }
+                ]
+            });
+
+            // Load initial bus locations
+            loadBusLocations();
+            
+            // Start SignalR connection
+            startSignalRConnection();
+            
+            // Start auto-refresh
+            startAutoRefresh();
+        }
+
+        // Load bus locations from API
+        async function loadBusLocations() {
+            try {
+                const buses = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
+                
+                for (const bus of buses) {
+                    if (bus.IsActive && bus.Status === "Active") {
+                        // Get latest tracking data for this bus
+                        const trackingData = await getBusTrackingData(bus.Id);
+                        
+                        if (trackingData) {
+                            addOrUpdateBusMarker(bus, trackingData);
+                        } else {
+                            // Use default location if no tracking data
+                            addDefaultBusMarker(bus);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading bus locations:', error);
+            }
+        }
+
+        // Get bus tracking data from API
+        async function getBusTrackingData(busId) {
+            try {
+                const response = await fetch(`/api/transport/buses/${busId}/tracking/latest`);
+                if (response.ok) {
+                    return await response.json();
+                }
+            } catch (error) {
+                console.error('Error fetching tracking data:', error);
+            }
+            return null;
+        }
+
+        // Add or update bus marker
+        function addOrUpdateBusMarker(bus, trackingData) {
+            const position = {
+                lat: trackingData.latitude,
+                lng: trackingData.longitude
+            };
+
+            if (busMarkers[bus.Id]) {
+                // Update existing marker
+                busMarkers[bus.Id].setPosition(position);
+                updateBusInfo(bus.Id, trackingData);
+            } else {
+                // Create new marker
+                const marker = new google.maps.Marker({
+                    position: position,
+                    map: map,
+                    title: bus.BusNumber,
+                    icon: getBusIcon(bus.Status, trackingData.isMoving),
+                    animation: google.maps.Animation.DROP
+                });
+
+                marker.addListener('click', () => {
+                    showBusInfo(bus, trackingData);
+                    selectedBusId = bus.Id;
+                    highlightBusItem(bus.Id);
+                });
+
+                busMarkers[bus.Id] = marker;
+                updateBusInfo(bus.Id, trackingData);
+            }
+        }
+
+        // Add default bus marker (when no tracking data)
+        function addDefaultBusMarker(bus) {
+            // Use Riyadh as default location
+            const position = { lat: 24.7136, lng: 46.6753 };
+
+            const marker = new google.maps.Marker({
+                position: position,
+                map: map,
+                title: bus.BusNumber,
+                icon: getBusIcon(bus.Status, false),
+                animation: google.maps.Animation.DROP
+            });
+
+            marker.addListener('click', () => {
+                showBusInfo(bus, null);
+                selectedBusId = bus.Id;
+                highlightBusItem(bus.Id);
+            });
+
+            busMarkers[bus.Id] = marker;
+            
+            document.getElementById(`bus-${bus.Id}-status`).innerHTML = 
+                '<small class="text-muted">لا توجد بيانات تتبع</small>';
+        }
+
+        // Get bus icon based on status
+        function getBusIcon(status, isMoving) {
+            const baseUrl = 'https://maps.google.com/mapfiles/ms/icons/';
+            
+            if (status === 'Active') {
+                if (isMoving) {
+                    return {
+                        url: baseUrl + 'green-dot.png',
+                        scaledSize: new google.maps.Size(32, 32)
+                    };
+                } else {
+                    return {
+                        url: baseUrl + 'blue-dot.png',
+                        scaledSize: new google.maps.Size(32, 32)
+                    };
+                }
+            } else if (status === 'Maintenance') {
+                return {
+                    url: baseUrl + 'orange-dot.png',
+                    scaledSize: new google.maps.Size(32, 32)
+                };
+            } else {
+                return {
+                    url: baseUrl + 'red-dot.png',
+                    scaledSize: new google.maps.Size(32, 32)
+                };
+            }
+        }
+
+        // Update bus info panel
+        function updateBusInfo(busId, trackingData) {
+            const statusElement = document.getElementById(`bus-${busId}-status`);
+            if (statusElement && trackingData) {
+                const status = trackingData.isMoving ? 'متحرك' : 'متوقف';
+                const speed = trackingData.speed.toFixed(1);
+                const direction = trackingData.direction.toFixed(0);
+                
+                statusElement.innerHTML = `
+                    <small>
+                        <span class="badge ${trackingData.isMoving ? 'badge-success' : 'badge-secondary'}">${status}</span>
+                        <span class="text-muted">| السرعة: ${speed} كم/س</span>
+                        <span class="text-muted">| الاتجاه: ${direction}°</span>
+                    </small>
+                `;
+            }
+        }
+
+        // Show bus info in infowindow
+        function showBusInfo(bus, trackingData) {
+            let content = `
+                <div style="padding: 10px;">
+                    <h4>${bus.BusNumber}</h4>
+                    <p><strong>رقم اللوحة:</strong> ${bus.PlateNumber}</p>
+                    <p><strong>السعة:</strong> ${bus.Capacity} راكب</p>
+                    <p><strong>النوع:</strong> ${bus.Type}</p>
+                    <p><strong>السائق:</strong> ${bus.DriverName || 'غير معين'}</p>
+                    <p><strong>المشرف:</strong> ${bus.SupervisorName || 'غير معين'}</p>
+            `;
+
+            if (trackingData) {
+                content += `
+                    <hr>
+                    <p><strong>الموقع الحالي:</strong> ${trackingData.latitude.toFixed(6)}, ${trackingData.longitude.toFixed(6)}</p>
+                    <p><strong>السرعة:</strong> ${trackingData.speed.toFixed(1)} كم/س</p>
+                    <p><strong>الاتجاه:</strong> ${trackingData.direction.toFixed(0)}°</p>
+                    <p><strong>الحالة:</strong> ${trackingData.isMoving ? 'متحرك' : 'متوقف'}</p>
+                    <p><strong>آخر تحديث:</strong> ${new Date(trackingData.timestamp).toLocaleString('ar-SA')}</p>
+                    ${trackingData.batteryLevel ? `<p><strong>البطارية:</strong> ${trackingData.batteryLevel}%</p>` : ''}
+                    ${trackingData.signalStrength ? `<p><strong>الإشارة:</strong> ${trackingData.signalStrength}%</p>` : ''}
+                `;
+            } else {
+                content += `<p class="text-muted">لا توجد بيانات تتبع حالية</p>`;
+            }
+
+            content += '</div>';
+
+            const infowindow = new google.maps.InfoWindow({
+                content: content
+            });
+
+            if (busMarkers[bus.Id]) {
+                infowindow.open(map, busMarkers[bus.Id]);
+            }
+        }
+
+        // Focus on specific bus
+        function focusOnBus(busId) {
+            selectedBusId = busId;
+            highlightBusItem(busId);
+            
+            if (busMarkers[busId]) {
+                map.setCenter(busMarkers[busId].getPosition());
+                map.setZoom(15);
+                
+                // Trigger click to show info
+                google.maps.event.trigger(busMarkers[busId], 'click');
+            }
+        }
+
+        // Highlight bus item in list
+        function highlightBusItem(busId) {
+            document.querySelectorAll('.bus-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            const busItem = document.querySelector(`[data-bus-id="${busId}"]`);
+            if (busItem) {
+                busItem.classList.add('active');
+            }
+        }
+
+        // Start SignalR connection
+        function startSignalRConnection() {
+            connection = new signalR.HubConnectionBuilder()
+                .withUrl("/bustrackinghub")
+                .withAutomaticReconnect()
+                .build();
+
+            connection.start()
+                .then(() => {
+                    console.log("SignalR Connected");
+                    setupSignalREvents();
+                })
+                .catch(err => {
+                    console.error("SignalR Connection Error:", err);
+                });
+        }
+
+        // Setup SignalR events
+        function setupSignalREvents() {
+            // Listen for bus location updates
+            connection.on("BusLocationUpdate", (busId, locationData) => {
+                console.log("Bus location update:", busId, locationData);
+                if (busMarkers[busId]) {
+                    const position = {
+                        lat: locationData.latitude,
+                        lng: locationData.longitude
+                    };
+                    busMarkers[busId].setPosition(position);
+                    
+                    // Update icon based on movement
+                    busMarkers[busId].setIcon(getBusIcon('Active', locationData.isMoving));
+                    
+                    updateBusInfo(busId, locationData);
+                }
+            });
+
+            // Listen for bus started
+            connection.on("BusStarted", (busId, busData) => {
+                console.log("Bus started:", busId);
+                if (busMarkers[busId]) {
+                    busMarkers[busId].setIcon(getBusIcon('Active', true));
+                }
+            });
+
+            // Listen for bus stopped
+            connection.on("BusStopped", (busId, busData) => {
+                console.log("Bus stopped:", busId);
+                if (busMarkers[busId]) {
+                    busMarkers[busId].setIcon(getBusIcon('Active', false));
+                }
+            });
+
+            // Listen for speed violations
+            connection.on("SpeedViolation", (busId, alertData) => {
+                console.log("Speed violation:", busId, alertData);
+                alert(`تنبيه: الحافلة ${busId} تتجاوز السرعة المسموحة!`);
+            });
+
+            // Listen for maintenance alerts
+            connection.on("MaintenanceAlert", (busId, alertData) => {
+                console.log("Maintenance alert:", busId, alertData);
+                alert(`تنبيه صيانة: الحافلة ${busId} تحتاج صيانة عاجلة`);
+            });
+        }
+
+        // Start auto-refresh
+        function startAutoRefresh() {
+            const interval = parseInt(document.getElementById('refreshInterval').value);
+            
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+            
+            refreshInterval = setInterval(() => {
+                refreshBusLocations();
+            }, interval);
+
+            // Update interval when changed
+            document.getElementById('refreshInterval').addEventListener('change', function() {
+                const newInterval = parseInt(this.value);
+                if (refreshInterval) {
+                    clearInterval(refreshInterval);
+                }
+                refreshInterval = setInterval(() => {
+                    refreshBusLocations();
+                }, newInterval);
+            });
+        }
+
+        // Refresh bus locations manually
+        async function refreshBusLocations() {
+            console.log("Refreshing bus locations...");
+            await loadBusLocations();
+        }
+
+        // Handle page unload
+        window.addEventListener('beforeunload', () => {
+            if (connection) {
+                connection.stop();
+            }
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        });
+    </script>
+</body>
+</html>
+
+@section Scripts {
+    <script>
+        // Fallback for when Google Maps API key is not configured
+        window.initMap = function() {
+            document.getElementById('map').innerHTML = `
+                <div style="height: 600px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 8px;">
+                    <div style="text-align: center;">
+                        <i class="fas fa-map-marked-alt" style="font-size: 48px; color: #999;"></i>
+                        <h4 class="mt-3">Google Maps API Key Required</h4>
+                        <p>يرجى إضافة Google Maps API Key في الكود لعرض الخريطة</p>
+                        <small class="text-muted">يمكنك الحصول على مفتاح من console.cloud.google.com</small>
+                    </div>
+                </div>
+            `;
+        };
+    </script>
+}

@@ -1,0 +1,90 @@
+@model StudentIndexViewModel
+@{
+    ViewData["Title"] = "الطلاب";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-people"></i> إدارة الطلاب
+        </h1>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-person-plus"></i> إضافة طالب جديد
+        </a>
+        <a asp-action="ExportToExcel" class="btn btn-success">
+            <i class="bi bi-file-earmark-excel"></i> تصدير إلى Excel
+        </a>
+        <a asp-action="ImportFromExcel" class="btn btn-info">
+            <i class="bi bi-upload"></i> استيراد من Excel
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>الرقم</th>
+                                <th>الاسم</th>
+                                <th>الفصل</th>
+                                <th>المدرسة</th>
+                                <th>الحالة</th>
+                                <th>ولي الأمر</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var student in Model.Students)
+                            {
+                                <tr>
+                                    <td>@student.StudentNumber</td>
+                                    <td>
+                                        <strong>@student.FullNameArabic</strong><br>
+                                        <small class="text-muted">@student.FullName</small>
+                                    </td>
+                                    <td>@student.ClassRoom?.NameArabic</td>
+                                    <td>@student.School?.NameArabic</td>
+                                    <td>
+                                        @if (student.IsActive)
+                                        {
+                                            <span class="status-badge success">نشط</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge danger">غير نشط</span>
+                                        }
+                                    </td>
+                                    <td>@student.Guardian?.FullNameArabic</td>
+                                    <td>
+                                        <a asp-action="Details" asp-route-id="@student.Id" class="btn btn-sm btn-info" title="التفاصيل">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@student.Id" class="btn btn-sm btn-warning" title="تعديل">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="DigitalCard" asp-route-id="@student.Id" class="btn btn-sm btn-success" title="البطاقة الرقمية">
+                                            <i class="bi bi-card-heading"></i>
+                                        </a>
+                                        <a asp-action="AcademicRecord" asp-route-id="@student.Id" class="btn btn-sm btn-primary" title="السجل الأكاديمي">
+                                            <i class="bi bi-graduation-cap"></i>
+                                        </a>
+                                        <a asp-action="AttendanceAnalysis" asp-route-id="@student.Id" class="btn btn-sm btn-secondary" title="تحليل الحضور">
+                                            <i class="bi bi-calendar-check"></i>
+                                        </a>
+                                        <a asp-action="Documents" asp-route-id="@student.Id" class="btn btn-sm btn-dark" title="المستندات">
+                                            <i class="bi bi-file-alt"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

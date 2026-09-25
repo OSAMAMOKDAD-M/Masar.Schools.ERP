@@ -1,0 +1,141 @@
+@model Masar.Schools.ERP.WebUI.Controllers.RolesAndPermissionsIndexViewModel
+@{
+    ViewData["Title"] = "إدارة الأدوار والصلاحيات";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-end">إدارة الأدوار والصلاحيات</h2>
+        <div>
+            <a asp-action="Index" asp-controller="LicenseManager" class="btn btn-secondary">
+                <i class="bi bi-shield-lock"></i> إدارة التراخيص
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-people"></i> المستخدمون</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Users.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover text-end">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>الاسم</th>
+                                        <th>البريد الإلكتروني</th>
+                                        <th>الأدوار</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in Model.Users)
+                                    {
+                                        <tr>
+                                            <td>@user.FullNameArabic ?? user.FullName</td>
+                                            <td>@user.Email</td>
+                                            <td>
+                                                @if (user.UserRoles.Any())
+                                                {
+                                                    var userRoleIds = user.UserRoles.Select(ur => ur.RoleId).ToList();
+                                                    var userRolesList = Model.Roles.Where(r => userRoleIds.Contains(r.Id)).ToList();
+                                                    foreach (var role in userRolesList)
+                                                    {
+                                                        <span class="badge bg-info me-1">@role.Name</span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">لا توجد أدوار</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a asp-action="ManageUserPermissions" asp-route-userId="@user.Id" class="btn btn-sm btn-primary">
+                                                    <i class="bi bi-key"></i> الصلاحيات
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="bi bi-people fs-1 text-muted"></i>
+                            <p class="text-muted mt-2">لا يوجد مستخدمون</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-shield-check"></i> الأدوار</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Roles.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover text-end">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>اسم الدور</th>
+                                        <th>الوصف</th>
+                                        <th>الحالة</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var role in Model.Roles)
+                                    {
+                                        <tr>
+                                            <td>@role.Name</td>
+                                            <td>@role.DescriptionArabic ?? role.Description</td>
+                                            <td>
+                                                @if (role.IsActive)
+                                                {
+                                                    <span class="badge bg-success">نشط</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">غير نشط</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a asp-action="ManageRolePermissions" asp-route-roleId="@role.Id" class="btn btn-sm btn-success">
+                                                    <i class="bi bi-key"></i> الصلاحيات
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="bi bi-shield-check fs-1 text-muted"></i>
+                            <p class="text-muted mt-2">لا توجد أدوار</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer text-muted border-top py-3 text-center bg-light mt-auto">
+    <div class="container-fluid">
+        <span>© 2026 <strong>نظام مَسَار للمدارس</strong> - جميع الحقوق محفوظة - شركة مسار للبرمجيات mokdadvipr@gmail.com .. 01006765664 (نسخة 1.0.0)</span>
+    </div>
+</footer>

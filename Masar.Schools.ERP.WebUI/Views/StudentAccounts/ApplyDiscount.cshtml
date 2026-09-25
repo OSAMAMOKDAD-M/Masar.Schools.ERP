@@ -1,0 +1,158 @@
+@model StudentAccount
+@{
+    ViewData["Title"] = "تطبيق الخصم";
+    var discounts = ViewBag.Discounts as List<Discount>;
+    var unpaidInvoices = ViewBag.UnpaidInvoices as List<StudentInvoice>;
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-percent"></i> تطبيق الخصم
+        </h1>
+        <a asp-action="Statement" asp-route-id="@Model.AccountId" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للكشف
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">الطالب: @Model.Student.FullNameArabic</h5>
+                <p class="card-text">رقم الحساب: @Model.AccountNumber</p>
+                <p class="card-text">المبلغ المستحق الحالي: @Model.OutstandingBalance.ToString("N2") ر.س</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">تطبيق الخصم</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="ApplyDiscount" method="post">
+                    <input type="hidden" name="studentAccountId" value="@Model.AccountId" />
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">اختر الخصم</label>
+                            <select name="discountId" class="form-select" required>
+                                <option value="">اختر خصم</option>
+                                @if (discounts != null)
+                                {
+                                    @foreach (var discount in discounts)
+                                    {
+                                        <option value="@discount.DiscountId">
+                                            @discount.DiscountNameAr - @discount.DiscountNameEn
+                                            @if (discount.DiscountType == DiscountType.Percentage)
+                                            {
+                                                @($" ({discount.DiscountPercentage}%)")
+                                            }
+                                            else if (discount.DiscountType == DiscountType.FixedAmount)
+                                            {
+                                                @($" ({discount.FixedAmount:C})")
+                                            }
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">اختر الفاتورة (اختياري)</label>
+                            <select name="invoiceId" class="form-select">
+                                <option value="">أحدث فاتورة غير مدفوعة</option>
+                                @if (unpaidInvoices != null)
+                                {
+                                    @foreach (var invoice in unpaidInvoices)
+                                    {
+                                        <option value="@invoice.InvoiceId">
+                                            @invoice.InvoiceNumber - @invoice.IssueDate.ToString("yyyy-MM-dd") - @invoice.OutstandingAmount.ToString("N2") ر.س
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        إذا لم يتم اختيار فاتورة، سيتم تطبيق الخصم على أحدث فاتورة غير مدفوعة.
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> تطبيق الخصم
+                            </button>
+                            <a asp-action="Statement" asp-route-id="@Model.AccountId" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> إلغاء
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">الخصومات المتاحة</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>الرمز</th>
+                                <th>الاسم (عربي)</th>
+                                <th>الاسم (إنجليزي)</th>
+                                <th>النوع</th>
+                                <th>القيمة</th>
+                                <th>صالح حتى</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (discounts != null)
+                            {
+                                @foreach (var discount in discounts)
+                                {
+                                    <tr>
+                                        <td>@discount.DiscountCode</td>
+                                        <td>@discount.DiscountNameAr</td>
+                                        <td>@discount.DiscountNameEn</td>
+                                        <td>@discount.DiscountType</td>
+                                        <td>
+                                            @if (discount.DiscountType == DiscountType.Percentage)
+                                            {
+                                                @($"{discount.DiscountPercentage}%")
+                                            }
+                                            else if (discount.DiscountType == DiscountType.FixedAmount)
+                                            {
+                                                @($"{discount.FixedAmount:C}")
+                                            }
+                                        </td>
+                                        <td>@discount.ValidTo?.ToString("yyyy-MM-dd") ?? "بدون انتهاء"</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">No discounts available</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

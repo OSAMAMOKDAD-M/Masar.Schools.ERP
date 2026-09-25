@@ -1,0 +1,70 @@
+@model Masar.Schools.ERP.Domain.DTOs.CreateGraduationDocumentDto
+
+@{
+    ViewData["Title"] = "إضافة وثيقة تخرج";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3"><i class="bi bi-plus-circle"></i> إضافة وثيقة تخرج</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="CreateDocument" method="post">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <input type="hidden" asp-for="AlumniRecordId" value="@ViewBag.AlumniRecordId" />
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="DocumentType" class="form-label">نوع الوثيقة</label>
+                                <select asp-for="DocumentType" class="form-control" required>
+                                    <option value="">اختر النوع</option>
+                                    <option value="GraduationCertificate">شهادة التخرج</option>
+                                    <option value="Transcript">كشف الدرجات</option>
+                                    <option value="ClearanceCertificate">شهادة الإبراء</option>
+                                </select>
+                                <span asp-validation-for="DocumentType" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="DocumentTypeArabic" class="form-label">نوع الوثيقة (عربي)</label>
+                                <input asp-for="DocumentTypeArabic" class="form-control" required />
+                                <span asp-validation-for="DocumentTypeArabic" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="DocumentNumber" class="form-label">رقم الوثيقة</label>
+                                <input asp-for="DocumentNumber" class="form-control" required />
+                                <span asp-validation-for="DocumentNumber" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="IssueDate" class="form-label">تاريخ الإصدار</label>
+                                <input asp-for="IssueDate" class="form-control" type="date" required />
+                                <span asp-validation-for="IssueDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> حفظ
+                            </button>
+                            <a asp-action="Documents" asp-route-alumniRecordId="@ViewBag.AlumniRecordId" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> إلغاء
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

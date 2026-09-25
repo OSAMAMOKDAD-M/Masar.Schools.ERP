@@ -1,0 +1,76 @@
+@model List<Masar.Schools.ERP.Domain.DTOs.StockReportDto>
+
+@{
+    ViewData["Title"] = "تقرير المخزون";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">تقرير المخزون</h3>
+                    <div>
+                        <a asp-action="LowStockReport" class="btn btn-warning">
+                            <i class="fas fa-exclamation-triangle"></i> الأصناف منخفضة المخزون
+                        </a>
+                        <a asp-action="OverStockReport" class="btn btn-info">
+                            <i class="fas fa-boxes"></i> الأصناف الزائدة
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>الكود (SKU)</th>
+                                    <th>الاسم</th>
+                                    <th>الاسم بالعربية</th>
+                                    <th>التصنيف</th>
+                                    <th>الرصيد الحالي</th>
+                                    <th>الحد الأدنى</th>
+                                    <th>الحد الأقصى</th>
+                                    <th>التكلفة المتوسطة</th>
+                                    <th>القيمة الإجمالية</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr class="@(item.IsBelowReorderLevel ? "table-warning" : item.IsAboveMaxLevel ? "table-danger" : "")">
+                                        <td>@item.SKU</td>
+                                        <td>@item.ItemName</td>
+                                        <td>@item.ItemNameArabic</td>
+                                        <td>@item.Category</td>
+                                        <td>@item.CurrentStock</td>
+                                        <td>@item.ReorderLevel</td>
+                                        <td>@item.MaxStockLevel</td>
+                                        <td>@item.AverageCost @item.Currency</td>
+                                        <td>@item.TotalValue @item.Currency</td>
+                                        <td>
+                                            @if (item.IsBelowReorderLevel)
+                                            {
+                                                <span class="badge badge-warning">منخفض</span>
+                                            }
+                                            else if (item.IsAboveMaxLevel)
+                                            {
+                                                <span class="badge badge-danger">زائد</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-success">سليم</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

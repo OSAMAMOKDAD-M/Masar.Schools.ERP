@@ -1,0 +1,121 @@
+@{
+    ViewData["Title"] = "سجل الحضور المباشر";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-clock-history"></i> سجل الحضور المباشر
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للحضور
+        </a>
+        <button class="btn btn-primary" onclick="refreshLog()">
+            <i class="bi bi-arrow-clockwise"></i> تحديث
+        </button>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">إجمالي الحضور</h5>
+                <h3 class="text-success" id="totalPresent">0</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">إجمالي الغياب</h5>
+                <h3 class="text-danger" id="totalAbsent">0</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">الوصول المتأخر</h5>
+                <h3 class="text-warning" id="lateArrivals">0</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">نسبة الحضور</h5>
+                <h3 class="text-primary" id="attendanceRate">0%</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">سجلات الحضور المباشر</h5>
+                <small class="text-muted">متصل بجهاز البصمة عبر SignalR</small>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="attendanceTable">
+                        <thead>
+                            <tr>
+                                <th>الوقت</th>
+                                <th>رقم الطالب</th>
+                                <th>الاسم</th>
+                                <th>الفصل</th>
+                                <th>الحالة</th>
+                                <th>الجهاز</th>
+                                <th>حالة واتساب</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceBody">
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">
+                                    <i class="bi bi-hourglass-split"></i> في انتظار بيانات الحضور...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">حالة الجهاز</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>جهاز البصمة:</strong> <span class="status-badge success">متصل</span></p>
+                        <p><strong>آخر مزامنة:</strong> <span id="lastSync">الآن</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>اتصال SignalR:</strong> <span class="status-badge success">نشط</span></p>
+                        <p><strong>سجلات اليوم:</strong> <span id="todayRecords">0</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function refreshLog() {
+            // Simulate refresh - in real implementation, this would fetch from API
+            document.getElementById('lastSync').textContent = new Date().toLocaleTimeString();
+        }
+
+        // SignalR connection would be established here in real implementation
+        // The connection would receive real-time attendance updates from the fingerprint device
+    </script>
+}

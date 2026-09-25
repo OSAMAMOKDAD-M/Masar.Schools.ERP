@@ -1,0 +1,438 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<MasarUser> SignInManager
+
+<!-- مسار الذكي - المساعد الرقمي -->
+<div id="masar-ai-widget" class="masar-ai-widget" dir="rtl" style="display: block !important; position: fixed !important; bottom: 30px !important; left: 30px !important; z-index: 9999 !important;">
+        <!-- Floating Action Button -->
+        <button id="masar-ai-toggle" class="masar-ai-fab" title="مسار الذكي" style="display: flex !important; align-items: center !important; justify-content: center !important; width: 60px !important; height: 60px !important; border-radius: 50% !important; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; border: none !important; cursor: pointer !important; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important; color: white !important; font-size: 24px !important;">
+            <i class="bi bi-robot"></i>
+            <span class="masar-ai-badge"></span>
+        </button>
+
+        <!-- Chat Container -->
+        <div id="masar-ai-chat" class="masar-ai-chat-container d-none">
+            <!-- Header -->
+            <div class="masar-ai-header">
+                <div class="masar-ai-header-content">
+                    <div class="masar-ai-avatar">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <div class="masar-ai-title">
+                        <h5>مسار الذكي</h5>
+                        <span class="masar-ai-status">
+                            <span class="masar-ai-status-dot"></span>
+                            متصل الآن
+                        </span>
+                    </div>
+                </div>
+                <div class="masar-ai-actions">
+                    <button id="masar-ai-clear" class="masar-ai-btn-icon" title="مسح المحادثة">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                    <button id="masar-ai-close" class="masar-ai-btn-icon" title="إغلاق">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages Container -->
+            <div id="masar-ai-messages" class="masar-ai-messages">
+                <!-- Welcome Message -->
+                <div class="masar-ai-message masar-ai-message-assistant">
+                    <div class="masar-ai-message-content">
+                        <div class="masar-ai-message-avatar">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        <div class="masar-ai-message-text">
+                            أهلاً بك! أنا مسار الذكي، المساعد الرقمي لنظام مَسَار للمدارس.
+                            <br><br>
+                            يمكنني مساعدتك في:
+                            <ul>
+                                <li>🏢 إدارة المؤسسات والشعارات</li>
+                                <li>🎓 شؤون الطلاب والكنترول</li>
+                                <li>💰 الفواتير والمالية ZATCA</li>
+                                <li>📊 مؤشر الخطر للطلاب</li>
+                                <li>👥 إدارة الصلاحيات</li>
+                                <li>📅 الحضور والغياب</li>
+                            </ul>
+                            <br>
+                            كيف يمكنني مساعدتك اليوم؟
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="masar-ai-input-area">
+                <div class="masar-ai-input-wrapper">
+                    <textarea
+                        id="masar-ai-input"
+                        class="masar-ai-input"
+                        placeholder="اكتب رسالتك هنا..."
+                        rows="1"
+                        maxlength="2000"></textarea>
+                    <button id="masar-ai-send" class="masar-ai-send-btn" title="إرسال">
+                        <i class="bi bi-send"></i>
+                    </button>
+                </div>
+                <div class="masar-ai-footer">
+                    <small>مسار الذكي v1.0.1 - مَسَار للمدارس</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* مسار الذكي Widget Styles */
+        .masar-ai-widget {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 9999;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Floating Action Button */
+        .masar-ai-fab {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .masar-ai-fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .masar-ai-fab i {
+            animation: masar-ai-pulse 2s infinite !important;
+        }
+
+        @@keyframes masar-ai-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .masar-ai-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 15px;
+            height: 15px;
+            background: #00c853;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        /* Chat Container */
+        .masar-ai-chat-container {
+            position: absolute;
+            bottom: 80px;
+            left: 0;
+            width: 380px;
+            height: 550px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* Header */
+        .masar-ai-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+        }
+
+        .masar-ai-header-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .masar-ai-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .masar-ai-title h5 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .masar-ai-status {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .masar-ai-status-dot {
+            width: 8px;
+            height: 8px;
+            background: #00c853;
+            border-radius: 50%;
+            animation: masar-ai-blink 1.5s infinite;
+        }
+
+        @@keyframes masar-ai-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .masar-ai-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .masar-ai-btn-icon {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .masar-ai-btn-icon:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Messages Container */
+        .masar-ai-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .masar-ai-message {
+            margin-bottom: 15px;
+            animation: masar-ai-slideIn 0.3s ease;
+        }
+
+        @@keyframes masar-ai-slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .masar-ai-message-content {
+            display: flex;
+            gap: 10px;
+        }
+
+        .masar-ai-message-assistant .masar-ai-message-content {
+            flex-direction: row;
+        }
+
+        .masar-ai-message-user .masar-ai-message-content {
+            flex-direction: row-reverse;
+        }
+
+        .masar-ai-message-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .masar-ai-message-assistant .masar-ai-message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .masar-ai-message-user .masar-ai-message-avatar {
+            background: #007bff;
+            color: white;
+        }
+
+        .masar-ai-message-text {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 280px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .masar-ai-message-assistant .masar-ai-message-text {
+            border-top-right-radius: 2px;
+        }
+
+        .masar-ai-message-user .masar-ai-message-text {
+            background: #007bff;
+            color: white;
+            border-top-left-radius: 2px;
+        }
+
+        .masar-ai-message-text strong {
+            font-weight: 600;
+        }
+
+        .masar-ai-message-text ul {
+            margin: 8px 0;
+            padding-right: 20px;
+        }
+
+        .masar-ai-message-text li {
+            margin: 4px 0;
+        }
+
+        /* Typing Indicator */
+        .masar-ai-typing {
+            display: flex;
+            gap: 5px;
+            padding: 10px;
+        }
+
+        .masar-ai-typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: masar-ai-typing 1.4s infinite;
+        }
+
+        .masar-ai-typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .masar-ai-typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @@keyframes masar-ai-typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Input Area */
+        .masar-ai-input-area {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .masar-ai-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .masar-ai-input {
+            flex: 1;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            padding: 10px 15px;
+            resize: none;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s ease;
+            max-height: 100px;
+        }
+
+        .masar-ai-input:focus {
+            border-color: #667eea;
+        }
+
+        .masar-ai-send-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .masar-ai-send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .masar-ai-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .masar-ai-footer {
+            text-align: center;
+            margin-top: 10px;
+            color: #6c757d;
+        }
+
+        /* Scrollbar Styling */
+        .masar-ai-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .masar-ai-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .masar-ai-messages::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .masar-ai-messages::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Responsive */
+        @@media (max-width: 480px) {
+            .masar-ai-chat-container {
+                width: calc(100vw - 60px);
+                height: calc(100vh - 150px);
+                bottom: 80px;
+            }
+
+            .masar-ai-widget {
+                bottom: 20px;
+                left: 20px;
+            }
+        }
+    </style>

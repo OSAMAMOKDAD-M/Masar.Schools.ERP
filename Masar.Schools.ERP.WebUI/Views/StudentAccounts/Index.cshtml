@@ -1,0 +1,166 @@
+@model List<StudentAccount>
+@{
+    ViewData["Title"] = "حسابات الطلاب";
+    var totalBalance = ViewBag.TotalBalance ?? 0m;
+    var totalPaid = ViewBag.TotalPaid ?? 0m;
+    var totalOutstanding = ViewBag.TotalOutstanding ?? 0m;
+    var totalStudents = ViewBag.TotalStudents ?? 0;
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-wallet2"></i> حسابات الطلاب
+        </h1>
+        <a asp-action="Index" asp-controller="Students" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للطلاب
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">إجمالي الطلاب</h5>
+                <h3 class="text-primary">@totalStudents</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">إجمالي الفواتير</h5>
+                <h3 class="text-info">@totalBalance.ToString("N2") ر.س</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">إجمالي المدفوع</h5>
+                <h3 class="text-success">@totalPaid.ToString("N2") ر.س</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">المتبقي</h5>
+                <h3 class="text-danger">@totalOutstanding.ToString("N2") ر.س</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Index" method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">المرحلة الدراسية</label>
+                        <select name="gradeId" class="form-select">
+                            <option value="">جميع المراحل</option>
+                            <option value="1">الصف الأول</option>
+                            <option value="2">الصف الثاني</option>
+                            <option value="3">الصف الثالث</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">الفصل</label>
+                        <select name="classId" class="form-select">
+                            <option value="">جميع الفصول</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">الحالة</label>
+                        <select name="status" class="form-select">
+                            <option value="">جميع الحالات</option>
+                            <option value="1">نشط</option>
+                            <option value="2">غير نشط</option>
+                            <option value="3">معلق</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i> تصفية
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">قائمة حسابات الطلاب</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>رقم الحساب</th>
+                                <th>اسم الطالب</th>
+                                <th>الفصل</th>
+                                <th>المدرسة</th>
+                                <th>إجمالي الفواتير</th>
+                                <th>المدفوع</th>
+                                <th>المتبقي</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var account in Model)
+                            {
+                                <tr>
+                                    <td>@account.AccountNumber</td>
+                                    <td>
+                                        <strong>@account.Student.FullNameArabic</strong><br>
+                                        <small class="text-muted">@account.Student.FullName</small>
+                                    </td>
+                                    <td>@account.Student.ClassRoom?.NameArabic</td>
+                                    <td>@account.Student.School?.NameArabic</td>
+                                    <td>@account.TotalBalance.ToString("N2") ر.س</td>
+                                    <td class="text-success">@account.PaidBalance.ToString("N2") ر.س</td>
+                                    <td class="text-danger">@account.OutstandingBalance.ToString("N2") ر.س</td>
+                                    <td>
+                                        @switch (account.Status)
+                                        {
+                                            case AccountStatus.Active:
+                                                <span class="status-badge success">نشط</span>
+                                                break;
+                                            case AccountStatus.Inactive:
+                                                <span class="status-badge secondary">غير نشط</span>
+                                                break;
+                                            case AccountStatus.Suspended:
+                                                <span class="status-badge danger">معلق</span>
+                                                break;
+                                            default:
+                                                <span class="status-badge">@account.Status</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-action="Statement" asp-route-id="@account.AccountId" class="btn btn-sm btn-info">
+                                            <i class="bi bi-file-text"></i> كشف
+                                        </a>
+                                        <a asp-action="CreatePayment" asp-controller="Invoices" asp-route-studentAccountId="@account.AccountId" class="btn btn-sm btn-success">
+                                            <i class="bi bi-cash"></i> دفع
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

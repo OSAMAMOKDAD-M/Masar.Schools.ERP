@@ -1,0 +1,296 @@
+@{
+    ViewData["Title"] = "كشف الطالب";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-file-text"></i> كشف الطالب
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للفواتير
+        </a>
+        @if (Model.StudentAccount != null && Model.StudentAccount.OutstandingBalance > 0)
+        {
+            <a asp-action="RecordPayment" asp-route-studentAccountId="@Model.StudentAccount.AccountId" class="btn btn-primary">
+                <i class="bi bi-cash"></i> تسجيل دفعة
+            </a>
+        }
+        <button class="btn btn-primary" onclick="printStatement()">
+            <i class="bi bi-printer"></i> طباعة الكشف
+        </button>
+        <button class="btn btn-success" onclick="exportPdf()">
+            <i class="bi bi-file-earmark-pdf"></i> تصدير PDF
+        </button>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <label class="form-label">الطالب</label>
+                <select class="form-select" id="studentSelect">
+                    <option value="1" selected>أحمد محمد أحمد (20260001)</option>
+                    <option value="2">محمد علي محمد (20260002)</option>
+                    <option value="3">سارة أحمد محمد (20260003)</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <label class="form-label">من تاريخ</label>
+                <input type="date" class="form-control" id="fromDate" value="2026-01-01">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <label class="form-label">إلى تاريخ</label>
+                <input type="date" class="form-control" id="toDate" value="@DateTime.Now.ToString("yyyy-MM-dd")">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">معلومات الطالب</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <p><strong>رقم الطالب:</strong> 20260001</p>
+                        <p><strong>الاسم:</strong> أحمد محمد أحمد</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>الفصل:</strong> الفصل 1-أ</p>
+                        <p><strong>المدرسة:</strong> مَسَار للمدارس</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>ولي الأمر:</strong> محمد أحمد</p>
+                        <p><strong>الهاتف:</strong> 0501234567</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>فترة الكشف:</strong></p>
+                        <p>2026-01-01 إلى 2026-01-27</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">إجمالي الفواتير</h5>
+                <h3 class="text-primary">45,000.00 ر.س</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">إجمالي المدفوع</h5>
+                <h3 class="text-success">30,000.00 ر.س</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">إجمالي المستحق</h5>
+                <h3 class="text-danger">15,000.00 ر.س</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">حالة الدفع</h5>
+                <h3 class="text-warning">جزئي</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">سجل المعاملات</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>النوع</th>
+                                <th>المرجع</th>
+                                <th>الوصف</th>
+                                <th>مدين</th>
+                                <th>دائن</th>
+                                <th>الرصيد</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2026-01-15</td>
+                                <td><span class="badge bg-danger">فاتورة</span></td>
+                                <td>INV-2026-0001</td>
+                                <td>رسوم الدراسة - الفصل الأول</td>
+                                <td class="text-danger">15,000.00</td>
+                                <td>-</td>
+                                <td class="fw-bold">15,000.00</td>
+                                <td><span class="status-badge warning">غير مدفوع</span></td>
+                            </tr>
+                            <tr>
+                                <td>2026-01-10</td>
+                                <td><span class="badge bg-success">دفع</span></td>
+                                <td>PAY-2026-0001</td>
+                                <td>دفع رسوم الدراسة</td>
+                                <td>-</td>
+                                <td class="text-success">10,000.00</td>
+                                <td class="fw-bold">15,000.00</td>
+                                <td><span class="status-badge success">مكتمل</span></td>
+                            </tr>
+                            <tr>
+                                <td>2026-01-05</td>
+                                <td><span class="badge bg-danger">فاتورة</span></td>
+                                <td>INV-2026-0001</td>
+                                <td>رسوم الدراسة - الفصل الأول</td>
+                                <td class="text-danger">15,000.00</td>
+                                <td>-</td>
+                                <td class="fw-bold">25,000.00</td>
+                                <td><span class="status-badge warning">جزئي</span></td>
+                            </tr>
+                            <tr>
+                                <td>2026-01-01</td>
+                                <td><span class="badge bg-danger">فاتورة</span></td>
+                                <td>INV-2026-0002</td>
+                                <td>رسوم الكتب</td>
+                                <td class="text-danger">5,000.00</td>
+                                <td>-</td>
+                                <td class="fw-bold">40,000.00</td>
+                                <td><span class="status-badge success">مدفوع</span></td>
+                            </tr>
+                            <tr>
+                                <td>2025-12-20</td>
+                                <td><span class="badge bg-success">دفع</span></td>
+                                <td>PAY-2025-0001</td>
+                                <td>دفع رسوم الكتب</td>
+                                <td>-</td>
+                                <td class="text-success">5,000.00</td>
+                                <td class="fw-bold">40,000.00</td>
+                                <td><span class="status-badge success">مكتمل</span></td>
+                            </tr>
+                            <tr>
+                                <td>2025-12-15</td>
+                                <td><span class="badge bg-danger">فاتورة</span></td>
+                                <td>INV-2025-0003</td>
+                                <td>رسوم التسجيل</td>
+                                <td class="text-danger">10,000.00</td>
+                                <td>-</td>
+                                <td class="fw-bold">45,000.00</td>
+                                <td><span class="status-badge success">مدفوع</span></td>
+                            </tr>
+                            <tr>
+                                <td>2025-12-10</td>
+                                <td><span class="badge bg-success">دفع</span></td>
+                                <td>PAY-2025-0002</td>
+                                <td>دفع رسوم التسجيل</td>
+                                <td>-</td>
+                                <td class="text-success">10,000.00</td>
+                                <td class="fw-bold">45,000.00</td>
+                                <td><span class="status-badge success">مكتمل</span></td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="6" class="text-end fw-bold">الرصيد الحالي:</td>
+                                <td class="fw-bold text-danger">15,000.00 ر.س</td>
+                                <td>-</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">جدول الدفعات</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>القسط</th>
+                                <th>تاريخ الاستحقاق</th>
+                                <th>المبلغ</th>
+                                <th>تاريخ الدفع</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>القسط الأول</td>
+                                <td>2025-09-01</td>
+                                <td>5,000.00 ر.س</td>
+                                <td>2025-08-25</td>
+                                <td><span class="status-badge success">مدفوع</span></td>
+                            </tr>
+                            <tr>
+                                <td>القسط الثاني</td>
+                                <td>2025-12-01</td>
+                                <td>5,000.00 ر.س</td>
+                                <td>2025-11-28</td>
+                                <td><span class="status-badge success">مدفوع</span></td>
+                            </tr>
+                            <tr>
+                                <td>القسط الثالث</td>
+                                <td>2026-03-01</td>
+                                <td>5,000.00 ر.س</td>
+                                <td>-</td>
+                                <td><span class="status-badge warning">في الانتظار</span></td>
+                            </tr>
+                            <tr>
+                                <td>القسط الرابع</td>
+                                <td>2026-06-01</td>
+                                <td>5,000.00 ر.س</td>
+                                <td>-</td>
+                                <td><span class="status-badge warning">في الانتظار</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function printStatement() {
+            window.print();
+        }
+        
+        function exportPdf() {
+            alert('PDF export functionality would be implemented here using a library like QuestPDF or Rotativa.');
+        }
+    </script>
+}

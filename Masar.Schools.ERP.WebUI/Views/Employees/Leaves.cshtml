@@ -1,0 +1,181 @@
+@model IEnumerable<Masar.Schools.ERP.Domain.DTOs.LeaveRequestDto>
+@{
+    ViewData["Title"] = "الإجازات والاستئذانات";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">إدارة الإجازات والاستئذانات</h3>
+                    <div class="card-tools">
+                        <a href="@Url.Action("CreateLeave", "Employees")" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> طلب إجازة جديد
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="info-box bg-info">
+                                <span class="info-box-icon"><i class="fas fa-calendar-alt"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">إجمالي الطلبات</span>
+                                    <span class="info-box-number">@(Model?.Count() ?? 0)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-warning">
+                                <span class="info-box-icon"><i class="fas fa-clock"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">قيد المراجعة</span>
+                                    <span class="info-box-number">@(Model?.Count(l => l.Status == "Pending") ?? 0)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-success">
+                                <span class="info-box-icon"><i class="fas fa-check-circle"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">موافق عليه</span>
+                                    <span class="info-box-number">@(Model?.Count(l => l.Status == "Approved") ?? 0)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-danger">
+                                <span class="info-box-icon"><i class="fas fa-times-circle"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">مرفوض</span>
+                                    <span class="info-box-number">@(Model?.Count(l => l.Status == "Rejected") ?? 0)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>رقم الإجازة</th>
+                                    <th>الموظف</th>
+                                    <th>نوع الإجازة</th>
+                                    <th>تاريخ البدء</th>
+                                    <th>تاريخ الانتهاء</th>
+                                    <th>عدد الأيام</th>
+                                    <th>السبب</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    @foreach (var leave in Model)
+                                    {
+                                        <tr>
+                                            <td>@leave.LeaveNumber</td>
+                                            <td>@leave.EmployeeName</td>
+                                            <td>@leave.LeaveTypeArabic</td>
+                                            <td>@leave.StartDate.ToString("yyyy-MM-dd")</td>
+                                            <td>@leave.EndDate.ToString("yyyy-MM-dd")</td>
+                                            <td>@leave.TotalDays</td>
+                                            <td>@leave.ReasonArabic</td>
+                                            <td>
+                                                <span class="badge bg-@(leave.Status == "Approved" ? "success" : leave.Status == "Rejected" ? "danger" : leave.Status == "Cancelled" ? "secondary" : "warning")">
+                                                    @leave.StatusArabic
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if (leave.Status == "Pending")
+                                                {
+                                                    <form asp-action="ApproveLeave" method="post" style="display: inline;">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@leave.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('هل أنت متأكد من الموافقة على هذا الطلب؟')">
+                                                            <i class="fas fa-check"></i> موافقة
+                                                        </button>
+                                                    </form>
+                                                    <button class="btn btn-sm btn-danger" onclick="showRejectModal('@leave.Id')">
+                                                        <i class="fas fa-times"></i> رفض
+                                                    </button>
+                                                }
+                                                else if (leave.Status == "Approved")
+                                                {
+                                                    <a href="@Url.Action("LeaveBalance", "Employees", new { employeeId = leave.EmployeeId })" class="btn btn-sm btn-info">
+                                                        <i class="fas fa-balance-scale"></i> الرصيد
+                                                    </a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="9" class="text-center">لا توجد طلبات إجازات</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal لرفض الإجازة -->
+<div class="modal fade" id="rejectLeaveModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">رفض طلب الإجازة</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="rejectLeaveForm">
+                    <input type="hidden" id="rejectLeaveId" name="id" />
+                    <div class="form-group">
+                        <label>سبب الرفض</label>
+                        <textarea id="rejectionReason" name="rejectionReason" class="form-control" rows="3" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-danger" onclick="submitReject()">رفض</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showRejectModal(id) {
+            $('#rejectLeaveId').val(id);
+            $('#rejectLeaveModal').modal('show');
+        }
+
+        function submitReject() {
+            var id = $('#rejectLeaveId').val();
+            var reason = $('#rejectionReason').val();
+            
+            if (!reason) {
+                alert('يرجى إدخال سبب الرفض');
+                return;
+            }
+
+            $.post('/Employees/Leaves/Reject/' + id, { rejectionReason: reason }, function() {
+                alert('تم رفض طلب الإجازة بنجاح');
+                $('#rejectLeaveModal').modal('hide');
+                location.reload();
+            });
+        }
+    </script>
+}

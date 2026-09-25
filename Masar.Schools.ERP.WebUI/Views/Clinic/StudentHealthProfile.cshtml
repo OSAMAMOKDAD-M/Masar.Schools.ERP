@@ -1,0 +1,133 @@
+@model Masar.Schools.ERP.Domain.DTOs.StudentHealthProfileDto
+
+@{
+    ViewData["Title"] = "الملف الصحي للطالب";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3"><i class="bi bi-heart-pulse"></i> الملف الصحي: @Model.StudentName</h2>
+            <a asp-action="HealthProfiles" class="btn btn-secondary">
+                <i class="bi bi-arrow-right"></i> العودة للقائمة
+            </a>
+            <a asp-action="EditHealthProfile" asp-route-id="@Model.Id" class="btn btn-primary float-end">
+                <i class="bi bi-pencil"></i> تعديل
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">المعلومات الأساسية</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tr>
+                            <th>فصيلة الدم</th>
+                            <td>@Model.BloodType</td>
+                        </tr>
+                        <tr>
+                            <th>عامل Rh</th>
+                            <td>@Model.RhFactor</td>
+                        </tr>
+                        <tr>
+                            <th>تاريخ آخر فحص شامل</th>
+                            <td>@Model.LastComprehensiveCheckup?.ToString("yyyy-MM-dd")</td>
+                        </tr>
+                        <tr>
+                            <th>تاريخ إنشاء الملف</th>
+                            <td>@Model.ProfileCreatedDate.ToString("yyyy-MM-dd")</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">الحساسية والقيود</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>الحساسية:</strong> @Model.Allergies</p>
+                    <p><strong>الأطعمة الممنوعة:</strong> @Model.ProhibitedFoods</p>
+                    <p><strong>القيود الغذائية:</strong> @Model.DietaryRestrictions</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">الأمراض المزمنة</h5>
+                </div>
+                <div class="card-body">
+                    <p>@Model.ChronicDiseases</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">التطعيمات</h5>
+                </div>
+                <div class="card-body">
+                    <p>@Model.Vaccinations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">معلومات الطبيب والتأمين</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tr>
+                            <th>الطبيب المعالج</th>
+                            <td>@Model.TreatingPhysician</td>
+                        </tr>
+                        <tr>
+                            <th>رقم الطبيب</th>
+                            <td>@Model.PhysicianPhone</td>
+                        </tr>
+                        <tr>
+                            <th>المستشفى المفضل</th>
+                            <td>@Model.PreferredHospital</td>
+                        </tr>
+                        <tr>
+                            <th>رقم التأمين الصحي</th>
+                            <td>@Model.InsuranceNumber</td>
+                        </tr>
+                        <tr>
+                            <th>شركة التأمين</th>
+                            <td>@Model.InsuranceCompany</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">زيارات العيادة (@Model.VisitCount زيارة)</h5>
+                </div>
+                <div class="card-body">
+                    <a asp-action="StudentVisits" asp-route-studentId="@Model.StudentId" class="btn btn-info">
+                        <i class="bi bi-calendar-check"></i> عرض جميع الزيارات
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

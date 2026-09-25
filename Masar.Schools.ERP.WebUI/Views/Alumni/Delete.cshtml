@@ -1,0 +1,56 @@
+@model Masar.Schools.ERP.Domain.DTOs.AlumniRecordDto
+
+@{
+    ViewData["Title"] = "حذف الخريج";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3"><i class="bi bi-trash"></i> حذف سجل الخريج</h2>
+        </div>
+    </div>
+
+    @if (Model != null)
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="alert alert-warning">
+                            <h4><i class="bi bi-exclamation-triangle"></i> تأكيد الحذف</h4>
+                            <p>هل أنت متأكد من حذف سجل الخريج التالي؟</p>
+                        </div>
+
+                        <dl class="row">
+                            <dt class="col-sm-3">اسم الطالب:</dt>
+                            <dd class="col-sm-9">@Model.StudentName</dd>
+
+                            <dt class="col-sm-3">رقم الخريج:</dt>
+                            <dd class="col-sm-9">@Model.AlumniNumber</dd>
+
+                            <dt class="col-sm-3">سنة التخرج:</dt>
+                            <dd class="col-sm-9">@Model.GraduationYear</dd>
+
+                            <dt class="col-sm-3">الجامعة:</dt>
+                            <dd class="col-sm-9">@Model.UniversityArabic</dd>
+
+                            <dt class="col-sm-3">التخصص:</dt>
+                            <dd class="col-sm-9">@Model.MajorArabic</dd>
+                        </dl>
+
+                        <form asp-action="DeleteConfirmed" method="post">
+                            <input type="hidden" asp-for="Id" />
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> نعم، احذف
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> إلغاء
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

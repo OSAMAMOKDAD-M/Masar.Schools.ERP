@@ -1,0 +1,269 @@
+@{
+    ViewData["Title"] = "ورقة التحكم";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-table"></i> ورقة التحكم
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للدرجات
+        </a>
+        <button class="btn btn-success" onclick="saveGrades()">
+            <i class="bi bi-save"></i> حفظ الدرجات
+        </button>
+        <button class="btn btn-primary" onclick="approveSheet()">
+            <i class="bi bi-check-circle"></i> اعتماد الورقة
+        </button>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <label class="form-label">Class</label>
+                <select class="form-select" id="classSelect">
+                    <option value="">Select Class</option>
+                    <option value="1" selected>Class 1-A</option>
+                    <option value="2">Class 1-B</option>
+                    <option value="3">Class 2-A</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <label class="form-label">Term</label>
+                <select class="form-select" id="termSelect">
+                    <option value="1" selected>First Term</option>
+                    <option value="2">Second Term</option>
+                    <option value="3">Final</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <label class="form-label">Subject</label>
+                <select class="form-select" id="subjectSelect">
+                    <option value="">Select Subject</option>
+                    <option value="math" selected>Mathematics</option>
+                    <option value="arabic">Arabic</option>
+                    <option value="english">English</option>
+                    <option value="science">Science</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <label class="form-label">Exam Type</label>
+                <select class="form-select" id="examTypeSelect">
+                    <option value="midterm">Midterm</option>
+                    <option value="final" selected>Final</option>
+                    <option value="quiz">Quiz</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Grade Entry Sheet</h5>
+                <small class="text-muted">Class 1-A - Mathematics - Final Exam - First Term</small>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Student Number</th>
+                                <th>Name</th>
+                                <th>Written (40)</th>
+                                <th>Oral (20)</th>
+                                <th>Practical (20)</th>
+                                <th>Attendance (20)</th>
+                                <th>Total (100)</th>
+                                <th>Grade</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gradesBody">
+                            <tr>
+                                <td>1</td>
+                                <td>20260001</td>
+                                <td>أحمد محمد أحمد</td>
+                                <td><input type="number" class="form-control form-control-sm grade-input" data-max="40" value="35"></td>
+                                <td><input type="number" class="form-control form-control-sm grade-input" data-max="20" value="18"></td>
+                                <td><input type="number" class="form-control form-control-sm grade-input" data-max="20" value="17"></td>
+                                <td><input type="number" class="form-control form-control-sm grade-input" data-max="20" value="19"></td>
+                                <td class="fw-bold total-grade">89</td>
+                                <td class="letter-grade">A</td>
+                                <td><input type="text" class="form-control form-control-sm" placeholder="Notes"></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>20260002</td>
+                                <td>محمد علي محمد</td>
+                                <td><input type="number" class="form-control form-control-sm grade-input" data-max="40" value="32"></td>
+                                <td><input type="number" class="form-control form-control-sm grade-input" data-max="20" value="15"></td>
+                                <td><input type="number" class="form-control form-control-sm grade-input" data-max="20" value="16"></td>
+                                <td><input type="number" class="form-control form-control-sm grade-input" data-max="20" value="18"></td>
+                                <td class="fw-bold total-grade">81</td>
+                                <td class="letter-grade">B+</td>
+                                <td><input type="text" class="form-control form-control-sm" placeholder="Notes"></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>20260003</td>
+                                <td>سارة أحمد محمد</td>
+                                <td><input type="number" class="form-control form-control-sm grade-input" data-max="40" value="38"></td>
+                                <td><input type="number" class="form-control form-control-sm grade-input" data-max="20" value="19"></td>
+                                <td><input type="number" class="form-control form-control-sm grade-input" data-max="20" value="18"></td>
+                                <td><input type="number" class="form-control form-control-sm grade-input" data-max="20" value="20"></td>
+                                <td class="fw-bold total-grade">95</td>
+                                <td class="letter-grade">A+</td>
+                                <td><input type="text" class="form-control form-control-sm" placeholder="Excellent"></td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="7" class="text-end fw-bold">Class Average:</td>
+                                <td class="fw-bold" id="classAverage">88.3</td>
+                                <td class="letter-grade">A</td>
+                                <td>-</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">A+ (90-100)</h5>
+                <h3 class="text-success" id="aplusCount">1</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">A (80-89)</h5>
+                <h3 class="text-primary" id="aCount">1</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">B (70-79)</h5>
+                <h3 class="text-info" id="bCount">1</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Below 70</h5>
+                <h3 class="text-danger" id="belowCount">0</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function calculateTotal(row) {
+            const inputs = row.querySelectorAll('.grade-input');
+            let total = 0;
+            inputs.forEach(input => {
+                const value = parseFloat(input.value) || 0;
+                const max = parseFloat(input.dataset.max) || 100;
+                if (value <= max) {
+                    total += value;
+                }
+            });
+            return total;
+        }
+        
+        function getLetterGrade(total) {
+            if (total >= 90) return 'A+';
+            if (total >= 80) return 'A';
+            if (total >= 70) return 'B';
+            if (total >= 60) return 'C';
+            if (total >= 50) return 'D';
+            return 'F';
+        }
+        
+        function updateRow(row) {
+            const total = calculateTotal(row);
+            const totalCell = row.querySelector('.total-grade');
+            const letterCell = row.querySelector('.letter-grade');
+            
+            totalCell.textContent = total.toFixed(0);
+            letterCell.textContent = getLetterGrade(total);
+            
+            updateStatistics();
+        }
+        
+        function updateStatistics() {
+            const rows = document.querySelectorAll('#gradesBody tr');
+            let aplus = 0, a = 0, b = 0, below = 0;
+            let totalSum = 0;
+            
+            rows.forEach(row => {
+                const total = parseFloat(row.querySelector('.total-grade').textContent) || 0;
+                totalSum += total;
+                
+                if (total >= 90) aplus++;
+                else if (total >= 80) a++;
+                else if (total >= 70) b++;
+                else below++;
+            });
+            
+            document.getElementById('aplusCount').textContent = aplus;
+            document.getElementById('aCount').textContent = a;
+            document.getElementById('bCount').textContent = b;
+            document.getElementById('belowCount').textContent = below;
+            
+            const average = rows.length > 0 ? totalSum / rows.length : 0;
+            document.getElementById('classAverage').textContent = average.toFixed(1);
+        }
+        
+        function saveGrades() {
+            alert('Grades saved successfully!');
+        }
+        
+        function approveSheet() {
+            if (confirm('Are you sure you want to approve this control sheet? This action cannot be undone.')) {
+                alert('Control sheet approved successfully!');
+            }
+        }
+        
+        // Add event listeners to grade inputs
+        document.querySelectorAll('.grade-input').forEach(input => {
+            input.addEventListener('input', function() {
+                updateRow(this.closest('tr'));
+            });
+        });
+        
+        // Initial calculation
+        document.querySelectorAll('#gradesBody tr').forEach(row => {
+            updateRow(row);
+        });
+    </script>
+}

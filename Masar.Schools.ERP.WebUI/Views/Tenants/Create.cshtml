@@ -1,0 +1,158 @@
+@model Tenant
+@{
+    ViewData["Title"] = "إضافة مؤسسة جديدة";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-plus-circle"></i> إضافة مؤسسة جديدة
+        </h1>
+        <p class="text-muted">أدخل بيانات المؤسسة الجديدة</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-building"></i> بيانات المؤسسة
+            </div>
+            <div class="card-body">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger">
+                        <h5><i class="bi bi-exclamation-triangle"></i> أخطاء في البيانات</h5>
+                        <ul>
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NameArabic" class="form-label">اسم المؤسسة (عربي)</label>
+                            <input asp-for="NameArabic" class="form-control" required>
+                            <span asp-validation-for="NameArabic" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Name" class="form-label">اسم المؤسسة (إنجليزي)</label>
+                            <input asp-for="Name" class="form-control" required>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="LicenseNumber" class="form-label">رقم الترخيص</label>
+                        <input asp-for="LicenseNumber" class="form-control" required>
+                        <span asp-validation-for="LicenseNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Email" class="form-label">البريد الإلكتروني</label>
+                            <input asp-for="Email" class="form-control" type="email">
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Phone" class="form-label">رقم الهاتف</label>
+                            <input asp-for="Phone" class="form-control">
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label">العنوان</label>
+                        <input asp-for="Address" class="form-control">
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="City" class="form-label">المدينة</label>
+                        <input asp-for="City" class="form-control">
+                        <span asp-validation-for="City" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="SubscriptionStartDate" class="form-label">تاريخ بداية الاشتراك</label>
+                            <input asp-for="SubscriptionStartDate" class="form-control" type="date">
+                            <span asp-validation-for="SubscriptionStartDate" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="SubscriptionEndDate" class="form-label">تاريخ نهاية الاشتراك</label>
+                            <input asp-for="SubscriptionEndDate" class="form-control" type="date">
+                            <span asp-validation-for="SubscriptionEndDate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PrimaryColor" class="form-label">اللون الرئيسي</label>
+                            <input asp-for="PrimaryColor" class="form-control" type="color">
+                            <span asp-validation-for="PrimaryColor" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="SecondaryColor" class="form-label">اللون الثانوي</label>
+                            <input asp-for="SecondaryColor" class="form-control" type="color">
+                            <span asp-validation-for="SecondaryColor" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">شعار المؤسسة</label>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <input type="file" name="logoFile" class="form-control" accept="image/*" onchange="previewLogo(event)">
+                                <span asp-validation-for="LogoPath" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <div id="logoPreview" class="text-center border rounded p-2" style="min-height: 100px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+                                    <span class="text-muted">
+                                        <i class="bi bi-image" style="font-size: 2rem;"></i>
+                                        <br>
+                                        <small>معاينة الشعار</small>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        function previewLogo(event) {
+                            const file = event.target.files[0];
+                            if (file) {
+                                const reader = new FileReader();
+                                reader.onload = function(e) {
+                                    const preview = document.getElementById('logoPreview');
+                                    preview.innerHTML = `<img src="${e.target.result}" alt="معاينة الشعار" style="max-width: 100%; max-height: 100px; object-fit: contain;">`;
+                                }
+                                reader.readAsDataURL(file);
+                            }
+                        }
+                    </script>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" checked>
+                            <label asp-for="IsActive" class="form-check-label">نشط</label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> حفظ
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> رجوع
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,150 @@
+@model List<Masar.Schools.ERP.WebUI.Controllers.SavedReportTemplate>
+@{
+    ViewData["Title"] = "التقارير المحفوظة";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-bookmark"></i> التقارير المحفوظة
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>الاسم</th>
+                                        <th>الجدول</th>
+                                        <th>عدد الحقول</th>
+                                        <th>عدد الفلاتر</th>
+                                        <th>تاريخ الإنشاء</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var report in Model)
+                                    {
+                                        <tr>
+                                            <td>@report.Name</td>
+                                            <td>@report.TableName</td>
+                                            <td>@report.SelectedColumns.Count</td>
+                                            <td>@report.Filters.Count</td>
+                                            <td>@report.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary" onclick="loadReport('@report.Id')">
+                                                    <i class="bi bi-upload"></i> تحميل
+                                                </button>
+                                                <button class="btn btn-sm btn-success" onclick="generateReport('@report.Id')">
+                                                    <i class="bi bi-play"></i> توليد
+                                                </button>
+                                                <button class="btn btn-sm btn-danger" onclick="deleteReport('@report.Id')">
+                                                    <i class="bi bi-trash"></i> حذف
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> لا توجد تقارير محفوظة حالياً.
+                            <a href="/Reports/CustomReportBuilder" class="btn btn-primary btn-sm">إنشاء تقرير جديد</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        async function loadReport(reportId) {
+            try {
+                const response = await fetch('/Reports/LoadSavedReport', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    },
+                    body: JSON.stringify({ reportId })
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.template) {
+                    // Store the template in sessionStorage
+                    sessionStorage.setItem('loadedReportTemplate', JSON.stringify(data.template));
+                    window.location.href = '/Reports/CustomReportBuilder';
+                } else {
+                    alert('فشل تحميل النموذج: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error loading report:', error);
+                alert('حدث خطأ أثناء تحميل النموذج');
+            }
+        }
+
+        async function generateReport(reportId) {
+            try {
+                const response = await fetch('/Reports/LoadSavedReport', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    },
+                    body: JSON.stringify({ reportId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // توليد التقرير من النموذج المحفوظ
+                    // TODO: Implement report generation from saved template
+                    alert('سيتم توليد التقرير من النموذج المحفوظ');
+                } else {
+                    alert('فشل توليد التقرير: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error generating report:', error);
+                alert('حدث خطأ أثناء توليد التقرير');
+            }
+        }
+
+        async function deleteReport(reportId) {
+            if (!confirm('هل أنت متأكد من حذف هذا النموذج؟')) return;
+
+            try {
+                const response = await fetch('/Reports/DeleteSavedReport', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    },
+                    body: JSON.stringify({ reportId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('تم حذف النموذج بنجاح');
+                    location.reload();
+                } else {
+                    alert('فشل حذف النموذج: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error deleting report:', error);
+                alert('حدث خطأ أثناء حذف النموذج');
+            }
+        }
+    </script>
+}

@@ -1,0 +1,68 @@
+@model List<Masar.Schools.ERP.Domain.DTOs.InventoryTransferDto>
+
+@{
+    ViewData["Title"] = "عمليات النقل";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">عمليات النقل</h3>
+                    <div class="card-tools">
+                        <a asp-action="CreateInventoryTransfer" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> عملية نقل جديدة
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>رقم النقل</th>
+                                <th>التاريخ</th>
+                                <th>من المخزن</th>
+                                <th>إلى المخزن</th>
+                                <th>القيمة</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                @foreach (var transfer in Model)
+                                {
+                                    <tr>
+                                        <td>@transfer.TransferNumber</td>
+                                        <td>@transfer.TransferDate.ToString("yyyy-MM-dd")</td>
+                                        <td>@transfer.FromWarehouseName</td>
+                                        <td>@transfer.ToWarehouseName</td>
+                                        <td>@transfer.TotalValue.ToString("C")</td>
+                                        <td>
+                                            <span class="badge bg-@(transfer.Status == "Completed" ? "success" : transfer.Status == "Approved" ? "info" : "warning")">
+                                                @transfer.StatusArabic
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a asp-action="InventoryTransferDetails" asp-route-id="@transfer.Id" class="btn btn-sm btn-info">
+                                                <i class="bi bi-eye"></i> عرض
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center">لا توجد عمليات نقل</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

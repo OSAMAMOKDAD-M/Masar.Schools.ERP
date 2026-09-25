@@ -1,0 +1,75 @@
+@model School
+@{
+    ViewData["Title"] = "تفاصيل المدرسة";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-building"></i> تفاصيل المدرسة
+        </h1>
+        <p class="text-muted">معلومات تفصيلية عن المدرسة</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-info-circle"></i> معلومات المدرسة
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>اسم المدرسة (عربي):</strong> @Model.NameArabic</p>
+                        <p><strong>اسم المدرسة (إنجليزي):</strong> @Model.Name</p>
+                        <p><strong>الكود:</strong> @Model.Code</p>
+                        <p><strong>رقم النور:</strong> @Model.NoorSchoolId</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>البريد الإلكتروني:</strong> @Model.Email</p>
+                        <p><strong>رقم الهاتف:</strong> @Model.Phone</p>
+                        <p><strong>المدينة:</strong> @Model.City</p>
+                        <p><strong>الحالة:</strong> @(Model.IsActive ? "نشط" : "غير نشط")</p>
+                    </div>
+                </div>
+                <p><strong>العنوان:</strong> @Model.Address</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-people"></i> الإحصائيات
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <strong>عدد الطلاب:</strong> @Model.Students.Count
+                </div>
+                <div class="mb-3">
+                    <strong>عدد الموظفين:</strong> @Model.Employees.Count
+                </div>
+                <div class="mb-3">
+                    <strong>عدد الفروع:</strong> @(Model.Branches?.Count ?? 0)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> تعديل
+            </a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                <i class="bi bi-trash"></i> حذف
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> رجوع
+            </a>
+        </div>
+    </div>
+</div>

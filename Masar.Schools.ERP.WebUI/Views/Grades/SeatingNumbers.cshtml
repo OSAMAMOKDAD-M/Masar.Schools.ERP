@@ -1,0 +1,45 @@
+@model List<SeatingNumberDto>
+@{
+    ViewData["Title"] = "أرقام الجلوس";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-table"></i> أرقام الجلوس
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للقائمة
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>اسم الطالب</th>
+                                <th>رقم الجلوس</th>
+                                <th>الرقم السري</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.StudentName</td>
+                                    <td>@item.SeatingNumber</td>
+                                    <td>@item.SecretNumber</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

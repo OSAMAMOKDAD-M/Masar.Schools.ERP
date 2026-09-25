@@ -1,0 +1,49 @@
+@model Masar.Schools.ERP.Domain.DTOs.CreateCashierShiftDto
+@{
+    ViewData["Title"] = "فتح وردية كاشير";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">فتح وردية كاشير جديدة</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="OpenShift" method="post">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div class="form-group">
+                            <label asp-for="OpeningBalance" class="control-label">رصيد الافتتاح (نقداً)</label>
+                            <input asp-for="OpeningBalance" class="form-control" type="number" step="0.01" />
+                            <span asp-validation-for="OpeningBalance" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="OpeningCardBalance" class="control-label">رصيد الافتتاح (بطاقة)</label>
+                            <input asp-for="OpeningCardBalance" class="form-control" type="number" step="0.01" />
+                            <span asp-validation-for="OpeningCardBalance" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Notes" class="control-label">ملاحظات</label>
+                            <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <button type="submit" class="btn btn-primary">فتح الوردية</button>
+                            <a asp-action="Shifts" class="btn btn-secondary">إلغاء</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

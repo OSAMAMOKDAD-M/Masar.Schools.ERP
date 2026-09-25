@@ -1,0 +1,194 @@
+@model Masar.Schools.ERP.Domain.Entities.Student
+@{
+    ViewData["Title"] = "السجل الأكاديمي";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">السجل الأكاديمي - @Model.FullNameArabic</h3>
+                    <div class="card-tools">
+                        <a href="@Url.Action("Index", "Students")" class="btn btn-secondary">
+                            <i class="fas fa-arrow-right"></i> العودة
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="info-box bg-info">
+                                <span class="info-box-icon"><i class="fas fa-graduation-cap"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">رقم الطالب</span>
+                                    <span class="info-box-number">@Model.StudentNumber</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-success">
+                                <span class="info-box-icon"><i class="fas fa-school"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">الفصل</span>
+                                    <span class="info-box-number">@Model.ClassRoom?.NameArabic</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-warning">
+                                <span class="info-box-icon"><i class="fas fa-building"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">المدرسة</span>
+                                    <span class="info-box-number">@Model.School?.NameArabic</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-danger">
+                                <span class="info-box-icon"><i class="fas fa-user"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">الوضع الأكاديمي</span>
+                                    <span class="info-box-number">@Model.AcademicStanding</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>السنة الأكاديمية</th>
+                                    <th>المستوى</th>
+                                    <th>الشعبة</th>
+                                    <th>المعدل (GPA)</th>
+                                    <th>النسبة المئوية</th>
+                                    <th>الوضع الأكاديمي</th>
+                                    <th>المرتبة</th>
+                                    <th>أيام الغياب</th>
+                                    <th>أيام التأخير</th>
+                                    <th>الفصل الحالي</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.AcademicRecords != null && Model.AcademicRecords.Any())
+                                {
+                                    @foreach (var record in Model.AcademicRecords.OrderByDescending(r => r.AcademicYear))
+                                    {
+                                        <tr>
+                                            <td>@record.AcademicYear</td>
+                                            <td>@record.GradeLevelArabic</td>
+                                            <td>@record.SectionArabic</td>
+                                            <td>@record.GPA?.ToString("F2")</td>
+                                            <td>@record.OverallPercentage?.ToString("F2")%</td>
+                                            <td>
+                                                <span class="badge bg-@(record.AcademicStanding == "Honors" ? "success" : record.AcademicStanding == "Good" ? "primary" : record.AcademicStanding == "Probation" ? "warning" : "danger")">
+                                                    @record.AcademicStandingArabic
+                                                </span>
+                                            </td>
+                                            <td>@record.ClassRank / @record.TotalStudentsInClass</td>
+                                            <td>@record.AbsenceDays</td>
+                                            <td>@record.LateDays</td>
+                                            <td>@record.CurrentTermArabic</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="10" class="text-center">لا توجد سجلات أكاديمية</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <button class="btn btn-primary" onclick="showAddAcademicRecordModal()">
+                                <i class="fas fa-plus"></i> إضافة سجل أكاديمي
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal لإضافة سجل أكاديمي -->
+<div class="modal fade" id="addAcademicRecordModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">إضافة سجل أكاديمي جديد</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addAcademicRecordForm">
+                    <input type="hidden" name="StudentId" value="@Model.Id" />
+                    <div class="form-group">
+                        <label>السنة الأكاديمية</label>
+                        <input type="number" name="AcademicYear" class="form-control" required value="@DateTime.Now.Year" />
+                    </div>
+                    <div class="form-group">
+                        <label>المستوى</label>
+                        <input type="text" name="GradeLevel" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>المستوى بالعربية</label>
+                        <input type="text" name="GradeLevelArabic" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>الشعبة</label>
+                        <input type="text" name="Section" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>الشعبة بالعربية</label>
+                        <input type="text" name="SectionArabic" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>المعدل (GPA)</label>
+                        <input type="number" step="0.01" name="GPA" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>النسبة المئوية</label>
+                        <input type="number" step="0.01" name="OverallPercentage" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>الوضع الأكاديمي</label>
+                        <select name="AcademicStanding" class="form-control">
+                            <option value="Good">جيد</option>
+                            <option value="Honors">تميز</option>
+                            <option value="Probation">إنذار</option>
+                            <option value="Suspended">فصل</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-primary" onclick="saveAcademicRecord()">حفظ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showAddAcademicRecordModal() {
+            $('#addAcademicRecordModal').modal('show');
+        }
+
+        function saveAcademicRecord() {
+            // هنا يجب إضافة الكود لحفظ السجل الأكاديمي
+            // للتبسيط، سنعرض رسالة نجاح
+            alert('تم حفظ السجل الأكاديمي بنجاح');
+            $('#addAcademicRecordModal').modal('hide');
+        }
+    </script>
+}

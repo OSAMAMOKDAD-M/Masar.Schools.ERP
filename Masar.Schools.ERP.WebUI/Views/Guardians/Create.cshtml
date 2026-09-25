@@ -1,0 +1,129 @@
+@model GuardianCreateDto
+@{
+    ViewData["Title"] = "إضافة ولي أمر جديد";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-person-plus"></i> إضافة ولي أمر جديد
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للقائمة
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="FirstNameArabic" class="form-label">الاسم الأول (عربي)</label>
+                            <input asp-for="FirstNameArabic" class="form-control" required>
+                            <span asp-validation-for="FirstNameArabic" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="LastNameArabic" class="form-label">اسم العائلة (عربي)</label>
+                            <input asp-for="LastNameArabic" class="form-control" required>
+                            <span asp-validation-for="LastNameArabic" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="FirstName" class="form-label">الاسم الأول (إنجليزي)</label>
+                            <input asp-for="FirstName" class="form-control" required>
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="LastName" class="form-label">اسم العائلة (إنجليزي)</label>
+                            <input asp-for="LastName" class="form-control" required>
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="NationalId" class="form-label">رقم الهوية الوطنية</label>
+                            <input asp-for="NationalId" class="form-control">
+                            <span asp-validation-for="NationalId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="PhoneNumber" class="form-label">رقم الهاتف</label>
+                            <input asp-for="PhoneNumber" class="form-control" required>
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="WhatsAppNumber" class="form-label">رقم الواتساب</label>
+                            <input asp-for="WhatsAppNumber" class="form-control">
+                            <span asp-validation-for="WhatsAppNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label">البريد الإلكتروني</label>
+                            <input asp-for="Email" type="email" class="form-control">
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="TenantId" class="form-label">المدرسة</label>
+                            <select asp-for="TenantId" class="form-select" asp-items="ViewBag.Tenants">
+                                <option value="">اختر المدرسة</option>
+                            </select>
+                            <span asp-validation-for="TenantId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Relationship" class="form-label">صلة القرابة (إنجليزي)</label>
+                            <input asp-for="Relationship" class="form-control" placeholder="Father, Mother, Guardian">
+                            <span asp-validation-for="Relationship" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="RelationshipArabic" class="form-label">صلة القرابة (عربي)</label>
+                            <input asp-for="RelationshipArabic" class="form-control" placeholder="أب، أم، ولي أمر">
+                            <span asp-validation-for="RelationshipArabic" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Occupation" class="form-label">المهنة (إنجليزي)</label>
+                            <input asp-for="Occupation" class="form-control">
+                            <span asp-validation-for="Occupation" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="OccupationArabic" class="form-label">المهنة (عربي)</label>
+                            <input asp-for="OccupationArabic" class="form-control">
+                            <span asp-validation-for="OccupationArabic" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label asp-for="Address" class="form-label">العنوان</label>
+                            <textarea asp-for="Address" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> حفظ ولي الأمر
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> إلغاء
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,153 @@
+@model Masar.Schools.ERP.Domain.DTOs.CreateClinicVisitDto
+
+@{
+    ViewData["Title"] = "تسجيل زيارة عيادة";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0"><i class="bi bi-clipboard-plus"></i> تسجيل زيارة عيادة</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="QuickVisit" method="post">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">اسم الطالب</label>
+                                <select asp-for="StudentId" class="form-select" required>
+                                    <option value="">اختر الطالب</option>
+                                    <!-- سيتم ملؤها ديناميكياً -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">نوع الزيارة</label>
+                                <select asp-for="VisitType" class="form-select">
+                                    <option value="Routine">عادية</option>
+                                    <option value="Emergency">طارئة</option>
+                                    <option value="FollowUp">متابعة</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">سبب الزيارة</label>
+                            <input type="text" asp-for="VisitReason" class="form-control" placeholder="مثال: صداع، حرارة، إصابة" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">الأعراض</label>
+                            <textarea asp-for="Symptoms" class="form-control" rows="3" placeholder="وصف الأعراض"></textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label class="form-label">درجة الحرارة</label>
+                                <input type="number" step="0.1" asp-for="Temperature" class="form-control" placeholder="37.0" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">ضغط الدم</label>
+                                <div class="input-group">
+                                    <input type="number" asp-for="BloodPressureSystolic" class="form-control" placeholder="120" />
+                                    <span class="input-group-text">/</span>
+                                    <input type="number" asp-for="BloodPressureDiastolic" class="form-control" placeholder="80" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">النبض</label>
+                                <input type="number" asp-for="HeartRate" class="form-control" placeholder="72" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">الأكسجين</label>
+                                <input type="number" asp-for="OxygenSaturation" class="form-control" placeholder="98" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">الوزن (كجم)</label>
+                                <input type="number" step="0.1" asp-for="Weight" class="form-control" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">الطول (سم)</label>
+                                <input type="number" step="0.1" asp-for="Height" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">التشخيص المبدئي</label>
+                            <textarea asp-for="PreliminaryDiagnosis" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">العلاج</label>
+                            <textarea asp-for="Treatment" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">الدواء</label>
+                                <input type="text" asp-for="MedicationPrescribed" class="form-control" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">الجرعة</label>
+                                <input type="text" asp-for="Dosage" class="form-control" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">المدة</label>
+                                <input type="text" asp-for="Duration" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">حالة الطالب بعد الزيارة</label>
+                            <select asp-for="PatientCondition" class="form-select">
+                                <option value="Stable">مستقر</option>
+                                <option value="Improved">محسّن</option>
+                                <option value="Stable">نفس الحالة</option>
+                                <option value="Worsening">سوء</option>
+                            </select>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input type="checkbox" asp-for="ReturnedToClass" class="form-check-input" />
+                                    <label class="form-check-label">أرجع للفصل</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input type="checkbox" asp-for="ReferredToHospital" class="form-check-input" />
+                                    <label class="form-check-label">حوّل للمستشفى</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input type="checkbox" asp-for="SentHome" class="form-check-input" />
+                                    <label class="form-check-label">حوّل للمنزل</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">ملاحظات</label>
+                            <textarea asp-for="Notes" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input type="checkbox" asp-for="IsEmergency" class="form-check-input" />
+                            <label class="form-check-label text-danger">حالة طارئة (سيتم إرسال إشعار لولي الأمر)</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> حفظ الزيارة
+                        </button>
+                        <a asp-action="Dashboard" class="btn btn-secondary">إلغاء</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

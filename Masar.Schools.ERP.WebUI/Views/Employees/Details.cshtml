@@ -1,0 +1,148 @@
+@model Employee
+@{
+    ViewData["Title"] = "تفاصيل الموظف";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 class="text-end mb-3">تفاصيل الموظف</h2>
+            <div class="btn-group">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-right"></i> العودة للموظفين
+                </a>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> تعديل
+                </a>
+                <a asp-action="TeacherSchedule" asp-route-id="@Model.Id" class="btn btn-info">
+                    <i class="fas fa-calendar-week"></i> جدول المعلم
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+                    {
+                        <img src="@Model.ProfileImagePath" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="@Model.FullNameArabic">
+                    }
+                    else
+                    {
+                        <div class="rounded-circle mb-3 d-flex align-items-center justify-content-center" style="width: 150px; height: 150px; background-color: #e9ecef;">
+                            <i class="fas fa-user fa-3x text-secondary"></i>
+                        </div>
+                    }
+                    <h4 class="card-title">@Model.FullNameArabic</h4>
+                    <p class="card-text text-muted">@Model.FullName</p>
+                    <p class="card-text">@Model.JobTitleArabic</p>
+                    @if (Model.IsActive)
+                    {
+                        <span class="badge bg-success">نشط</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">غير نشط</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">معلومات الموظف</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">رقم الموظف:</label>
+                            <p class="form-control-plaintext">@Model.EmployeeNumber</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">الاسم بالعربية:</label>
+                            <p class="form-control-plaintext">@Model.FullNameArabic</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">الاسم بالإنجليزية:</label>
+                            <p class="form-control-plaintext">@Model.FullName</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">الرقم الوطني:</label>
+                            <p class="form-control-plaintext">@Model.NationalId</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">المسمى الوظيفي:</label>
+                            <p class="form-control-plaintext">@Model.JobTitleArabic</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">القسم:</label>
+                            <p class="form-control-plaintext">@Model.DepartmentArabic</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">رقم الهاتف:</label>
+                            <p class="form-control-plaintext">@Model.PhoneNumber</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">البريد الإلكتروني:</label>
+                            <p class="form-control-plaintext">@Model.Email</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">تاريخ التعيين:</label>
+                            <p class="form-control-plaintext">@Model.HireDate?.ToString("yyyy-MM-dd")</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">الراتب:</label>
+                            <p class="form-control-plaintext">@Model.Salary?.ToString("N2") ر.س</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">البنك:</label>
+                            <p class="form-control-plaintext">@Model.BankName</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">رقم الحساب البنكي:</label>
+                            <p class="form-control-plaintext">@Model.BankAccountNumber</p>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">العنوان:</label>
+                            <p class="form-control-plaintext">@Model.Address</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">المدرسة:</label>
+                            <p class="form-control-plaintext">@Model.School?.NameArabic</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">الفرع:</label>
+                            <p class="form-control-plaintext">@Model.Branch?.NameArabic</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">العمليات السريعة</h5>
+                </div>
+                <div class="card-body">
+                    <div class="btn-group flex-wrap">
+                        <a asp-action="Payroll" class="btn btn-outline-primary">
+                            <i class="fas fa-money-bill-wave"></i> الرواتب
+                        </a>
+                        <a asp-action="Leaves" class="btn btn-outline-success">
+                            <i class="fas fa-calendar-check"></i> الإجازات
+                        </a>
+                        <a asp-action="TeacherSchedule" asp-route-id="@Model.Id" class="btn btn-outline-info">
+                            <i class="fas fa-calendar-week"></i> جدول المعلم
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

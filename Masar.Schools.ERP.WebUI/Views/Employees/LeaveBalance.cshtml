@@ -1,0 +1,79 @@
+@model IEnumerable<Masar.Schools.ERP.Domain.DTOs.LeaveBalanceDto>
+@{
+    ViewData["Title"] = "رصيد الإجازات";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var employee = ViewBag.Employee as Employee;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">رصيد الإجازات - @employee?.FullNameArabic</h3>
+                    <div class="card-tools">
+                        <a href="@Url.Action("Leaves", "Employees")" class="btn btn-secondary">
+                            <i class="fas fa-arrow-right"></i> العودة
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        عرض رصيد الإجازات للموظف @employee?.FullNameArabic
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>السنة المالية</th>
+                                    <th>نوع الإجازة</th>
+                                    <th>الرصيد الكلي</th>
+                                    <th>المستخدم</th>
+                                    <th>المتبقي</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    @foreach (var balance in Model)
+                                    {
+                                        <tr>
+                                            <td>@balance.FiscalYear</td>
+                                            <td>@balance.LeaveTypeArabic</td>
+                                            <td>@balance.TotalDays</td>
+                                            <td>@balance.UsedDays</td>
+                                            <td>
+                                                <span class="badge bg-@(balance.RemainingDays >= 10 ? "success" : balance.RemainingDays >= 5 ? "warning" : "danger")">
+                                                    @balance.RemainingDays
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if (balance.IsActive)
+                                                {
+                                                    <span class="badge bg-success">نشط</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">غير نشط</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center">لا يوجد رصيد إجازات للموظف</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

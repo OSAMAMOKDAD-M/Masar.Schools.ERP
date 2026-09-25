@@ -1,0 +1,249 @@
+@model Masar.Schools.ERP.WebUI.ViewModels.ClassroomCreateVM
+
+<div class="row">
+    <div class="col-12">
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                <h5><i class="bi bi-exclamation-triangle"></i> أخطاء في البيانات</h5>
+                <ul>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+</div>
+
+<form method="post" data-ajax="true" action="@Url.Action(ViewContext.RouteData.Values["action"]?.ToString())">
+    @Html.AntiForgeryToken()
+    
+    @if (ViewBag.IsEdit == true)
+    {
+        <input type="hidden" name="Id" value="@ViewBag.ClassroomId" />
+    }
+    
+    @if (ViewBag.IsEdit != true)
+    {
+        <input type="hidden" asp-for="Code" id="autoCode" />
+    }
+    
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="Name" class="form-label">اسم الفصل (إنجليزي)</label>
+            <input asp-for="Name" class="form-control" required>
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="NameArabic" class="form-label">اسم الفصل (عربي)</label>
+            <input asp-for="NameArabic" class="form-control" required>
+            <span asp-validation-for="NameArabic" class="text-danger"></span>
+        </div>
+    </div>
+
+    @if (ViewBag.IsEdit == true)
+    {
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">كود الفصل</label>
+                <input type="text" class="form-control" value="@(ViewBag.ClassroomCode ?? "")" readonly>
+                <small class="text-muted">الكود: @(ViewBag.ClassroomCode ?? "") (لا يمكن تعديله)</small>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">كود الفصل (أوتوماتيكي)</label>
+                <input type="text" class="form-control" id="displayCode" readonly placeholder="سيتم توليد الكود تلقائياً...">
+                <small class="text-muted">يُنشأ تلقائياً بناءً على المدرسة والمرحلة والشعبة</small>
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="GradeLevelId" class="form-label">المرحلة الدراسية</label>
+            <select asp-for="GradeLevelId" class="form-select" asp-items="ViewBag.GradeLevels" required>
+                <option value="">اختر المرحلة الدراسية</option>
+            </select>
+            <span asp-validation-for="GradeLevelId" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="SectionId" class="form-label">الشعبة</label>
+            <select asp-for="SectionId" class="form-select" asp-items="ViewBag.Sections" required>
+                <option value="">اختر الشعبة</option>
+            </select>
+            <span asp-validation-for="SectionId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="Capacity" class="form-label">السعة (عدد الطلاب)</label>
+            <input asp-for="Capacity" class="form-control" type="number" min="1" max="100" required>
+            <span asp-validation-for="Capacity" class="text-danger"></span>
+            <small class="text-muted">الحد الأقصى: 100 طالب</small>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="SchoolId" class="form-label">المدرسة</label>
+            <select asp-for="SchoolId" class="form-select" asp-items="ViewBag.Schools" required>
+                <option value="">اختر المدرسة</option>
+            </select>
+            <span asp-validation-for="SchoolId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="BranchId" class="form-label">الفرع</label>
+            <select asp-for="BranchId" class="form-select" asp-items="ViewBag.Branches">
+                <option value="">اختر الفرع (اختياري)</option>
+            </select>
+            <span asp-validation-for="BranchId" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="ClassTeacherId" class="form-label">معلم الفصل</label>
+            <select asp-for="ClassTeacherId" class="form-select" asp-items="ViewBag.Teachers">
+                <option value="">اختر المعلم (اختياري)</option>
+            </select>
+            <span asp-validation-for="ClassTeacherId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <label asp-for="ClassTeacherId" class="form-label">معلم الفصل</label>
+            <select asp-for="ClassTeacherId" class="form-select" asp-items="ViewBag.Teachers">
+                <option value="">اختر المعلم (اختياري)</option>
+            </select>
+            <span asp-validation-for="ClassTeacherId" class="text-danger"></span>
+        </div>
+    </div>
+
+    @if (ViewBag.IsEdit == true)
+    {
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    عدد الطلاب الحالي في الفصل: <strong>@ViewBag.CurrentCount</strong>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="mb-3">
+        <div class="form-check">
+            <input asp-for="IsActive" class="form-check-input" type="checkbox" checked>
+            <label asp-for="IsActive" class="form-check-label">نشط</label>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2 justify-content-end">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle"></i> إلغاء
+        </button>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save"></i> حفظ
+        </button>
+    </div>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // توليد كود الفصل أوتوماتيكياً عند فتح النموذج
+        const autoCode = document.getElementById('autoCode');
+        if (autoCode) {
+            generateAutoCode();
+        }
+
+        // تحديث الكود عند تغيير المدرسة أو المرحلة أو الشعبة
+        const schoolSelect = document.getElementById('SchoolId');
+        const gradeLevelSelect = document.getElementById('GradeLevelId');
+        const sectionSelect = document.getElementById('SectionId');
+
+        if (schoolSelect) {
+            schoolSelect.addEventListener('change', generateAutoCode);
+        }
+        if (gradeLevelSelect) {
+            gradeLevelSelect.addEventListener('change', generateAutoCode);
+        }
+        if (sectionSelect) {
+            sectionSelect.addEventListener('change', generateAutoCode);
+        }
+    });
+
+    // دالة توليد الكود الأوتوماتيكي
+    function generateAutoCode() {
+        const autoCode = document.getElementById('autoCode');
+        const displayCode = document.getElementById('displayCode');
+        if (!autoCode || !displayCode) return;
+
+        const schoolSelect = document.getElementById('SchoolId');
+        const gradeLevelSelect = document.getElementById('GradeLevelId');
+        const sectionSelect = document.getElementById('SectionId');
+
+        if (!schoolSelect || !gradeLevelSelect) return;
+
+        const schoolId = schoolSelect.value;
+        const gradeLevelId = gradeLevelSelect.value;
+        const sectionId = sectionSelect ? sectionSelect.value : '';
+
+        if (!schoolId || !gradeLevelId) {
+            autoCode.value = '';
+            displayCode.value = '';
+            return;
+        }
+
+        // توليد كود بناءً على المدرسة والمرحلة والشعبة
+        // نمط: SchoolCode-GradeLevel-Section-Number
+        const schoolCode = getSchoolCode(schoolId);
+        const gradeCode = getGradeCode(gradeLevelId);
+        const sectionCode = sectionId ? getSectionCode(sectionId) : 'A';
+        const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+
+        const generatedCode = `${schoolCode}-${gradeCode}-${sectionCode}-${randomNum}`;
+        autoCode.value = generatedCode;
+        displayCode.value = generatedCode;
+    }
+
+    // الحصول على كود المدرسة
+    function getSchoolCode(schoolId) {
+        const schoolSelect = document.getElementById('SchoolId');
+        if (!schoolSelect) return 'SCH';
+        
+        const selectedOption = schoolSelect.options[schoolSelect.selectedIndex];
+        const schoolName = selectedOption ? selectedOption.text : 'SCH';
+        
+        // أخذ أول 3 أحرف من اسم المدرسة
+        return schoolName.substring(0, 3).toUpperCase().replace(/\s/g, '');
+    }
+
+    // الحصول على كود المرحلة
+    function getGradeCode(gradeLevelId) {
+        const gradeLevelSelect = document.getElementById('GradeLevelId');
+        if (!gradeLevelSelect) return 'G0';
+        
+        const selectedOption = gradeLevelSelect.options[gradeLevelSelect.selectedIndex];
+        const gradeLevelName = selectedOption ? selectedOption.text : 'G0';
+        
+        // أخذ أول حرفين من اسم المرحلة
+        return gradeLevelName.substring(0, 2).toUpperCase().replace(/\s/g, '');
+    }
+
+    // الحصول على كود الشعبة
+    function getSectionCode(sectionId) {
+        const sectionSelect = document.getElementById('SectionId');
+        if (!sectionSelect) return 'A';
+        
+        const selectedOption = sectionSelect.options[sectionSelect.selectedIndex];
+        const sectionName = selectedOption ? selectedOption.text : 'A';
+        
+        // أخذ أول حرف من اسم الشعبة
+        return sectionName.substring(0, 1).toUpperCase().replace(/\s/g, '');
+    }
+</script>

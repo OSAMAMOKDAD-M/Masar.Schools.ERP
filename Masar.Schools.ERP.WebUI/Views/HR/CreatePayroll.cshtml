@@ -1,0 +1,180 @@
+@model Masar.Schools.ERP.Infrastructure.Interfaces.PayrollCreateDto
+@{
+    ViewData["Title"] = "إنشاء ملف راتب جديد";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-primary">
+                <i class="bi bi-cash-plus"></i> إنشاء ملف راتب جديد
+            </h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="CreatePayroll" method="post">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="EmployeeId" class="form-label">الموظف</label>
+                            <select asp-for="EmployeeId" asp-items="ViewBag.Employees" class="form-select" required>
+                                <option value="">اختر الموظف</option>
+                            </select>
+                            <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="EffectiveFrom" class="form-label">تاريخ السريان من</label>
+                                <input asp-for="EffectiveFrom" class="form-control" type="date">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="PeriodStart" class="form-label">بداية الفترة</label>
+                                <input asp-for="PeriodStart" class="form-control" type="date">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="PeriodEnd" class="form-label">نهاية الفترة</label>
+                                <input asp-for="PeriodEnd" class="form-control" type="date">
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4 mb-3">الراتب والبدلات</h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Basic" class="form-label">الراتب الأساسي</label>
+                                <input asp-for="Basic" class="form-control" type="number" step="0.01" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Housing" class="form-label">بدل السكن</label>
+                                <input asp-for="Housing" class="form-control" type="number" step="0.01" value="0">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Transport" class="form-label">بدل النقل</label>
+                                <input asp-for="Transport" class="form-control" type="number" step="0.01" value="0">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="OtherEarnings" class="form-label">بدلات أخرى</label>
+                                <input asp-for="OtherEarnings" class="form-control" type="number" step="0.01" value="0">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="VariableEarnings" class="form-label">بدلات متغيرة</label>
+                                <input asp-for="VariableEarnings" class="form-control" type="number" step="0.01" value="0">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Deductions" class="form-label">الخصومات</label>
+                                <input asp-for="Deductions" class="form-control" type="number" step="0.01" value="0">
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4 mb-3">الغياب والتأخير</h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="AbsenceDays" class="form-label">أيام الغياب</label>
+                                <input asp-for="AbsenceDays" class="form-control" type="number" step="0.1" value="0">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="LateDays" class="form-label">أيام التأخير</label>
+                                <input asp-for="LateDays" class="form-control" type="number" step="0.1" value="0">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="LateDeduction" class="form-label">خصم التأخير</label>
+                                <input asp-for="LateDeduction" class="form-control" type="number" step="0.01" value="0">
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4 mb-3">إعدادات GOSI</h5>
+                        <div class="form-check mb-3">
+                            <input asp-for="GosiEnabled" class="form-check-input" type="checkbox" id="gosiEnabled">
+                            <label asp-for="GosiEnabled" class="form-check-label" for="gosiEnabled">تفعيل GOSI</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="GosiScheme" class="form-label">نظام GOSI</label>
+                                <select asp-for="GosiScheme" class="form-select">
+                                    <option value="auto">تلقائي</option>
+                                    <option value="manual">يدوي</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="GosiWage" class="form-label">أجر GOSI</label>
+                                <input asp-for="GosiWage" class="form-control" type="number" step="0.01" value="0">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="GosiServiceDays" class="form-label">أيام الخدمة</label>
+                                <input asp-for="GosiServiceDays" class="form-control" type="number" value="30">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Notes" class="form-label">ملاحظات</label>
+                            <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> حفظ ملف الراتب
+                            </button>
+                            <a asp-action="Payroll" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> إلغاء
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">حساب مباشر</h5>
+                    <div id="calculationPreview" class="mt-3">
+                        <p class="text-muted">اختر الموظف وأدخل البيانات لعرض الحساب</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Add live calculation preview
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('change', calculatePreview);
+        });
+
+        function calculatePreview() {
+            const basic = parseFloat(document.getElementById('Basic').value) || 0;
+            const housing = parseFloat(document.getElementById('Housing').value) || 0;
+            const transport = parseFloat(document.getElementById('Transport').value) || 0;
+            const other = parseFloat(document.getElementById('OtherEarnings').value) || 0;
+            const variable = parseFloat(document.getElementById('VariableEarnings').value) || 0;
+            const deductions = parseFloat(document.getElementById('Deductions').value) || 0;
+            const absenceDays = parseFloat(document.getElementById('AbsenceDays').value) || 0;
+            const lateDeduction = parseFloat(document.getElementById('LateDeduction').value) || 0;
+
+            const gross = basic + housing + transport + other + variable;
+            const absenceDeduction = (basic / 30) * absenceDays;
+            const totalDeductions = deductions + absenceDeduction + lateDeduction;
+            const net = gross - totalDeductions;
+
+            document.getElementById('calculationPreview').innerHTML = `
+                <div class="mb-2">
+                    <strong>الإجمالي:</strong> ${gross.toFixed(2)} ريال
+                </div>
+                <div class="mb-2">
+                    <strong>الخصومات:</strong> ${totalDeductions.toFixed(2)} ريال
+                </div>
+                <div class="mb-2">
+                    <strong>صافي الراتب:</strong> <span class="text-success fw-bold">${net.toFixed(2)} ريال</span>
+                </div>
+            `;
+        }
+    </script>
+}

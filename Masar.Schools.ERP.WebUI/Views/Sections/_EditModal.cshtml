@@ -1,0 +1,36 @@
+@model Masar.Schools.ERP.Domain.Entities.Section
+
+<form id="editForm" action="/Sections/Edit/@Model.Id" method="post" onsubmit="submitEditForm(this)">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <div class="form-group">
+        <label for="Code">الكود</label>
+        <input type="text" class="form-control" id="Code" name="Code" required maxlength="10" value="@Model.Code" />
+        <span class="text-danger field-validation-valid" data-valmsg-for="Code" data-valmsg-replace="true"></span>
+    </div>
+    <div class="form-group">
+        <label for="NameArabic">الاسم (عربي)</label>
+        <input type="text" class="form-control" id="NameArabic" name="NameArabic" required maxlength="50" value="@Model.NameArabic" />
+        <span class="text-danger field-validation-valid" data-valmsg-for="NameArabic" data-valmsg-replace="true"></span>
+    </div>
+    <div class="form-group">
+        <label for="Name">الاسم (إنجليزي)</label>
+        <input type="text" class="form-control" id="Name" name="Name" required maxlength="50" value="@Model.Name" />
+        <span class="text-danger field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+    </div>
+    <div class="form-group">
+        <label for="DisplayOrder">الترتيب</label>
+        <input type="number" class="form-control" id="DisplayOrder" name="DisplayOrder" value="@Model.DisplayOrder" min="1" />
+        <span class="text-danger field-validation-valid" data-valmsg-for="DisplayOrder" data-valmsg-replace="true"></span>
+    </div>
+    <div class="form-group">
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="IsActive" name="IsActive" @(Model.IsActive ? "checked" : "") />
+            <label class="form-check-label" for="IsActive">نشط</label>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+        <button type="submit" class="btn btn-primary">حفظ التعديلات</button>
+    </div>
+</form>

@@ -1,0 +1,17 @@
+/* 
+ * Vendor Libraries Consolidation
+ * Centralized file for all third-party CSS libraries
+ * Masar For Schools - Offline-First Architecture
+ */
+
+/* Cairo Font - Arabic Font Family */
+@import url('fonts.css');
+
+/* Bootstrap 5 RTL */
+@import url('../lib/bootstrap/dist/css/bootstrap.rtl.min.css');
+
+/* Bootstrap Icons */
+@import url('../lib/bootstrap-icons/bootstrap-icons.css');
+
+/* Font Awesome */
+@import url('../lib/fontawesome/css/all.min.css');

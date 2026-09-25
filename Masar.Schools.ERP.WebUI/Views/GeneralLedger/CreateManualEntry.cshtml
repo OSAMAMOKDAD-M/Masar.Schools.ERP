@@ -1,0 +1,216 @@
+@model ManualJournalEntryDto
+@{
+    ViewData["Title"] = "إنشاء قيد محاسبي يدوي";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 class="text-end mb-3">إنشاء قيد محاسبي يدوي</h2>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-right"></i> العودة لدفتر الأستاذ
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">بيانات القيد المحاسبي</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateManualEntry" method="post">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">تاريخ القيد</label>
+                                <input type="date" asp-for="EntryDate" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">نشر فوراً</label>
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" asp-for="PostImmediately" checked>
+                                    <label class="form-check-label" for="PostImmediately">
+                                        نشر القيد فوراً إلى دفتر الأستاذ
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">الوصف</label>
+                            <input type="text" asp-for="Description" class="form-control" required placeholder="وصف القيد المحاسبي">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">ملاحظات</label>
+                            <textarea asp-for="Notes" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h6 class="mb-3">سطور القيد</h6>
+                        <div id="entryLinesContainer">
+                            <!-- Entry lines will be added here dynamically -->
+                        </div>
+
+                        <button type="button" onclick="addEntryLine()" class="btn btn-outline-primary btn-sm mt-2">
+                            <i class="fas fa-plus"></i> إضافة سطر
+                        </button>
+
+                        <div class="row mt-4 mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">إجمالي المدين:</label>
+                                <p class="form-control-plaintext" id="totalDebit">0.00</p>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">إجمالي الدائن:</label>
+                                <p class="form-control-plaintext" id="totalCredit">0.00</p>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">الفرق:</label>
+                                <p class="form-control-plaintext" id="difference">0.00</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                                <i class="fas fa-save"></i> إنشاء القيد
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> إلغاء
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">معلومات مهمة</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>ملاحظات مهمة:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>يجب أن يكون إجمالي المدين = إجمالي الدائن</li>
+                            <li>يمكنك إضافة عدة سطور للقيد</li>
+                            <li>إذا تم النشر فوراً، سيتم تحديث أرصدة الحسابات</li>
+                        </ul>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>تنبيه:</strong>
+                        <p class="mb-0 mt-2">
+                            القيود المحاسبية لا يمكن حذفها بعد النشر.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let lineCounter = 0;
+
+        function addEntryLine() {
+            lineCounter++;
+            const container = document.getElementById('entryLinesContainer');
+            
+            const lineHtml = `
+                <div class="card mb-2 entry-line" data-line="${lineCounter}">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label class="form-label">م</label>
+                                <input type="number" class="form-control line-number" value="${lineCounter}" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">الحساب</label>
+                                <select class="form-select account-select" required onchange="updateTotals()" name="EntryLines[${lineCounter-1}].AccountId">
+                                    <option value="">اختر الحساب</option>
+                                    @foreach (var account in ViewBag.Accounts)
+                                    {
+                                        <option value="@account.Id">@account.AccountCode - @account.AccountNameAr</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">مدين</label>
+                                <input type="number" class="form-control debit-input" step="0.01" min="0" oninput="updateTotals()" name="EntryLines[${lineCounter-1}].Debit">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">دائن</label>
+                                <input type="number" class="form-control credit-input" step="0.01" min="0" oninput="updateTotals()" name="EntryLines[${lineCounter-1}].Credit">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="button" class="btn btn-danger btn-sm w-100" onclick="removeLine(${lineCounter})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-10">
+                                <input type="text" class="form-control line-description" placeholder="وصف السطر" name="EntryLines[${lineCounter-1}].Description">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="hidden" class="line-number-hidden" name="EntryLines[${lineCounter-1}].LineNumber" value="${lineCounter}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', lineHtml);
+            updateTotals();
+        }
+
+        function removeLine(lineNumber) {
+            const line = document.querySelector(`.entry-line[data-line="${lineNumber}"]`);
+            if (line) {
+                line.remove();
+                updateTotals();
+            }
+        }
+
+        function updateTotals() {
+            let totalDebit = 0;
+            let totalCredit = 0;
+
+            document.querySelectorAll('.entry-line').forEach(line => {
+                const debit = parseFloat(line.querySelector('.debit-input').value) || 0;
+                const credit = parseFloat(line.querySelector('.credit-input').value) || 0;
+                totalDebit += debit;
+                totalCredit += credit;
+            });
+
+            document.getElementById('totalDebit').textContent = totalDebit.toFixed(2);
+            document.getElementById('totalCredit').textContent = totalCredit.toFixed(2);
+            
+            const difference = totalDebit - totalCredit;
+            const diffElement = document.getElementById('difference');
+            diffElement.textContent = difference.toFixed(2);
+            
+            if (Math.abs(difference) < 0.01) {
+                diffElement.classList.remove('text-danger');
+                diffElement.classList.add('text-success');
+                document.getElementById('submitBtn').disabled = false;
+            } else {
+                diffElement.classList.remove('text-success');
+                diffElement.classList.add('text-danger');
+                document.getElementById('submitBtn').disabled = true;
+            }
+        }
+
+        // Add initial entry lines
+        addEntryLine();
+        addEntryLine();
+    </script>
+}

@@ -1,0 +1,78 @@
+@{
+    ViewData["Title"] = "إنشاء حركة مخزون";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">إنشاء حركة مخزون جديدة</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateTransaction" method="post">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>الصنف</label>
+                                    <select name="InventoryItemId" class="form-control" required>
+                                        <option value="">اختر الصنف</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>المخزن</label>
+                                    <select name="WarehouseId" class="form-control" required>
+                                        <option value="">اختر المخزن</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>نوع الحركة</label>
+                                    <select name="TransactionType" class="form-control" required>
+                                        <option value="Receipt">استلام</option>
+                                        <option value="Issue">صرف</option>
+                                        <option value="Transfer">نقل</option>
+                                        <option value="Adjustment">تعديل</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>الكمية</label>
+                                    <input type="number" name="Quantity" step="0.01" class="form-control" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>التكلفة الوحدة</label>
+                                    <input type="number" name="UnitCost" step="0.01" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>تاريخ الحركة</label>
+                                    <input type="date" name="TransactionDate" class="form-control" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>ملاحظات</label>
+                            <textarea name="Notes" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">حفظ</button>
+                            <a asp-action="Transactions" class="btn btn-secondary">إلغاء</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,236 @@
+@model Masar.Schools.ERP.WebUI.Controllers.StudentAttendanceAnalysisViewModel
+@using Masar.Schools.ERP.Infrastructure.Services
+@{
+    ViewData["Title"] = "تحليل الحضور";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">تحليل الحضور - @Model.Student.FullNameArabic</h3>
+                    <div class="card-tools">
+                        <a href="@Url.Action("Index", "Students")" class="btn btn-secondary">
+                            <i class="fas fa-arrow-right"></i> العودة
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="info-box bg-info">
+                                <span class="info-box-icon"><i class="fas fa-calendar-check"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">نسبة الحضور</span>
+                                    <span class="info-box-number">@((Model.Pattern?.AttendanceRate ?? 0).ToString("F2"))%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-success">
+                                <span class="info-box-icon"><i class="fas fa-user-check"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">أيام الحضور</span>
+                                    <span class="info-box-number">@(Model.Pattern?.PresentDays ?? 0)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-danger">
+                                <span class="info-box-icon"><i class="fas fa-user-times"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">أيام الغياب</span>
+                                    <span class="info-box-number">@(Model.Pattern?.AbsentDays ?? 0)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-warning">
+                                <span class="info-box-icon"><i class="fas fa-clock"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">أيام التأخير</span>
+                                    <span class="info-box-number">@(Model.Pattern?.LateDays ?? 0)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">مستوى الخطر</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="progress-group">
+                                        <span class="progress-text">مستوى الخطر</span>
+                                        <span class="float-right"><b>@(Model.Pattern?.RiskLevel ?? "غير محدد")</b></span>
+                                        <div class="progress sm">
+                                            <div class="progress-bar bg-@(Model.Pattern?.RiskLevel == "Excellent" ? "success" : Model.Pattern?.RiskLevel == "Good" ? "primary" : Model.Pattern?.RiskLevel == "Warning" ? "warning" : "danger")" 
+                                                 style="width: @((Model.Pattern?.AttendanceRate ?? 0))%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">اتجاه الحضور</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="progress-group">
+                                        <span class="progress-text">الاتجاه</span>
+                                        <span class="float-right"><b>@(Model.Trend?.TrendDirection ?? "غير محدد")</b></span>
+                                        <div class="progress sm">
+                                            <div class="progress-bar bg-@(Model.Trend?.OverallImprovement == true ? "success" : "danger")" 
+                                                 style="width: @(Math.Abs(Model.Trend?.TrendPercentage ?? 0))%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="progress-group">
+                                        <span class="progress-text">نسبة التغيير</span>
+                                        <span class="float-right"><b>@((Model.Trend?.TrendPercentage ?? 0).ToString("F2"))%</b></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">التوصيات</h3>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.Pattern.Recommendations != null && Model.Pattern.Recommendations.Any())
+                            {
+                                <ul class="list-group">
+                                    @foreach (var recommendation in Model.Pattern.Recommendations)
+                                    {
+                                        <li class="list-group-item">
+                                            <i class="fas fa-lightbulb text-warning"></i> @recommendation
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <p class="text-muted">لا توجد توصيات حالياً</p>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h3 class="card-title">البيانات التفصيلية</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <td>فترة التحليل</td>
+                                            <td>@Model.Pattern.AnalysisPeriodDays يوم</td>
+                                        </tr>
+                                        <tr>
+                                            <td>إجمالي الأيام</td>
+                                            <td>@Model.Pattern.TotalDays</td>
+                                        </tr>
+                                        <tr>
+                                            <td>أيام الحضور</td>
+                                            <td>@Model.Pattern.PresentDays</td>
+                                        </tr>
+                                        <tr>
+                                            <td>أيام الغياب</td>
+                                            <td>@Model.Pattern.AbsentDays</td>
+                                        </tr>
+                                        <tr>
+                                            <td>أيام التأخير</td>
+                                            <td>@Model.Pattern.LateDays</td>
+                                        </tr>
+                                        <tr>
+                                            <td>أيام معذورة</td>
+                                            <td>@Model.Pattern.ExcusedDays</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <td>نسبة الحضور</td>
+                                            <td>@Model.Pattern.AttendanceRate%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>نسبة الغياب</td>
+                                            <td>@Model.Pattern.AbsenceRate%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>نسبة التأخير</td>
+                                            <td>@Model.Pattern.LateRate%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>اليام الأكثر غياباً</td>
+                                            <td>@Model.Pattern.FrequentAbsenceDay</td>
+                                        </tr>
+                                        <tr>
+                                            <td>متوسط التأخير</td>
+                                            <td>@Model.Pattern.AverageLateMinutes دقيقة</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h3 class="card-title">اتجاه الحضور الشهري</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>السنة</th>
+                                            <th>الشهر</th>
+                                            <th>إجمالي الأيام</th>
+                                            <th>أيام الحضور</th>
+                                            <th>أيام الغياب</th>
+                                            <th>أيام التأخير</th>
+                                            <th>نسبة الحضور</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Trend.MonthlyData != null && Model.Trend.MonthlyData.Any())
+                                        {
+                                            @foreach (var month in Model.Trend.MonthlyData)
+                                            {
+                                                var attendanceRate = month.TotalDays > 0 ? (month.PresentDays / (decimal)month.TotalDays) * 100 : 0;
+                                                <tr>
+                                                    <td>@month.Year</td>
+                                                    <td>@month.Month</td>
+                                                    <td>@month.TotalDays</td>
+                                                    <td>@month.PresentDays</td>
+                                                    <td>@month.AbsentDays</td>
+                                                    <td>@month.LateDays</td>
+                                                    <td>@attendanceRate.ToString("F2")%</td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="7" class="text-center">لا توجد بيانات كافية للتحليل</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

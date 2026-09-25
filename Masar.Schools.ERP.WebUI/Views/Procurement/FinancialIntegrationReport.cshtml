@@ -1,0 +1,128 @@
+@model Masar.Schools.ERP.Infrastructure.Services.FinancialIntegrationReportDto
+
+@{
+    ViewData["Title"] = "تقرير التكامل المالي";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">تقرير التكامل المالي للمشتريات</h3>
+                    <div>
+                        <span class="text-muted">تاريخ التقرير: @Model.ReportDate.ToString("yyyy-MM-dd HH:mm:ss")</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-info"><i class="fas fa-shopping-cart"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">إجمالي أوامر الشراء</span>
+                                    <span class="info-box-number">@Model.TotalPurchaseOrders</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-success"><i class="fas fa-money-bill-wave"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">إجمالي قيمة المشتريات</span>
+                                    <span class="info-box-number">@Model.TotalPurchaseValue.ToString("N2") @Model.Currency</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-primary"><i class="fas fa-check-circle"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">إجمالي المدفوع</span>
+                                    <span class="info-box-number">@Model.TotalPaidAmount.ToString("N2") @Model.Currency</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-warning"><i class="fas fa-clock"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">إجمالي المتبقي</span>
+                                    <span class="info-box-number">@Model.TotalPendingAmount.ToString("N2") @Model.Currency</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">نسبة الدفع</h4>
+                                </div>
+                                <div class="card-body">
+                                    @if (Model.TotalPurchaseValue > 0)
+                                    {
+                                        var paymentPercentage = (Model.TotalPaidAmount / Model.TotalPurchaseValue) * 100;
+                                        <div class="progress">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: @paymentPercentage%" aria-valuenow="@paymentPercentage" aria-valuemin="0" aria-valuemax="100">
+                                                @paymentPercentage.ToString("N1")%
+                                            </div>
+                                        </div>
+                                        <small class="text-muted">تم دفع @paymentPercentage.ToString("N1")% من إجمالي المشتريات</small>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-muted">لا توجد مشتريات</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">الملخص المالي</h4>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <td>إجمالي قيمة المشتريات:</td>
+                                            <td class="text-left font-weight-bold">@Model.TotalPurchaseValue.ToString("N2") @Model.Currency</td>
+                                        </tr>
+                                        <tr>
+                                            <td>المدفوع:</td>
+                                            <td class="text-left text-success font-weight-bold">@Model.TotalPaidAmount.ToString("N2") @Model.Currency</td>
+                                        </tr>
+                                        <tr>
+                                            <td>المتبقي:</td>
+                                            <td class="text-left text-warning font-weight-bold">@Model.TotalPendingAmount.ToString("N2") @Model.Currency</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <h4><i class="fas fa-info-circle"></i> معلومات التكامل المالي</h4>
+                                <p class="mb-0">
+                                    هذا التقرير يوضح التكامل بين نظام المشتريات والنظام المالي المحاسبي.
+                                    يتم إنشاء القيود الدفترية تلقائياً عند:
+                                </p>
+                                <ul>
+                                    <li>استلام أوامر الشراء</li>
+                                    <li>دفع فواتير الشراء</li>
+                                    <li>تعديلات المخزون</li>
+                                    <li>نقل المخزون بين المخازن</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

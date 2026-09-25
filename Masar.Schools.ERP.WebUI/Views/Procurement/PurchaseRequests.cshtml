@@ -1,0 +1,66 @@
+@model List<Masar.Schools.ERP.Domain.DTOs.PurchaseRequestDto>
+
+@{
+    ViewData["Title"] = "طلبات الشراء";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">طلبات الشراء</h3>
+                    <div class="card-tools">
+                        <a asp-action="CreatePurchaseRequest" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> طلب جديد
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>رقم الطلب</th>
+                                <th>التاريخ</th>
+                                <th>القسم</th>
+                                <th>المبلغ</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                @foreach (var request in Model)
+                                {
+                                    <tr>
+                                        <td>@request.RequestNumber</td>
+                                        <td>@request.RequestDate.ToString("yyyy-MM-dd")</td>
+                                        <td>@request.DepartmentName</td>
+                                        <td>@request.BudgetAmount.ToString("C")</td>
+                                        <td>
+                                            <span class="badge bg-@(request.Status == "Approved" ? "success" : request.Status == "Rejected" ? "danger" : "warning")">
+                                                @request.StatusArabic
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a asp-action="PurchaseRequestDetails" asp-route-id="@request.Id" class="btn btn-sm btn-info">
+                                                <i class="bi bi-eye"></i> عرض
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center">لا توجد طلبات شراء</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,99 @@
+@model Masar.Schools.ERP.WebUI.Controllers.LicenseIndexViewModel
+@{
+    ViewData["Title"] = "إدارة التراخيص";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-end">إدارة التراخيص</h2>
+        <a asp-action="Generate" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> إصدار ترخيص جديد
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0"><i class="bi bi-shield-lock"></i> التراخيص الصادرة</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.Licenses.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover text-end">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>العميل</th>
+                                <th>معرف الترخيص</th>
+                                <th>بصمة الجهاز</th>
+                                <th>تاريخ الانتهاء</th>
+                                <th>الحالة</th>
+                                <th>تاريخ الإصدار</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var license in Model.Licenses)
+                            {
+                                <tr>
+                                    <td>@license.ClientName</td>
+                                    <td><code>@license.LicenseId.ToString().Substring(0, 8)</code></td>
+                                    <td><code>@license.MachineId.Substring(0, 16)...</code></td>
+                                    <td>@license.ValidUntil.ToString("yyyy-MM-dd")</td>
+                                    <td>
+                                        @switch (license.Status)
+                                        {
+                                            case LicenseStatus.Valid:
+                                                <span class="badge bg-success">ساري</span>
+                                                break;
+                                            case LicenseStatus.Expired:
+                                                <span class="badge bg-danger">منتهي</span>
+                                                break;
+                                            case LicenseStatus.Revoked:
+                                                <span class="badge bg-warning">ملغى</span>
+                                                break;
+                                            default:
+                                                <span class="badge bg-secondary">@license.Status</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>@license.CreatedAt.ToString("yyyy-MM-dd")</td>
+                                    <td>
+                                        <a asp-action="Details" asp-route-licenseId="@license.LicenseId" class="btn btn-sm btn-info">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        @if (license.Status == LicenseStatus.Valid)
+                                        {
+                                            <form asp-action="Revoke" asp-route-licenseId="@license.LicenseId" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من إلغاء هذا الترخيص؟')">
+                                                    <i class="bi bi-x-circle"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox fs-1 text-muted"></i>
+                    <p class="text-muted mt-3">لا توجد تراخيص صادرة حتى الآن</p>
+                    <a asp-action="Generate" class="btn btn-primary mt-2">
+                        <i class="bi bi-plus-circle"></i> إصدار ترخيص جديد
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<footer class="footer text-muted border-top py-3 text-center bg-light mt-auto">
+    <div class="container-fluid">
+        <span>© 2026 <strong>نظام مَسَار للمدارس</strong> - جميع الحقوق محفوظة - شركة مسار للبرمجيات mokdadvipr@gmail.com .. 01006765664 (نسخة 1.0.0)</span>
+    </div>
+</footer>

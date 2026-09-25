@@ -1,0 +1,119 @@
+@model List<Masar.Schools.ERP.Domain.DTOs.BusSupervisorDto>
+@{
+    ViewData["Title"] = "إدارة المشرفين";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">إدارة المشرفين</h3>
+                    <div class="card-tools">
+                        <a href="@Url.Action("CreateSupervisor", "Transport")" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> إضافة مشرف جديد
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="supervisorsTable">
+                            <thead>
+                                <tr>
+                                    <th>الاسم</th>
+                                    <th>رقم الهاتف</th>
+                                    <th>جهة الاتصال الطارئ</th>
+                                    <th>الحافلة المعينة</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    @foreach (var supervisor in Model)
+                                    {
+                                        <tr>
+                                            <td>@supervisor.EmployeeName</td>
+                                            <td>@supervisor.Phone</td>
+                                            <td>@supervisor.EmergencyContact</td>
+                                            <td>@supervisor.BusNumber</td>
+                                            <td>
+                                                @if (supervisor.IsActive)
+                                                {
+                                                    <span class="badge badge-success">نشط</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">غير نشط</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a href="@Url.Action("EditSupervisor", "Transport", new { id = supervisor.Id })" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="@Url.Action("DeleteSupervisor", "Transport", new { id = supervisor.Id })" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من حذف هذا المشرف؟')">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center">لا يوجد مشرفين مسجلين</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof $ !== 'undefined') {
+                $(document).ready(function() {
+                    $('#supervisorsTable').DataTable({
+                        "language": {
+                            "sEmptyTable": "لا توجد بيانات",
+                            "sInfo": "عرض _START_ إلى _END_ من _TOTAL_ سجل",
+                            "sInfoEmpty": "عرض 0 إلى 0 من 0 سجل",
+                            "sInfoFiltered": "(مفلترة من _MAX_ سجل)",
+                            "sInfoPostFix": "",
+                            "sInfoThousands": ",",
+                            "sLengthMenu": "عرض _MENU_ سجلات",
+                            "sLoadingRecords": "جاري التحميل...",
+                            "sProcessing": "جاري المعالجة...",
+                            "sSearch": "بحث:",
+                            "sZeroRecords": "لا توجد نتائج",
+                            "oPaginate": {
+                                "sFirst": "الأول",
+                                "sLast": "الأخير",
+                                "sNext": "التالي",
+                                "sPrevious": "السابق"
+                            },
+                            "oAria": {
+                                "sSortAscending": ": تفعيل لترتيب العمود تصاعدياً",
+                                "sSortDescending": ": تفعيل لترتيب العمود تنازلياً"
+                            }
+                        },
+                        "order": [[0, "asc"]]
+                    });
+                });
+            } else {
+                console.error('jQuery is not loaded');
+            }
+        });
+    </script>
+}

@@ -1,0 +1,133 @@
+@model List<Employee>
+@{
+    ViewData["Title"] = "كشوف المرتبات";
+    var payrollPeriod = ViewBag.PayrollPeriod as string;
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-cash"></i> إدارة كشوف المرتبات
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للموظفين
+        </a>
+        <button class="btn btn-primary">
+            <i class="bi bi-download"></i> تصدير كشف المرتبات
+        </button>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">فترة كشف المرتبات: @payrollPeriod</h5>
+                <p class="card-text text-muted">إجمالي الموظفين النشطين: @Model.Count</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">تفاصيل مرتبات الموظفين</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>رقم الموظف</th>
+                                <th>الاسم</th>
+                                <th>المسمى الوظيفي</th>
+                                <th>القسم</th>
+                                <th>الراتب الأساسي</th>
+                                <th>الخصومات</th>
+                                <th>البدلات</th>
+                                <th>صافي الراتب</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var employee in Model)
+                            {
+                                <tr>
+                                    <td>@employee.EmployeeNumber</td>
+                                    <td>
+                                        <strong>@employee.FullNameArabic</strong><br>
+                                        <small class="text-muted">@employee.FullName</small>
+                                    </td>
+                                    <td>@employee.JobTitleArabic</td>
+                                    <td>@employee.DepartmentArabic</td>
+                                    <td>@employee.Salary?.ToString("N2") ريال</td>
+                                    <td>
+                                        <input type="number" class="form-control form-control-sm"
+                                               value="0" step="0.01" placeholder="الخصومات">
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control form-control-sm"
+                                               value="0" step="0.01" placeholder="البدلات">
+                                    </td>
+                                    <td class="fw-bold">@employee.Salary?.ToString("N2") ريال</td>
+                                    <td>
+                                        <span class="status-badge warning">قيد الانتظار</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success">
+                                            <i class="bi bi-check-circle"></i> معالجة
+                                        </button>
+                                        <button class="btn btn-sm btn-info">
+                                            <i class="bi bi-printer"></i> إيصال
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-primary">
+                                <td colspan="4" class="text-end fw-bold">الإجمالي:</td>
+                                <td class="fw-bold">@Model.Sum(e => e.Salary)?.ToString("N2") ريال</td>
+                                <td>0.00 ريال</td>
+                                <td>0.00 ريال</td>
+                                <td class="fw-bold">@Model.Sum(e => e.Salary)?.ToString("N2") ريال</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">إجمالي الراتب الأساسي</h5>
+                <h3 class="text-primary">@Model.Sum(e => e.Salary)?.ToString("N2") ريال</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">إجمالي الخصومات</h5>
+                <h3 class="text-danger">0.00 ريال</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">إجمالي صافي الراتب</h5>
+                <h3 class="text-success">@Model.Sum(e => e.Salary)?.ToString("N2") ريال</h3>
+            </div>
+        </div>
+    </div>
+</div>

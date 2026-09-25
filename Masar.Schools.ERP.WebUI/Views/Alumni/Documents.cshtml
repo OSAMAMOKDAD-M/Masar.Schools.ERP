@@ -1,0 +1,97 @@
+@model IEnumerable<Masar.Schools.ERP.Domain.DTOs.GraduationDocumentDto>
+
+@{
+    ViewData["Title"] = "وثائق التخرج";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">دليل الخريجين</a></li>
+                    <li class="breadcrumb-item active">وثائق التخرج</li>
+                </ol>
+            </nav>
+            <h2 class="mb-3"><i class="bi bi-file-earmark"></i> وثائق التخرج</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">الوثائق</h5>
+                    <a asp-action="CreateDocument" asp-route-alumniRecordId="@ViewBag.AlumniRecordId" class="btn btn-success">
+                        <i class="bi bi-plus-circle"></i> إضافة وثيقة
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>نوع الوثيقة</th>
+                                        <th>رقم الوثيقة</th>
+                                        <th>تاريخ الإصدار</th>
+                                        <th>صادرة</th>
+                                        <th>مسلمة</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var doc in Model)
+                                    {
+                                        <tr>
+                                            <td>@doc.DocumentTypeArabic</td>
+                                            <td>@doc.DocumentNumber</td>
+                                            <td>@doc.IssueDate.ToString("yyyy-MM-dd")</td>
+                                            <td>
+                                                @if (doc.IsIssued)
+                                                {
+                                                    <span class="badge bg-success">نعم</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">لا</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (doc.IsDelivered)
+                                                {
+                                                    <span class="badge bg-success">نعم</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">لا</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="EditDocument" asp-route-id="@doc.Id" class="btn btn-sm btn-primary" title="تعديل">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <a asp-action="DeleteDocument" asp-route-id="@doc.Id" class="btn btn-sm btn-danger" title="حذف">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> لا توجد وثائق حالياً
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

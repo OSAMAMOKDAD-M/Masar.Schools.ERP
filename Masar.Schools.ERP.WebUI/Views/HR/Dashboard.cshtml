@@ -1,0 +1,145 @@
+@model Masar.Schools.ERP.WebUI.Controllers.HRDashboardViewModel
+@{
+    ViewData["Title"] = "لوحة تحكم الموارد البشرية";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-primary">
+                <i class="bi bi-speedometer2"></i> لوحة تحكم الموارد البشرية
+            </h2>
+            <p class="text-muted">نظرة عامة على نظام الموارد البشرية المتقدم</p>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-people"></i> إجمالي الموظفين
+                    </h5>
+                    <h2 class="display-4">@Model.TotalEmployees</h2>
+                    <p class="card-text">موظف نشط</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-file-earmark-text"></i> العقود النشطة
+                    </h5>
+                    <h2 class="display-4">@Model.ActiveContracts</h2>
+                    <p class="card-text">عقد ساري</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-calendar-x"></i> طلبات الإجازة المعلقة
+                    </h5>
+                    <h2 class="display-4">@Model.PendingLeaveRequests</h2>
+                    <p class="card-text">طلب في انتظار الموافقة</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-cash-coin"></i> رواتب هذا الشهر
+                    </h5>
+                    <h2 class="display-4">@Model.ThisMonthPayroll.ToString("N0")</h2>
+                    <p class="card-text">ريال سعودي</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-fingerprint"></i> الحضور اليوم
+                    </h5>
+                    <h3 class="display-6 text-primary">@Model.RecentAttendance</h3>
+                    <p class="card-text">سجل حضور اليوم</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-person-x"></i> المستقيلون هذا العام
+                    </h5>
+                    <h3 class="display-6 text-danger">@Model.ResignedThisYear</h3>
+                    <p class="card-text">موظف مستقيل</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-lightning"></i> إجراءات سريعة
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a asp-controller="HR" asp-action="CreateContract" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-file-plus"></i> إنشاء عقد جديد
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a asp-controller="HR" asp-action="CreatePayroll" class="btn btn-outline-success w-100">
+                                <i class="bi bi-cash-plus"></i> إعداد مرتبات
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a asp-controller="HR" asp-action="ImportAttendance" class="btn btn-outline-info w-100">
+                                <i class="bi bi-upload"></i> استيراد الحضور
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a asp-controller="Employees" asp-action="CreateLeave" class="btn btn-outline-warning w-100">
+                                <i class="bi bi-calendar-plus"></i> طلب إجازة
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-clock-history"></i> أنشطة حديثة
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        سيتم عرض الأنشطة الحديثة هنا (طلبات الإجازة، العقود الجديدة، العمليات المالية، إلخ)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

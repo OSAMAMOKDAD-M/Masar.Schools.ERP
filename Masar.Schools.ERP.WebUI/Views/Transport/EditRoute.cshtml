@@ -1,0 +1,158 @@
+@model Masar.Schools.ERP.Domain.DTOs.BusRouteCreateDto
+@{
+    ViewData["Title"] = "تعديل خط السير";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <style>
+        body {
+            background-color: #f4f6f9;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background: #3b82f6;
+            color: white;
+            border-radius: 8px 8px 0 0;
+            padding: 15px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+        .form-control {
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 8px 12px;
+        }
+        .btn-primary {
+            background: #3b82f6;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+        }
+        .btn-secondary {
+            background: #6b7280;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">تعديل خط السير</h3>
+                        <a href="/Transport/Routes" class="btn btn-secondary float-left">
+                            <i class="fas fa-arrow-left"></i> رجوع
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="EditRoute" method="post">
+                            <input type="hidden" name="id" value="@ViewBag.RouteId" />
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="RouteName">اسم الخط</label>
+                                        <input asp-for="RouteName" class="form-control" required />
+                                        <span asp-validation-for="RouteName" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="RouteCode">كود الخط</label>
+                                        <input asp-for="RouteCode" class="form-control" required />
+                                        <span asp-validation-for="RouteCode" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="StartLocation">نقطة البداية</label>
+                                        <input asp-for="StartLocation" class="form-control" required />
+                                        <span asp-validation-for="StartLocation" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="EndLocation">نقطة النهاية</label>
+                                        <input asp-for="EndLocation" class="form-control" required />
+                                        <span asp-validation-for="EndLocation" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="TotalDistance">المسافة الكلية (كم)</label>
+                                        <input asp-for="TotalDistance" class="form-control" type="number" step="0.1" required />
+                                        <span asp-validation-for="TotalDistance" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="EstimatedDuration">المدة المقدرة (دقيقة)</label>
+                                        <input asp-for="EstimatedDuration" class="form-control" type="number" required />
+                                        <span asp-validation-for="EstimatedDuration" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="Direction">الاتجاه</label>
+                                        <select asp-for="Direction" class="form-control" required>
+                                            <option value="Outbound">ذاهب</option>
+                                            <option value="Return">عائد</option>
+                                        </select>
+                                        <span asp-validation-for="Direction" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Description">الوصف</label>
+                                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> حفظ التعديلات
+                                </button>
+                                <a href="/Transport/Routes" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> رجوع
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>

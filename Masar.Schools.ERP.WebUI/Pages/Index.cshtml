@@ -1,0 +1,51 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "الصفحة الرئيسية";
+}
+
+<div class="card border-0 shadow-lg rounded-4 overflow-hidden my-4 position-relative">
+    <!-- خلفية زخرفية ناعمة -->
+    <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient opacity-10" style="background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); pointer-events: none;"></div>
+
+    <div class="card-body text-center p-4 p-md-5 position-relative z-1">
+        <!-- شعار/أيقونة النظام -->
+        <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle mb-4 p-3 shadow-sm" style="width: 80px; height: 80px;">
+            <i class="bi bi-mortarboard-fill fs-1"></i>
+        </div>
+
+        <!-- العنوان الرئيسي والوصف -->
+        <h1 class="fw-bold mb-2 text-dark">مرحباً بكم في <span class="text-primary">مَسَار للمدارس</span></h1>
+        <p class="text-muted fs-5 mb-4 mx-auto" style="max-width: 650px;">
+            منظومة إدارية وأكاديمية متكاملة تُدير مؤسستك التعليمية بأحدث التقنيات والحلول الذكية.
+        </p>
+
+        <!-- بطاقة حقوق الملكية والتواصل الفاخرة -->
+        <div class="card bg-body-tertiary border-0 rounded-3 p-3 mx-auto shadow-sm" style="max-width: 650px;">
+            <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-2 text-muted small">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-shield-check text-success fs-5"></i>
+                    <span>© 2026 <strong>نظام مَسَار للمدارس</strong> — جميع الحقوق محفوظة</span>
+                </div>
+                <div class="badge bg-primary-subtle text-primary fw-medium px-3 py-2 rounded-pill">
+                    شركة مسار للبرمجيات
+                </div>
+            </div>
+
+            <hr class="my-2 opacity-25">
+
+            <!-- أزرار الاتصال السريع -->
+            <div class="d-flex flex-wrap align-items-center justify-content-center gap-3 pt-1 small">
+                <a href="mailto:mokdadvipr@gmail.com" class="text-decoration-none text-secondary d-flex align-items-center gap-1 hover-primary">
+                    <i class="bi bi-envelope-at text-primary"></i>
+                    <span>mokdadvipr@gmail.com</span>
+                </a>
+                <span class="text-muted opacity-50">•</span>
+                <a href="tel:01006765664" class="text-decoration-none text-secondary d-flex align-items-center gap-1 hover-primary" dir="ltr">
+                    <i class="bi bi-telephone-outbound text-success"></i>
+                    <span>01006765664</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

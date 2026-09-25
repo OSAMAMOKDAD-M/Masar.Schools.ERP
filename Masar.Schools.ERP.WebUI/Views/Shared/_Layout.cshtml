@@ -1,0 +1,1693 @@
+@{
+    var tenantNameComponent = await Component.InvokeAsync("TenantName");
+    var tenantName = tenantNameComponent?.ToString() ?? "نظام مَسَار للمدارس";
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @tenantName</title>
+    <link rel="stylesheet" href="~/css/fonts.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script defer src="~/lib/alpinejs/alpine.min.js"></script>
+    <style>
+        .sidebar {
+            padding-top: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .main-content {
+            margin-right: 0;
+        }
+        .sidebar .accordion-button {
+            background-color: #212529 !important;
+            color: white !important;
+            border: none !important;
+        }
+        .sidebar .accordion-button:not(.collapsed) {
+            background-color: #343a40 !important;
+            color: white !important;
+            box-shadow: none !important;
+        }
+        .sidebar .accordion-button::after {
+            filter: invert(1);
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,.75);
+            padding: 0.5rem 1.5rem;
+        }
+        .sidebar .nav-link:hover {
+            color: white;
+            background-color: rgba(255,255,255,.1);
+        }
+        .sidebar .nav-link.active {
+            color: #0d6efd;
+            background-color: rgba(13, 110, 253, .1);
+        }
+        .sidebar .nav-link.text-muted {
+            color: rgba(255,255,255,.5) !important;
+            pointer-events: none;
+        }
+        .main-content {
+            margin-right: 0;
+        }
+        @@media (max-width: 992px) {
+            .sidebar {
+                width: 250px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease-in-out;
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-right: 0;
+            }
+        }
+    
+    .accordion-button:not(.collapsed)::after {
+        filter: invert(1);
+    }
+    
+    .accordion-button {
+        transition: background-color 0.2s ease;
+    }
+    
+    .accordion-button:hover {
+        background-color: #343a40 !important;
+    }
+    
+    .nav-link {
+        transition: all 0.2s ease;
+    }
+    
+    .nav-link:hover {
+        padding-right: 1.75rem !important;
+    }
+    </style>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <nav class="sidebar bg-dark text-white flex-shrink-0" style="width: 280px; min-height: 100vh;">
+            <div class="sidebar-header p-3 border-bottom border-secondary">
+                <a class="navbar-brand text-white text-decoration-none" href="/">
+                    <i class="bi bi-building-fill"></i>
+                    <span class="fw-bold">@tenantName</span>
+                </a>
+            </div>
+
+            <div class="accordion accordion-flush" id="sidebarAccordion">
+                <!-- المجموعة 1: لوحة التحكم والاتصال الفوري -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group1">
+                            <i class="bi bi-speedometer2"></i> لوحة التحكم والاتصال
+                        </button>
+                    </h2>
+                    <div id="group1" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Home", "Index")" asp-controller="Home" asp-action="Index">
+                                        <i class="bi bi-house-door"></i> الرئيسية
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Chat", "Index")" asp-controller="Chat" asp-action="Index">
+                                        <i class="bi bi-chat-dots"></i> الدردشة
+                                        <span class="badge bg-primary ms-auto">SignalR</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" onclick="window.openAiAssistant()" data-bs-toggle="tooltip" title="مساعد الذكاء الاصطناعي">
+                                        <i class="bi bi-robot"></i> المساعد الذكي
+                                        <span class="badge bg-info ms-auto">AI</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 1.5: المؤسسة والمدارس -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group15">
+                            <i class="bi bi-building"></i> المؤسسة والمدارس
+                        </button>
+                    </h2>
+                    <div id="group15" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Tenants", "Index")" asp-controller="Tenants" asp-action="Index">
+                                        <i class="bi bi-building"></i> إدارة المؤسسات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Schools", "Index")" asp-controller="Schools" asp-action="Index">
+                                        <i class="bi bi-building"></i> إدارة المدارس
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Classrooms", "Index")" asp-controller="Classrooms" asp-action="Index">
+                                        <i class="bi bi-door-open"></i> إدارة الفصول
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("GradeLevels", "Index")" asp-controller="GradeLevels" asp-action="Index">
+                                        <i class="bi bi-layers"></i> إدارة المراحل
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Sections", "Index")" asp-controller="Sections" asp-action="Index">
+                                        <i class="bi bi-collection"></i> إدارة الشعب
+                                    </a>
+                                </li>
+                                @await Component.InvokeAsync("ClassroomsSidebar")
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Settings", "Index")" asp-controller="Settings" asp-action="Index">
+                                        <i class="bi bi-sliders"></i> الإعدادات العامة
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Backups", "Index")" asp-controller="Backups" asp-action="Index">
+                                        <i class="bi bi-database"></i> النسخ الاحتياطية
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("BackupSettings", "Index")" asp-controller="BackupSettings" asp-action="Index">
+                                        <i class="bi bi-gear"></i> إعدادات النسخ
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 1.6: مركز التقارير -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group16">
+                            <i class="bi bi-file-earmark-bar-graph"></i> مركز التقارير
+                        </button>
+                    </h2>
+                    <div id="group16" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">التقارير الرئيسية</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Reports", "Index")" asp-controller="Reports" asp-action="Index">
+                                        <i class="bi bi-file-earmark-text"></i> جميع التقارير
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">التقارير المخصصة</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Reports", "CustomReportBuilder")" asp-controller="Reports" asp-action="CustomReportBuilder">
+                                        <i class="bi bi-tools"></i> مُنشئ التقارير المخصصة
+                                        <span class="badge bg-success ms-auto">جديد</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Reports", "SavedReports")" asp-controller="Reports" asp-action="SavedReports">
+                                        <i class="bi bi-bookmark"></i> التقارير المحفوظة
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">تقارير الموارد البشرية</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("HR", "Payroll")" asp-controller="HR" asp-action="Payroll">
+                                        <i class="bi bi-cash"></i> تقارير الرواتب
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("HR", "Attendance")" asp-controller="HR" asp-action="Attendance">
+                                        <i class="bi bi-calendar-check"></i> تقارير الحضور
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">تقارير المخازن</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Inventory", "StockReport")" asp-controller="Inventory" asp-action="StockReport">
+                                        <i class="bi bi-box-seam"></i> تقرير المخزون
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Inventory", "LowStockReport")" asp-controller="Inventory" asp-action="LowStockReport">
+                                        <i class="bi bi-exclamation-triangle"></i> تقرير نقص المخزون
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Inventory", "OverStockReport")" asp-controller="Inventory" asp-action="OverStockReport">
+                                        <i class="bi bi-boxes"></i> تقرير زيادة المخزون
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">تقارير المشتريات</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Procurement", "ProcurementReport")" asp-controller="Procurement" asp-action="ProcurementReport">
+                                        <i class="bi bi-cart"></i> تقرير المشتريات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Procurement", "FinancialIntegrationReport")" asp-controller="Procurement" asp-action="FinancialIntegrationReport">
+                                        <i class="bi bi-currency-dollar"></i> التكامل المالي
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">تقارير مالية</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Invoices", "StudentStatement")" asp-controller="Invoices" asp-action="StudentStatement">
+                                        <i class="bi bi-receipt"></i> كشف حساب الطالب
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 2: شؤون الطلاب وأولياء الأمور -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group2">
+                            <i class="bi bi-people"></i> شؤون الطلاب وأولياء الأمور
+                        </button>
+                    </h2>
+                    <div id="group2" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">الطلاب</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Students", "Index")" asp-controller="Students" asp-action="Index">
+                                        <i class="bi bi-list-ul"></i> دليل الطلاب
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Students", "Create")" asp-controller="Students" asp-action="Create">
+                                        <i class="bi bi-person-plus"></i> تسجيل طالب جديد
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Students", "Details")" asp-controller="Students" asp-action="Details">
+                                        <i class="bi bi-person-vcard"></i> الملف الشامل
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Students", "DigitalCard")" asp-controller="Students" asp-action="DigitalCard">
+                                        <i class="bi bi-person-badge"></i> البطاقة الرقمية
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Students", "Promote")" asp-controller="Students" asp-action="Promote">
+                                        <i class="bi bi-arrow-up-circle"></i> ترفيع ونقل الفصول
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Students", "Documents")" asp-controller="Students" asp-action="Documents">
+                                        <i class="bi bi-folder"></i> أرشيف المستندات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Students", "Edit")" asp-controller="Students" asp-action="Edit">
+                                        <i class="bi bi-pencil-square"></i> تعديل بيانات الطالب
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Students", "AcademicRecord")" asp-controller="Students" asp-action="AcademicRecord">
+                                        <i class="bi bi-journal-bookmark"></i> السجل الأكاديمي
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Students", "AttendanceAnalysis")" asp-controller="Students" asp-action="AttendanceAnalysis">
+                                        <i class="bi bi-graph-up"></i> تحليل الحضور
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Students", "ImportFromExcel")" asp-controller="Students" asp-action="ImportFromExcel">
+                                        <i class="bi bi-file-earmark-excel"></i> استيراد من Excel
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">أولياء الأمور</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Guardians", "Index")" asp-controller="Guardians" asp-action="Index">
+                                        <i class="bi bi-person-hearts"></i> دليل أولياء الأمور
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Guardians", "Create")" asp-controller="Guardians" asp-action="Create">
+                                        <i class="bi bi-person-plus"></i> تسجيل ولي أمر
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Guardians", "Details")" asp-controller="Guardians" asp-action="Details">
+                                        <i class="bi bi-person-vcard"></i> ملف ولي الأمر
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Guardians", "LinkStudent")" asp-controller="Guardians" asp-action="LinkStudent">
+                                        <i class="bi bi-link-45deg"></i> ربط الأبناء
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 3: الكادر التعليمي والموارد البشرية -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group3">
+                            <i class="bi bi-person-workspace"></i> الكادر التعليمي والموارد البشرية
+                        </button>
+                    </h2>
+                    <div id="group3" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Employees", "Index")" asp-controller="Employees" asp-action="Index">
+                                        <i class="bi bi-people"></i> سجل المعلمين والموظفين
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Employees", "Create")" asp-controller="Employees" asp-action="Create">
+                                        <i class="bi bi-person-plus"></i> إضافة موظف
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Employees", "TeacherScheduleIndex")" asp-controller="Employees" asp-action="TeacherScheduleIndex">
+                                        <i class="bi bi-calendar3"></i> جدول الحصص
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Employees", "Payroll")" asp-controller="Employees" asp-action="Payroll">
+                                        <i class="bi bi-cash-stack"></i> مسير المرتبات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Employees", "Leaves")" asp-controller="Employees" asp-action="Leaves">
+                                        <i class="bi bi-calendar-x"></i> الإجازات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Employees", "LeaveBalance")" asp-controller="Employees" asp-action="LeaveBalance">
+                                        <i class="bi bi-wallet2"></i> رصيد الإجازات
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 3.5: نظام الموارد البشرية المتقدم -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group35">
+                            <i class="bi bi-person-workspace"></i> نظام الموارد البشرية المتقدم
+                        </button>
+                    </h2>
+                    <div id="group35" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("HR", "Dashboard")" asp-controller="HR" asp-action="Dashboard">
+                                        <i class="bi bi-speedometer2"></i> لوحة تحكم HR
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("HR", "Contracts")" asp-controller="HR" asp-action="Contracts">
+                                        <i class="bi bi-file-earmark-text"></i> إدارة العقود
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("HR", "Payroll")" asp-controller="HR" asp-action="Payroll">
+                                        <i class="bi bi-cash-coin"></i> نظام الرواتب المتقدم
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("HR", "Attendance")" asp-controller="HR" asp-action="Attendance">
+                                        <i class="bi bi-fingerprint"></i> الحضور البصري
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("HR", "Gratuity")" asp-controller="HR" asp-action="Gratuity">
+                                        <i class="bi bi-gift"></i> مكافأة نهاية الخدمة
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("HR", "ImportAttendance")" asp-controller="HR" asp-action="ImportAttendance">
+                                        <i class="bi bi-upload"></i> استيراد الحضور البصري
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 4: الاتصالات والمراسلات -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group35">
+                            <i class="bi bi-envelope"></i> الاتصالات والمراسلات
+                        </button>
+                    </h2>
+                    <div id="group35" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Communication", "Index")" asp-controller="Communication" asp-action="Index">
+                                        <i class="bi bi-chat-dots"></i> نظام المراسلات
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 3.6: الإنذار المبكر -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group36">
+                            <i class="bi bi-exclamation-triangle"></i> الإنذار المبكر
+                        </button>
+                    </h2>
+                    <div id="group36" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("EarlyWarning", "Index")" asp-controller="EarlyWarning" asp-action="Index">
+                                        <i class="bi bi-graph-up-arrow"></i> مؤشر الخطر للطلاب
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 4: الحضور والغياب والمناداة -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group4">
+                            <i class="bi bi-calendar-check"></i> الحضور والمناداة
+                        </button>
+                    </h2>
+                    <div id="group4" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">الحضور والغياب</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Attendance", "Index")" asp-controller="Attendance" asp-action="Index">
+                                        <i class="bi bi-calendar-check"></i> كشف الحضور
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Attendance", "LiveLog")" asp-controller="Attendance" asp-action="LiveLog">
+                                        <i class="bi bi-wifi"></i> المتابعة اللحظية
+                                        <span class="badge bg-primary ms-auto">SignalR</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Attendance", "CallSystem")" asp-controller="Attendance" asp-action="CallSystem">
+                                        <i class="bi bi-megaphone"></i> نظام المناداة
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Attendance", "ManualTake")" asp-controller="Attendance" asp-action="ManualTake">
+                                        <i class="bi bi-pencil-square"></i> التحضير السريع
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 4.5: النقل والنقليات -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group45">
+                            <i class="bi bi-bus-front"></i> النقل والنقليات
+                        </button>
+                    </h2>
+                    <div id="group45" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Transport", "Index")" asp-controller="Transport" asp-action="Index">
+                                        <i class="bi bi-speedometer2"></i> لوحة الإحصائيات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Transport", "Buses")" asp-controller="Transport" asp-action="Buses">
+                                        <i class="bi bi-bus-front"></i> إدارة الحافلات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Transport", "Routes")" asp-controller="Transport" asp-action="Routes">
+                                        <i class="bi bi-route"></i> خطوط السير
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Transport", "Drivers")" asp-controller="Transport" asp-action="Drivers">
+                                        <i class="bi bi-person-badge"></i> السائقين
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Transport", "Supervisors")" asp-controller="Transport" asp-action="Supervisors">
+                                        <i class="bi bi-person-check"></i> المشرفين
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Transport", "Schedules")" asp-controller="Transport" asp-action="Schedules">
+                                        <i class="bi bi-calendar-check"></i> جداول الحافلات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Transport", "Subscriptions")" asp-controller="Transport" asp-action="Subscriptions">
+                                        <i class="bi bi-people"></i> اشتراكات الطلاب
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Transport", "LiveTracking")" asp-controller="Transport" asp-action="LiveTracking">
+                                        <i class="bi bi-geo-alt"></i> التتبع اللحظي
+                                        <span class="badge bg-success ms-auto">GPS</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 5: العيادة المدرسية -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group5">
+                            <i class="bi bi-hospital"></i> العيادة المدرسية
+                        </button>
+                    </h2>
+                    <div id="group5" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Clinic", "Dashboard")" asp-controller="Clinic" asp-action="Dashboard">
+                                        <i class="bi bi-speedometer2"></i> لوحة المتابعة
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Clinic", "QuickVisit")" asp-controller="Clinic" asp-action="QuickVisit">
+                                        <i class="bi bi-clipboard-plus"></i> تسليم/تسجيل زيارة عيادة
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Clinic", "Visits")" asp-controller="Clinic" asp-action="Visits">
+                                        <i class="bi bi-calendar-check"></i> سجل الزيارات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Clinic", "HealthProfiles")" asp-controller="Clinic" asp-action="HealthProfiles">
+                                        <i class="bi bi-heart-pulse"></i> السجلات الصحية للطلاب
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Clinic", "Inventory")" asp-controller="Clinic" asp-action="Inventory">
+                                        <i class="bi bi-box-seam"></i> صيدلية العيادة والمخزون
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Clinic", "MedicalExcuses")" asp-controller="Clinic" asp-action="MedicalExcuses">
+                                        <i class="bi bi-file-medical"></i> الإجازات والتقارير الطبية
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Clinic", "ActiveMedicalExcuses")" asp-controller="Clinic" asp-action="ActiveMedicalExcuses">
+                                        <i class="bi bi-activity"></i> تقارير العيادة والحالات المزمنة
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Clinic", "StudentHealthProfile")" asp-controller="Clinic" asp-action="StudentHealthProfile">
+                                        <i class="bi bi-heart-pulse"></i> الملف الصحي للطالب
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 5.5: إدارة الخريجين -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group55">
+                            <i class="bi bi-mortarboard"></i> إدارة الخريجين
+                        </button>
+                    </h2>
+                    <div id="group55" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Alumni", "Dashboard")" asp-controller="Alumni" asp-action="Dashboard">
+                                        <i class="bi bi-speedometer2"></i> لوحة المتابعة
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Alumni", "Index")" asp-controller="Alumni" asp-action="Index">
+                                        <i class="bi bi-people"></i> دليل الخريجين
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Alumni", "Create")" asp-controller="Alumni" asp-action="Create">
+                                        <i class="bi bi-person-plus"></i> إضافة خريج
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Alumni", "Clearance")" asp-controller="Alumni" asp-action="Clearance">
+                                        <i class="bi bi-check-circle"></i> إبراء التخرج
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Alumni", "PendingClearance")" asp-controller="Alumni" asp-action="PendingClearance">
+                                        <i class="bi bi-clock"></i> إبراء معلق
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Alumni", "GraduateStudent")" asp-controller="Alumni" asp-action="GraduateStudent">
+                                        <i class="bi bi-award"></i> تخرج طالب
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Alumni", "Documents")" asp-controller="Alumni" asp-action="Documents">
+                                        <i class="bi bi-folder"></i> وثائق الخريجين
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 6: القبول والتسجيل -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group6">
+                            <i class="bi bi-person-plus"></i> القبول والتسجيل
+                        </button>
+                    </h2>
+                    <div id="group6" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Admission", "Dashboard")" asp-controller="Admission" asp-action="Dashboard">
+                                        <i class="bi bi-speedometer2"></i> لوحة المتابعة
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Admission", "Applications")" asp-controller="Admission" asp-action="Applications">
+                                        <i class="bi bi-file-earmark-text"></i> طلبات الالتحاق
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Admission", "CreateApplication")" asp-controller="Admission" asp-action="CreateApplication">
+                                        <i class="bi bi-plus-circle"></i> طلب جديد
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">المقابلات والاختبارات</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Admission", "CreateExam")" asp-controller="Admission" asp-action="CreateExam">
+                                        <i class="bi bi-clipboard-check"></i> جدول المقابلات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">القبول والتسكين</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Admission", "ConvertToStudent")" asp-controller="Admission" asp-action="ConvertToStudent">
+                                        <i class="bi bi-person-check"></i> اعتماد القبول
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 7: إدارة الكانتين ونقاط البيع -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group7">
+                            <i class="bi bi-shop"></i> إدارة الكانتين ونقاط البيع
+                        </button>
+                    </h2>
+                    <div id="group7" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">إدارة الورديات</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Canteen", "Shifts")" asp-controller="Canteen" asp-action="Shifts">
+                                        <i class="bi bi-calendar-check"></i> الورديات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Canteen", "OpenShift")" asp-controller="Canteen" asp-action="OpenShift">
+                                        <i class="bi bi-door-open"></i> فتح وردية
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">نقاط البيع</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Canteen", "POS")" asp-controller="Canteen" asp-action="POS">
+                                        <i class="bi bi-shop"></i> نقطة البيع
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Canteen", "DiningIn")" asp-controller="Canteen" asp-action="DiningIn">
+                                        <i class="bi bi-grid-3x3"></i> صالة
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Canteen", "Takeaway")" asp-controller="Canteen" asp-action="Takeaway">
+                                        <i class="bi bi-cup-hot"></i> سفري
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Canteen", "Delivery")" asp-controller="Canteen" asp-action="Delivery">
+                                        <i class="bi bi-truck"></i> دليفري
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">المنتجات</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Canteen", "Products")" asp-controller="Canteen" asp-action="Products">
+                                        <i class="bi bi-box-seam"></i> المنتجات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Canteen", "Categories")" asp-controller="Canteen" asp-action="Categories">
+                                        <i class="bi bi-tags"></i> التصنيفات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">الطلبات</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Canteen", "Orders")" asp-controller="Canteen" asp-action="Orders">
+                                        <i class="bi bi-receipt"></i> الطلبات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">التوصيل</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Canteen", "DeliveryZones")" asp-controller="Canteen" asp-action="DeliveryZones">
+                                        <i class="bi bi-geo-alt"></i> مناطق التوصيل
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Canteen", "Tables")" asp-controller="Canteen" asp-action="Tables">
+                                        <i class="bi bi-table"></i> الطاولات
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 8: الأكاديميات والاختبارات -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group8">
+                            <i class="bi bi-journal-bookmark"></i> الأكاديميات والاختبارات
+                        </button>
+                    </h2>
+                    <div id="group8" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">الكنترول والدرجات</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Grades", "Index")" asp-controller="Grades" asp-action="Index">
+                                        <i class="bi bi-speedometer"></i> لوحة الكنترول
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Grades", "ControlSheet")" asp-controller="Grades" asp-action="ControlSheet">
+                                        <i class="bi bi-table"></i> شيت الكنترول
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Grades", "Index")" asp-controller="Grades" asp-action="Index">
+                                        <i class="bi bi-grid-3x3"></i> أرقام الجلوس
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Grades", "Index")" asp-controller="Grades" asp-action="Index">
+                                        <i class="bi bi-award"></i> الشهادات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">الجدول المدرسي</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Timetable", "Index")" asp-controller="Timetable" asp-action="Index">
+                                        <i class="bi bi-calendar3"></i> الجدول المدرسي
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Timetable", "Generate")" asp-controller="Timetable" asp-action="Generate">
+                                        <i class="bi bi-magic"></i> توليد الجدول
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">السلوك والمواظبة</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Behavior", "Index")" asp-controller="Behavior" asp-action="Index">
+                                        <i class="bi bi-exclamation-triangle"></i> سجل المخالفات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Behavior", "CreateIncident")" asp-controller="Behavior" asp-action="CreateIncident">
+                                        <i class="bi bi-clipboard-plus"></i> رصد حالة
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 9: الحسابات والفوترة -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group9">
+                            <i class="bi bi-wallet2"></i> الحسابات والفوترة
+                        </button>
+                    </h2>
+                    <div id="group9" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">الفوترة والهيئة</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Invoices", "Index")" asp-controller="Invoices" asp-action="Index">
+                                        <i class="bi bi-receipt"></i> الفواتير
+                                        <span class="badge bg-warning ms-auto">ZATCA</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Invoices", "CreatePayment")" asp-controller="Invoices" asp-action="CreatePayment">
+                                        <i class="bi bi-cash"></i> تحصيل الأقساط
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Invoices", "Index")" asp-controller="Invoices" asp-action="Index">
+                                        <i class="bi bi-shield-check"></i> حالة ZATCA
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Invoices", "Index")" asp-controller="Invoices" asp-action="Index">
+                                        <i class="bi bi-file-text"></i> كشف حساب الطالب
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Invoices", "CreatePayment")" asp-controller="Invoices" asp-action="CreatePayment">
+                                        <i class="bi bi-cash"></i> تسجيل دفعة
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">حسابات الطلاب</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("StudentAccounts", "Index")" asp-controller="StudentAccounts" asp-action="Index">
+                                        <i class="bi bi-wallet"></i> موقف الطلاب
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("StudentAccounts", "Statement")" asp-controller="StudentAccounts" asp-action="Statement">
+                                        <i class="bi bi-file-text"></i> كشف الحساب
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("StudentAccounts", "Index")" asp-controller="StudentAccounts" asp-action="Index">
+                                        <i class="bi bi-percent"></i> تطبيق الخصم
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("StudentAccounts", "CreateAccount")" asp-controller="StudentAccounts" asp-action="CreateAccount">
+                                        <i class="bi bi-plus-circle"></i> إنشاء حساب طالب
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">الحسابات العامة</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("GeneralLedger", "Index")" asp-controller="GeneralLedger" asp-action="Index">
+                                        <i class="bi bi-journal-text"></i> دفتر الأستاذ
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("GeneralLedger", "AccountBalance")" asp-controller="GeneralLedger" asp-action="AccountBalance">
+                                        <i class="bi bi-wallet2"></i> رصيد الحساب
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("GeneralLedger", "TrialBalance")" asp-controller="GeneralLedger" asp-action="TrialBalance">
+                                        <i class="bi bi-table"></i> ميزان المراجعة
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("GeneralLedger", "IncomeStatement")" asp-controller="GeneralLedger" asp-action="IncomeStatement">
+                                        <i class="bi bi-graph-up-arrow"></i> قائمة الدخل
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("GeneralLedger", "BalanceSheet")" asp-controller="GeneralLedger" asp-action="BalanceSheet">
+                                        <i class="bi bi-bank"></i> الميزانية العمومية
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("GeneralLedger", "CreateManualEntry")" asp-controller="GeneralLedger" asp-action="CreateManualEntry">
+                                        <i class="bi bi-pencil-square"></i> قيد يدوي
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("GeneralLedger", "JournalEntry")" asp-controller="GeneralLedger" asp-action="JournalEntry">
+                                        <i class="bi bi-journal-text"></i> القيد اليومي
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("FinancialYearClosing", "Index")" asp-controller="FinancialYearClosing" asp-action="Index">
+                                        <i class="bi bi-calendar-check"></i> الإغلاق السنوي
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("FinancialYearClosing", "Close")" asp-controller="FinancialYearClosing" asp-action="Close">
+                                        <i class="bi bi-lock-fill"></i> إغلاق السنة المالية
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("FinancialYearClosing", "CreateOpeningEntry")" asp-controller="FinancialYearClosing" asp-action="CreateOpeningEntry">
+                                        <i class="bi bi-plus-circle"></i> قيد الافتتاح
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("FinancialYearClosing", "Reopen")" asp-controller="FinancialYearClosing" asp-action="Reopen">
+                                        <i class="bi bi-unlock"></i> إعادة فتح السنة
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Invoices", "ZatcaStatus")" asp-controller="Invoices" asp-action="ZatcaStatus">
+                                        <i class="bi bi-shield-check"></i> حالة ZATCA
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("StudentAccounts", "ApplyDiscount")" asp-controller="StudentAccounts" asp-action="ApplyDiscount">
+                                        <i class="bi bi-percent"></i> تطبيق الخصم
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 9.1: عمليات فتح الفصل الدراسي -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group91">
+                            <i class="bi bi-unlock"></i> عمليات فتح الفصل الدراسي
+                        </button>
+                    </h2>
+                    <div id="group91" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("AcademicTerm", "Open")" asp-controller="AcademicTerm" asp-action="Open">
+                                        <i class="bi bi-door-open"></i> فتح الفصل الدراسي
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("AcademicTerm", "Index")" asp-controller="AcademicTerm" asp-action="Index">
+                                        <i class="bi bi-list"></i> قائمة الفصول
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 9.2: إدارة المخازن -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group92">
+                            <i class="bi bi-box-seam"></i> إدارة المخازن
+                        </button>
+                    </h2>
+                    <div id="group92" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">المخازن والمواقع</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Inventory", "Warehouses")" asp-controller="Inventory" asp-action="Warehouses">
+                                        <i class="bi bi-building"></i> إدارة المخازن
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">الأصناف والمخزون</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Inventory", "Items")" asp-controller="Inventory" asp-action="Items">
+                                        <i class="bi bi-box"></i> إدارة الأصناف
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Inventory", "StockReport")" asp-controller="Inventory" asp-action="StockReport">
+                                        <i class="bi bi-graph-up"></i> تقرير المخزون
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Inventory", "LowStockReport")" asp-controller="Inventory" asp-action="LowStockReport">
+                                        <i class="bi bi-exclamation-triangle"></i> المخزون المنخفض
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Inventory", "OverStockReport")" asp-controller="Inventory" asp-action="OverStockReport">
+                                        <i class="bi bi-boxes"></i> المخزون الزائد
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">حركات المخزون</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Inventory", "Transactions")" asp-controller="Inventory" asp-action="Transactions">
+                                        <i class="bi bi-arrow-left-right"></i> حركات المخزون
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Inventory", "CreateTransaction")" asp-controller="Inventory" asp-action="CreateTransaction">
+                                        <i class="bi bi-plus-circle"></i> إنشاء حركة
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Inventory", "Adjustments")" asp-controller="Inventory" asp-action="Adjustments">
+                                        <i class="bi bi-pencil-square"></i> تعديلات المخزون
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Inventory", "CreateAdjustment")" asp-controller="Inventory" asp-action="CreateAdjustment">
+                                        <i class="bi bi-plus-circle"></i> إنشاء تعديل
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Inventory", "Transactions")" asp-controller="Inventory" asp-action="Transactions">
+                                        <i class="bi bi-arrow-left-right"></i> حركات المخزون
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">التنبيهات</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Inventory", "Alerts")" asp-controller="Inventory" asp-action="Alerts">
+                                        <i class="bi bi-bell"></i> تنبيهات المخزون
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 9.3: إدارة المشتريات -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group93">
+                            <i class="bi bi-cart3"></i> إدارة المشتريات
+                        </button>
+                    </h2>
+                    <div id="group93" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">الموردين</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Procurement", "Suppliers")" asp-controller="Procurement" asp-action="Suppliers">
+                                        <i class="bi bi-people"></i> إدارة الموردين
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Procurement", "SupplierPerformanceReport")" asp-controller="Procurement" asp-action="SupplierPerformanceReport">
+                                        <i class="bi bi-star"></i> أداء الموردين
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">طلبات الشراء</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Procurement", "PurchaseRequests")" asp-controller="Procurement" asp-action="PurchaseRequests">
+                                        <i class="bi bi-file-earmark"></i> طلبات الشراء
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Procurement", "CreatePurchaseRequest")" asp-controller="Procurement" asp-action="CreatePurchaseRequest">
+                                        <i class="bi bi-plus-circle"></i> إنشاء طلب
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">أوامر الشراء</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Procurement", "PurchaseOrders")" asp-controller="Procurement" asp-action="PurchaseOrders">
+                                        <i class="bi bi-bag"></i> أوامر الشراء
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Procurement", "CreatePurchaseOrder")" asp-controller="Procurement" asp-action="CreatePurchaseOrder">
+                                        <i class="bi bi-plus-circle"></i> إنشاء أمر
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">فواتير الشراء</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Procurement", "PurchaseInvoices")" asp-controller="Procurement" asp-action="PurchaseInvoices">
+                                        <i class="bi bi-receipt"></i> فواتير الشراء
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Procurement", "CreatePurchaseInvoice")" asp-controller="Procurement" asp-action="CreatePurchaseInvoice">
+                                        <i class="bi bi-plus-circle"></i> إنشاء فاتورة
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link fw-bold text-muted ps-3">التقارير المالية</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Procurement", "ProcurementReport")" asp-controller="Procurement" asp-action="ProcurementReport">
+                                        <i class="bi bi-graph-up"></i> تقرير المشتريات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Procurement", "FinancialIntegrationReport")" asp-controller="Procurement" asp-action="FinancialIntegrationReport">
+                                        <i class="bi bi-wallet2"></i> التكامل المالي
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Procurement", "InventoryTransfers")" asp-controller="Procurement" asp-action="InventoryTransfers">
+                                        <i class="bi bi-arrow-left-right"></i> نقل المخزون
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 9.4: عمليات غلق الفصل الدراسي -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group94">
+                            <i class="bi bi-lock"></i> عمليات غلق الفصل الدراسي
+                        </button>
+                    </h2>
+                    <div id="group94" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("TermClosure", "Index")" asp-controller="TermClosure" asp-action="Index">
+                                        <i class="bi bi-list-check"></i> قائمة الغلق
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("TermClosure", "Close")" asp-controller="TermClosure" asp-action="Close">
+                                        <i class="bi bi-lock-fill"></i> غلق الفصل
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("TermClosure", "Archives")" asp-controller="TermClosure" asp-action="Archives">
+                                        <i class="bi bi-archive"></i> الأرشيف
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("TermClosure", "ArchiveDetails")" asp-controller="TermClosure" asp-action="ArchiveDetails">
+                                        <i class="bi bi-file-earmark-text"></i> تفاصيل الأرشيف
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 10: مركز التقارير -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group10">
+                            <i class="bi bi-file-earmark-bar-graph"></i> مركز التقارير
+                        </button>
+                    </h2>
+                    <div id="group10" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Reports", "Index")" asp-controller="Reports" asp-action="Index">
+                                        <i class="bi bi-pie-chart"></i> لوحة التقارير
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Reports", "ExportEngine")" asp-controller="Reports" asp-action="ExportEngine">
+                                        <i class="bi bi-file-earmark-arrow-down"></i> تصدير التقارير
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 11: الإعدادات -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group11">
+                            <i class="bi bi-gear"></i> الإعدادات
+                        </button>
+                    </h2>
+                    <div id="group11" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Settings", "Index")" asp-controller="Settings" asp-action="Index">
+                                        <i class="bi bi-sliders"></i> الإعدادات العامة
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <hr class="dropdown-divider bg-secondary">
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("LicenseManager", "Index")" asp-controller="LicenseManager" asp-action="Index">
+                                        <i class="bi bi-key"></i> إدارة التراخيص
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("LicenseManager", "Generate")" asp-controller="LicenseManager" asp-action="Generate">
+                                        <i class="bi bi-plus-circle"></i> توليد ترخيص جديد
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("LicenseManager", "Details")" asp-controller="LicenseManager" asp-action="Details">
+                                        <i class="bi bi-info-circle"></i> تفاصيل الترخيص
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("LicenseManager", "GenerateKeys")" asp-controller="LicenseManager" asp-action="GenerateKeys">
+                                        <i class="bi bi-shield-lock"></i> توليد مفاتيح التشفير
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Settings", "ZatcaConfig")" asp-controller="Settings" asp-action="ZatcaConfig">
+                                        <i class="bi bi-shield-check"></i> إعدادات ZATCA
+                                        <span class="badge bg-warning ms-auto">CSID</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Settings", "NoorIntegration")" asp-controller="Settings" asp-action="NoorIntegration">
+                                        <i class="bi bi-link-45deg"></i> نظام نور
+                                        <span class="badge bg-info ms-auto">Noor</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Settings", "WhatsAppConfig")" asp-controller="Settings" asp-action="WhatsAppConfig">
+                                        <i class="bi bi-whatsapp"></i> إعدادات WhatsApp
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المجموعة 12: المستخدمون والصلاحيات والأدوار -->
+                <div class="accordion-item bg-dark" data-bs-parent="#sidebarAccordion">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#group12">
+                            <i class="bi bi-people-gear"></i> المستخدمون والصلاحيات والأدوار
+                        </button>
+                    </h2>
+                    <div id="group12" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Users", "Index")" asp-controller="Users" asp-action="Index">
+                                        <i class="bi bi-people"></i> إدارة المستخدمين
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("Roles", "Index")" asp-controller="Roles" asp-action="Index">
+                                        <i class="bi bi-shield-lock"></i> إدارة الأدوار
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @IsActive("RolesAndPermissions", "Index")" asp-controller="RolesAndPermissions" asp-action="Index">
+                                        <i class="bi bi-key"></i> الصلاحيات
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <!-- Top Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+                <div class="container-fluid">
+                    <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenu">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="mobileMenu">
+                        <ul class="navbar-nav me-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Index">
+                                    <i class="bi bi-house-door"></i> الرئيسية
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-person-circle"></i> @User.Identity?.Name
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="/Account/Profile"><i class="bi bi-person"></i> الملف الشخصي</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="LogoutGet"><i class="bi bi-box-arrow-right"></i> تسجيل الخروج</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content Area -->
+            <div class="container-fluid py-4">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle"></i> @TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-circle"></i> @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer text-muted border-top py-3 text-center bg-light mt-auto">
+        <div class="container-fluid">
+            <span>© 2026 <strong>نظام مَسَار للمدارس</strong> - محرك الإغلاق السنوي والأستاذ العام - جميع الحقوق محفوظة - شركة مسار للبرمجيات mokdadvipr@gmail.com .. 01006765664 (نسخة 1.0.0)</span>
+        </div>
+    </footer>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/alpinejs/alpine.min.js" defer></script>
+    <script src="~/js/site.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        // Auto-open the accordion group containing the active link
+        document.addEventListener('DOMContentLoaded', function() {
+            const activeLink = document.querySelector('.nav-link.active');
+            if (activeLink) {
+                // Find the closest accordion-collapse parent
+                const accordionCollapse = activeLink.closest('.accordion-collapse');
+                if (accordionCollapse) {
+                    // Show the accordion group
+                    accordionCollapse.classList.add('show');
+
+                    // Find the corresponding accordion button and add the 'not-collapsed' class
+                    const accordionButton = document.querySelector(`[data-bs-target="#${accordionCollapse.id}"]`);
+                    if (accordionButton) {
+                        accordionButton.classList.remove('collapsed');
+                        accordionButton.setAttribute('aria-expanded', 'true');
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- مسار الذكي - المساعد الرقمي الكامل -->
+    <div id="masar-ai-widget" style="position: fixed; bottom: 30px; left: 30px; z-index: 9999;">
+        <!-- زر المساعد -->
+        <button id="masar-ai-toggle" style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); color: white; font-size: 24px; display: flex; align-items: center; justify-content: center;">
+            🤖
+        </button>
+
+        <!-- نافذة المحادثة -->
+        <div id="masar-ai-chat" style="position: absolute; bottom: 80px; left: 0; width: 380px; height: 550px; background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); display: none; flex-direction: column; overflow: hidden;">
+            <!-- رأس النافذة -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; color: white;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px;">🤖</div>
+                    <div>
+                        <h5 style="margin: 0; font-size: 16px; font-weight: 600;">مسار الذكي</h5>
+                        <span style="font-size: 12px; display: flex; align-items: center; gap: 5px;">
+                            <span style="width: 8px; height: 8px; background: #00c853; border-radius: 50%;"></span>
+                            متصل الآن
+                        </span>
+                    </div>
+                </div>
+                <button id="masar-ai-close" style="width: 32px; height: 32px; border: none; background: rgba(255, 255, 255, 0.2); border-radius: 50%; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+            </div>
+
+            <!-- منطقة الرسائل -->
+            <div id="masar-ai-messages" style="flex: 1; overflow-y: auto; padding: 20px; background: #f8f9fa;">
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; gap: 10px;">
+                        <div style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; align-items: center; justify-content: center; font-size: 16px;">🤖</div>
+                        <div style="background: white; padding: 12px 16px; border-radius: 12px; max-width: 280px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); line-height: 1.5; font-size: 14px;">
+                            أهلاً بك! أنا مسار الذكي، المساعد الرقمي لنظام مَسَار للمدارس.
+                            <br><br>
+                            يمكنني مساعدتك في:
+                            <ul>
+                                <li>🏢 إدارة المؤسسات والشعارات</li>
+                                <li>🎓 شؤون الطلاب والكنترول</li>
+                                <li>💰 الفواتير والمالية ZATCA</li>
+                                <li>📊 مؤشر الخطر للطلاب</li>
+                                <li>👥 إدارة الصلاحيات</li>
+                                <li>📅 الحضور والغياب</li>
+                            </ul>
+                            <br>
+                            كيف يمكنني مساعدتك اليوم؟
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- منطقة الإدخال -->
+            <div style="padding: 15px 20px; background: white; border-top: 1px solid #e9ecef;">
+                <div style="display: flex; gap: 10px; align-items: flex-end;">
+                    <input type="text" id="masar-ai-input" placeholder="اكتب رسالتك هنا..." style="flex: 1; border: 1px solid #dee2e6; border-radius: 20px; padding: 10px 15px; resize: none; font-size: 14px; outline: none;" />
+                    <button id="masar-ai-send" style="width: 40px; height: 40px; border: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript للتحكم في المساعد
+        const toggleBtn = document.getElementById('masar-ai-toggle');
+        const chatContainer = document.getElementById('masar-ai-chat');
+        const closeBtn = document.getElementById('masar-ai-close');
+        const sendBtn = document.getElementById('masar-ai-send');
+        const inputField = document.getElementById('masar-ai-input');
+        const messagesContainer = document.getElementById('masar-ai-messages');
+
+        let isChatOpen = false;
+        let chatHistory = []; // حفظ تاريخ المحادثة
+
+        // دالة لفتح المساعد من القائمة الجانبية
+        window.openAiAssistant = function() {
+            isChatOpen = true;
+            chatContainer.style.display = 'flex';
+            inputField.focus();
+        };
+
+        toggleBtn.addEventListener('click', function() {
+            isChatOpen = !isChatOpen;
+            chatContainer.style.display = isChatOpen ? 'flex' : 'none';
+            if (isChatOpen) {
+                inputField.focus();
+            }
+        });
+
+        closeBtn.addEventListener('click', function() {
+            isChatOpen = false;
+            chatContainer.style.display = 'none';
+        });
+
+        sendBtn.addEventListener('click', sendMessage);
+        inputField.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const message = inputField.value.trim();
+            if (!message) return;
+
+            inputField.value = '';
+
+            // إضافة رسالة المستخدم للسجل
+            chatHistory.push({ role: 'user', content: message });
+
+            // إضافة رسالة المستخدم للواجهة
+            addMessage('user', message);
+
+            // إضافة رسالة "جاري الكتابة..."
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typing-indicator';
+            typingDiv.style.marginBottom = '15px';
+            typingDiv.innerHTML = `
+                <div style="display: flex; gap: 10px;">
+                    <div style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; align-items: center; justify-content: center; font-size: 16px;">🤖</div>
+                    <div style="background: white; padding: 12px 16px; border-radius: 12px; max-width: 280px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); line-height: 1.5; font-size: 14px;">
+                        <span style="color: #6c757d;">جاري الكتابة...</span>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // الاتصال بـ API مع تاريخ المحادثة
+            fetch('/api/ai/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userMessage: message,
+                    chatHistory: chatHistory // إرسال تاريخ المحادثة
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // إزالة مؤشر الكتابة
+                const typingIndicator = document.getElementById('typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+
+                // إضافة رد المساعد
+                if (data.responseText) {
+                    // إضافة رد المساعد للسجل
+                    chatHistory.push({ role: 'assistant', content: data.responseText });
+                    addMessage('assistant', data.responseText);
+                } else if (data.errorMessage) {
+                    addMessage('assistant', 'حدث خطأ: ' + data.errorMessage);
+                }
+            })
+            .catch(error => {
+                // إزالة مؤشر الكتابة
+                const typingIndicator = document.getElementById('typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+
+                // في حالة الخطأ، استخدام المحاكاة
+                console.error('API Error:', error);
+                const response = generateResponse(message);
+                chatHistory.push({ role: 'assistant', content: response });
+                addMessage('assistant', response);
+            });
+        }
+
+        function addMessage(sender, text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.style.marginBottom = '15px';
+
+            const avatar = sender === 'assistant' ? '🤖' : '👤';
+            const bgColor = sender === 'assistant' ? 'white' : '#007bff';
+            const textColor = sender === 'assistant' ? 'black' : 'white';
+
+            messageDiv.innerHTML = `
+                <div style="display: flex; gap: 10px;">
+                    <div style="width: 35px; height: 35px; border-radius: 50%; background: ${sender === 'assistant' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#007bff'}; color: white; display: flex; align-items: center; justify-content: center; font-size: 16px;">${avatar}</div>
+                    <div style="background: ${bgColor}; color: ${textColor}; padding: 12px 16px; border-radius: 12px; max-width: 280px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); line-height: 1.5; font-size: 14px;">
+                        ${text}
+                    </div>
+                </div>
+            `;
+
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function generateResponse(message) {
+            if (message.includes('شعار') || message.includes('هوية')) {
+                return 'لرفع شعار المؤسسة وتخصيص الهوية، اتبع الخطوات التالية:\n\n1. اذهب إلى **إدارة المؤسسات**\n2. اختر **إعدادات الهية**\n3. اسحب وأفلت ملف الشعار في منطقة الرفع\n4. ستظهر معاينة فورية للشعار\n5. اختر الألوان الأساسية والثانوية للمؤسسة\n6. اضغط **حفظ** لتطبيق التغييرات';
+            }
+
+            if (message.includes('خطر') || message.includes('مؤشر')) {
+                return 'مؤشر الخطر للطلاب (Student Risk Index) هو نظام ذكي يحلل ثلاثة عوامل رئيسية:\n\n- **الحضور والغياب (35%)**: نسبة الحضور والغياب\n- **الأداء الأكاديمي (45%)**: الدرجات والاختبارات\n- **المالية (20%)**: الأقساط والمدفوعات\n\n**مستويات الخطر:**\n- 🔵 آمن: 0-39\n- 🟡 تحذير: 40-69\n- 🔴 خطر حرج: 70-100';
+            }
+
+            if (message.includes('فاتورة') || message.includes('ZATCA')) {
+                return 'لإصدار فاتورة معتمدة من ZATCA:\n\n1. اذهب إلى **الفواتير**\n2. اضغط **إصدار فاتورة جديدة**\n3. اختر الطالب أو ولي الأمر\n4. حدد نوع الفاتورة (قسط، رسوم إضافية، إلخ)\n5. سيتم إنشاء الفاتورة مع رمز ضريبي ZATCA تلقائياً\n6. يمكن تحميل الفاتورة بصيغة PDF XML للإيداع الضريبي';
+            }
+
+            if (message.includes('كنترول') || message.includes('درجات')) {
+                return 'لرصد الدرجات في شيت الكنترول:\n\n1. اذهب إلى **الدرجات والامتحانات**\n2. اختر الفصل الدراسي المطلوب\n3. اضغط **الكنترول**\n4. ستظهر قائمة الطلاب مع حقول الدرجات\n5. أدخل درجات الفصل الأول، الثاني، والنهائي\n6. اضغط **حفظ** لحفظ الدرجات\n7. يمكنك طباعة شيت الكنترول من زر **طباعة**';
+            }
+
+            if (message.includes('حضور') || message.includes('غياب')) {
+                return 'تسجيل الحضور والغياب يتم بعدة طرق:\n\n1. **بصمة الإصبع**: من خلال أجهزة البصمة المتصلة بالنظام\n2. **المناداة الإلكترونية**: من واجهة المعلم\n3. **التسجيل اليدوي**: من صفحة الحضور\n\nعند تسجيل غياب طالب، يتم إرسال إشعار تلقائي عبر WhatsApp لولي الأمر.';
+            }
+
+            if (message.includes('صلاحية') || message.includes('دور')) {
+                return 'إدارة الصلاحيات في النظام:\n\n1. اذهب إلى **الأدوار والصلاحيات**\n2. ستجد قائمة الأدور الموجودة (مدير، معلم، محاسب، إلخ)\n3. لكل دور، يمكنك تحديد الصلاحيات المسموح بها\n4. التغييرات تُطبق فوراً دون الحاجة لإعادة تشغيل النظام\n5. يمكنك إنشاء أدور جديدة مخصصة';
+            }
+
+            return 'أهلاً بك! أنا مسار الذكي، المساعد الرقمي لنظام مَسَار للمدارس.\n\nيمكنني مساعدتك في:\n\n- 🏢 إدارة المؤسسات والشعارات\n- 🎓 شؤون الطلاب والكنترول\n- 💰 الفواتير والمالية ZATCA\n- 📊 مؤشر الخطر للطلاب\n- 👥 إدارة الصلاحيات\n- 📅 الحضور والغياب\n\nكيف يمكنني مساعدتك اليوم؟';
+        }
+    </script>
+
+    @functions {
+        public string IsActive(string controller, string action = "Index")
+        {
+            var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+            var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+            return (currentController == controller && currentAction == action) ? "active fw-bold text-primary" : "";
+        }
+    }
+</body>
+</html>

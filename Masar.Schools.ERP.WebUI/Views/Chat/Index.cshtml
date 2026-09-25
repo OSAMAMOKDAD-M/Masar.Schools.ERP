@@ -1,0 +1,241 @@
+@model List<ChatRoom>
+@{
+    ViewData["Title"] = "الدردشة";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-chat-dots"></i> الدردشة الفورية
+        </h1>
+        <p class="text-muted">التواصل المباشر مع الطلاب، المدرسين، والإدارة</p>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Chat Rooms List -->
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-header">
+                <i class="bi bi-chat-right-dots"></i> المحادثات
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush" id="chatRoomsList">
+                    @foreach (var room in Model)
+                    {
+                        <a href="#" class="list-group-item list-group-item-action chat-room-item" 
+                           data-room-id="@room.Id" 
+                           onclick="loadChatRoom('@room.Id')">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">@room.NameArabic</h6>
+                                <small class="text-muted">
+                                    @(room.LastMessageAt.HasValue ? room.LastMessageAt.Value.ToString("HH:mm") : "")
+                                </small>
+                            </div>
+                            <p class="mb-1 text-muted small">@room.DescriptionArabic</p>
+                            <small class="text-muted">
+                                <i class="bi bi-people"></i> @room.Members.Count عضو
+                            </small>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Window -->
+    <div class="col-md-8 mb-3">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-chat-square-dots"></i>
+                    <span id="currentChatRoomName">اختر محادثة</span>
+                </div>
+                <div>
+                    <button class="btn btn-sm btn-outline-primary" onclick="sendWhatsAppAlert()">
+                        <i class="bi bi-whatsapp"></i> إرسال واتساب
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="text-center text-muted py-5">
+                            <i class="bi bi-chat-dots display-4"></i>
+                            <p class="mt-3">اختر محادثة للبدء</p>
+                        </div>
+                    </div>
+                    <div class="chat-input p-3 border-top">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="messageInput" 
+                                   placeholder="اكتب رسالتك هنا..." disabled>
+                            <button class="btn btn-primary" id="sendButton" disabled onclick="sendMessage()">
+                                <i class="bi bi-send"></i> إرسال
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- WhatsApp Alert Modal -->
+<div class="modal fade" id="whatsAppModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-whatsapp"></i> إرسال إشعار واتساب
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="whatsAppForm">
+                    <div class="mb-3">
+                        <label class="form-label">رقم الهاتف</label>
+                        <input type="text" class="form-control" id="whatsappPhone" 
+                               placeholder="966XXXXXXXXX" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">الرسالة</label>
+                        <textarea class="form-control" id="whatsappMessage" rows="4" 
+                                  placeholder="اكتب الرسالة هنا..." required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-success" onclick="submitWhatsAppAlert()">
+                    <i class="bi bi-send"></i> إرسال
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let currentRoomId = null;
+        let connection = null;
+
+        // Initialize SignalR connection
+        document.addEventListener('DOMContentLoaded', function() {
+            connection = new signalR.HubConnectionBuilder()
+                .withUrl("/chathub")
+                .build();
+
+            connection.start().catch(function(err) {
+                console.error(err);
+            });
+
+            connection.on("ReceiveMessage", function(message) {
+                if (currentRoomId === message.chatRoomId) {
+                    appendMessage(message);
+                }
+            });
+        });
+
+        function loadChatRoom(roomId) {
+            currentRoomId = roomId;
+            
+            // Update UI
+            document.querySelectorAll('.chat-room-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.chat-room-item').classList.add('active');
+            
+            // Enable input
+            document.getElementById('messageInput').disabled = false;
+            document.getElementById('sendButton').disabled = false;
+            
+            // Load messages
+            fetch(`/Chat/GetMessages?conversationId=${roomId}`)
+                .then(response => response.json())
+                .then(messages => {
+                    const messagesContainer = document.getElementById('chatMessages');
+                    messagesContainer.innerHTML = '';
+                    messages.forEach(message => appendMessage(message));
+                });
+        }
+
+        function appendMessage(message) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const isCurrentUser = message.senderId === '@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value';
+            
+            const messageHtml = `
+                <div class="chat-message ${isCurrentUser ? 'sent' : 'received'}">
+                    <div class="message-content">
+                        <strong>${message.senderName}</strong>
+                        <p class="mb-0">${message.content}</p>
+                        <small class="message-time">${new Date(message.createdAt).toLocaleTimeString('ar-SA')}</small>
+                    </div>
+                </div>
+            `;
+            
+            messagesContainer.insertAdjacentHTML('beforeend', messageHtml);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function sendMessage() {
+            const content = document.getElementById('messageInput').value;
+            if (!content || !currentRoomId) return;
+
+            fetch('/Chat/SendMessage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify({
+                    chatRoomId: currentRoomId,
+                    content: content,
+                    messageType: 'Text'
+                })
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      document.getElementById('messageInput').value = '';
+                  }
+              });
+        }
+
+        function sendWhatsAppAlert() {
+            const modal = new bootstrap.Modal(document.getElementById('whatsAppModal'));
+            modal.show();
+        }
+
+        function submitWhatsAppAlert() {
+            const phone = document.getElementById('whatsappPhone').value;
+            const message = document.getElementById('whatsappMessage').value;
+
+            fetch('/Chat/SendWhatsAppAlert', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify({
+                    phoneNumber: phone,
+                    message: message
+                })
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      bootstrap.Modal.getInstance(document.getElementById('whatsAppModal')).hide();
+                      alert('تم إرسال الإشعار بنجاح');
+                  } else {
+                      alert('فشل الإرسال: ' + data.error);
+                  }
+              });
+        }
+
+        // Send message on Enter key
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+    <script src="~/lib/signalr/signalr.min.js"></script>
+}

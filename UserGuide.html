@@ -1,0 +1,2178 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                     نظام مَسَار للمدارس - Masar Schools ERP                   ║
+║                           دليل المستخدم الشامل                                ║
+║                                                                              ║
+║                      جميع الحقوق محفوظة © 2026                               ║
+║                  شركة مسار للبرمجيات والتقنية - Masar Software               ║
+║                                                                              ║
+║                  ما زال هناك الكثير من المفاجآت في السيستم                   ║
+║                   تواصل معنا لتحصل على المزيد                              ║
+║                                                                              ║
+║                  Email: mokdadvip@hotmail.com                                ║
+║                  Phone: 01006765664                                         ║
+║                  WhatsApp SA: +966 50 640 3548     
+                WhatsApp SA: +568280194                              ║
+║                  Facebook: @masarschools                                     ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دليل مستخدم نظام مَسَار للمدارس - Masar Schools ERP</title>
+    <style>
+        /* ========== إعدادات الخطوط والألوان ========== */
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #00c853;
+            --danger-color: #ff5252;
+            --warning-color: #ffc107;
+            --info-color: #00bcd4;
+            --dark-bg: #1a1a2e;
+            --darker-bg: #16213e;
+            --light-bg: #f8f9fa;
+            --text-dark: #2d3436;
+            --text-light: #ffffff;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #00c853 0%, #009688 100%);
+            --gradient-accent: linear-gradient(135deg, #ff5252 0%, #ff7043 100%);
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.12);
+            --shadow-lg: 0 8px 16px rgba(0,0,0,0.16);
+            --shadow-xl: 0 12px 24px rgba(0,0,0,0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ========== الهيكل العام ========== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ========== الشريط الجانبي ========== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--dark-bg);
+            color: var(--text-light);
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.8rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .sidebar-header p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-light);
+            transform: translateX(-5px);
+        }
+
+        .nav-link.active {
+            background: var(--gradient-primary);
+            color: var(--text-light);
+        }
+
+        .nav-link i {
+            margin-left: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-section {
+            margin: 20px 0 10px;
+            padding: 10px 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--accent-color);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ========== المحتوى الرئيسي ========== */
+        .main-content {
+            margin-right: 280px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        /* ========== قسم الترحيب ========== */
+        .welcome-section {
+            background: var(--gradient-primary);
+            color: var(--text-light);
+            padding: 60px 40px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-section h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .welcome-section p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            max-width: 800px;
+        }
+
+        .welcome-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stat-card h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        /* ========== البطاقات ========== */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-left: 15px;
+            color: white;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .card-content {
+            color: #555;
+        }
+
+        /* ========== المخطط الشجري ========== */
+        .tree-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .tree-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .tree-header h2 {
+            font-size: 2rem;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tree-node {
+            position: relative;
+            margin: 10px 0;
+        }
+
+        .tree-node-content {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .tree-node-content:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .tree-node-content.main {
+            background: var(--gradient-secondary);
+            font-size: 1.2rem;
+            padding: 20px 35px;
+        }
+
+        .tree-children {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .tree-children::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            background: #ddd;
+        }
+
+        .tree-child {
+            position: relative;
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 2px solid #e0e0e0;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tree-child:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .tree-child::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            background: #ddd;
+        }
+
+        /* ========== شبكة الموديولات ========== */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            border: 1px solid #f0f0f0;
+        }
+
+        .module-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .module-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+
+        .module-header .icon {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 2rem;
+            opacity: 0.3;
+        }
+
+        .module-header h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .module-header .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .module-body {
+            padding: 20px;
+        }
+
+        .module-features {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .module-features li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+        }
+
+        .module-features li:last-child {
+            border-bottom: none;
+        }
+
+        .module-features li::before {
+            content: '✓';
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .module-footer {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .module-footer .benefit {
+            font-size: 0.85rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+        }
+
+        .module-footer .benefit::before {
+            content: '💡';
+            margin-left: 8px;
+        }
+
+        /* ========== أدوار المستخدمين ========== */
+        .roles-section {
+            margin: 40px 0;
+        }
+
+        .role-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow-md);
+            border-right: 5px solid var(--primary-color);
+        }
+
+        .role-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .role-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-left: 20px;
+        }
+
+        .role-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .role-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .role-modules {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .role-module {
+            background: #f0f0f0;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        /* ========== سيناريو يوم العمل ========== */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 50%;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            width: 50%;
+            padding: 0 40px;
+        }
+
+        .timeline-item:nth-child(odd) {
+            right: 0;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) {
+            right: 50%;
+            text-align: left;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .timeline-item:nth-child(odd)::before {
+            right: -10px;
+        }
+
+        .timeline-item:nth-child(even)::before {
+            left: -10px;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .timeline-time {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .timeline-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .timeline-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* ========== الفوتر ========== */
+        .footer {
+            background: var(--dark-bg);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .footer p {
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        /* ========== الأزرار ========== */
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: var(--text-dark);
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* ========== الأنيميشن ========== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* ========== التجاوب ========== */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-right: 0;
+            }
+
+            .mobile-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 1001;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 10px;
+                cursor: pointer;
+            }
+
+            .timeline::before {
+                right: 20px;
+            }
+
+            .timeline-item {
+                width: 100%;
+                padding-right: 50px;
+                padding-left: 20px;
+                text-align: right;
+            }
+
+            .timeline-item:nth-child(even) {
+                right: 0;
+                text-align: right;
+            }
+
+            .timeline-item::before {
+                right: 10px;
+            }
+
+            .timeline-item:nth-child(even)::before {
+                right: 10px;
+            }
+        }
+
+        @media (min-width: 993px) {
+            .mobile-toggle {
+                display: none;
+            }
+        }
+
+        /* ========== شريط البحث ========== */
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        /* ========== قسم الطباعة ========== */
+        .print-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        @media print {
+            .sidebar, .mobile-toggle, .btn {
+                display: none;
+            }
+
+            .main-content {
+                margin-right: 0;
+            }
+
+            .card, .module-card, .role-card {
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+
+        /* ========== حالة التحميل ========== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f0f0f0;
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========== الألوان المخصصة للموديولات ========== */
+        .module-academic { border-right-color: #667eea; }
+        .module-students { border-right-color: #00c853; }
+        .module-hr { border-right-color: #ff5252; }
+        .module-attendance { border-right-color: #ffc107; }
+        .module-transport { border-right-color: #00bcd4; }
+        .module-clinic { border-right-color: #e91e63; }
+        .module-alumni { border-right-color: #9c27b0; }
+        .module-admission { border-right-color: #ff5722; }
+        .module-canteen { border-right-color: #4caf50; }
+        .module-finance { border-right-color: #2196f3; }
+        .module-inventory { border-right-color: #795548; }
+        .module-reports { border-right-color: #607d8b; }
+        .module-settings { border-right-color: #3f51b5; }
+
+        .module-header.academic { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .module-header.students { background: linear-gradient(135deg, #00c853 0%, #009688 100%); }
+        .module-header.hr { background: linear-gradient(135deg, #ff5252 0%, #ff7043 100%); }
+        .module-header.attendance { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); }
+        .module-header.transport { background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%); }
+        .module-header.clinic { background: linear-gradient(135deg, #e91e63 0%, #e91e63 100%); }
+        .module-header.alumni { background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%); }
+        .module-header.admission { background: linear-gradient(135deg, #ff5722 0%, #e64a19 100%); }
+        .module-header.canteen { background: linear-gradient(135deg, #4caf50 0%, #43a047 100%); }
+        .module-header.finance { background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%); }
+        .module-header.inventory { background: linear-gradient(135deg, #795548 0%, #5d4037 100%); }
+        .module-header.reports { background: linear-gradient(135deg, #607d8b 0%, #455a64 100%); }
+        .module-header.settings { background: linear-gradient(135deg, #3f51b5 0%, #303f9f 100%); }
+
+        /* ========== قسم المساعدة التفاعلية ========== */
+        .quick-start-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .quick-start-section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .quick-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .quick-step {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .quick-step-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        .quick-step-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .quick-step-description {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* ========== قسم المواصفات التقنية ========== */
+        .tech-specs {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: var(--shadow-md);
+        }
+
+        .tech-specs h2 {
+            font-size: 2rem;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .spec-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-right: 4px solid var(--primary-color);
+        }
+
+        .spec-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .spec-value {
+            color: #555;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- شريط التحميل -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- زر القائمة للموبايل -->
+    <button class="mobile-toggle" onclick="toggleSidebar()">
+        <i>☰</i> القائمة
+    </button>
+
+    <!-- الشريط الجانبي -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1>مَسَار للمدارس</h1>
+            <p>دليل المستخدم الشامل</p>
+        </div>
+
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="بحث في الدليل..." id="searchInput" onkeyup="searchGuide()">
+            <span class="search-icon">🔍</span>
+        </div>
+
+        <div class="nav-section">التنقل السريع</div>
+        
+        <div class="nav-item">
+            <a href="#welcome" class="nav-link active">
+                <i>🏠</i> الترحيب
+            </a>
+        </div>
+        
+        <div class="nav-item">
+            <a href="#quick-start" class="nav-link">
+                <i>🚀</i> البدء السريع
+            </a>
+        </div>
+        
+        <div class="nav-item">
+            <a href="#architecture" class="nav-link">
+                <i>🏗️</i> الهيكل النظامي
+            </a>
+        </div>
+        
+        <div class="nav-item">
+            <a href="#modules" class="nav-link">
+                <i>📦</i> الموديولات
+            </a>
+        </div>
+        
+        <div class="nav-item">
+            <a href="#roles" class="nav-link">
+                <i>👥</i> أدوار المستخدمين
+            </a>
+        </div>
+        
+        <div class="nav-item">
+            <a href="#permissions" class="nav-link">
+                <i>🔐</i> نظام الصلاحيات
+            </a>
+        </div>
+        
+        <div class="nav-item">
+            <a href="#scenario" class="nav-link">
+                <i>📅</i> سيناريو يوم العمل
+            </a>
+        </div>
+
+        <div class="nav-item">
+            <a href="#tech-specs" class="nav-link">
+                <i>⚙️</i> المواصفات التقنية
+            </a>
+        </div>
+
+        <div class="nav-section">أدوات</div>
+        
+        <div class="nav-item">
+            <a href="#" class="nav-link" onclick="printGuide()">
+                <i>🖨️</i> طباعة الدليل
+            </a>
+        </div>
+        
+        <div class="nav-item">
+            <a href="#" class="nav-link" onclick="downloadPDF()">
+                <i>📄</i> حفظ كـ PDF
+            </a>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content">
+        <!-- قسم الترحيب -->
+        <section class="welcome-section animate-in" id="welcome">
+            <div class="welcome-content">
+                <h1>مرحباً بك في نظام مَسَار للمدارس</h1>
+                <p>نظام إدارة المدارس الشامل والمتكامل الذي يُحدث ثورة في إدارة المؤسسات التعليمية. من خلال واجهة عصرية سهلة الاستخدام، نوفر لك الحلول الذكية لإدارة كل جانب من جوانب العملية التعليمية.</p>
+                
+                <div style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); padding: 20px; border-radius: 15px; margin: 20px 0; border: 1px solid rgba(255,255,255,0.2);">
+                    <h3 style="color: white; margin-bottom: 10px; font-size: 1.3rem;">📋 حقوق الملكية والترخيص</h3>
+                    <p style="color: rgba(255,255,255,0.9); margin-bottom: 10px;">
+                        جميع الحقوق محفوظة © 2026 - شركة مسار للبرمجيات والتقنية
+                    </p>
+                    <p style="color: rgba(255,255,255,0.9); margin-bottom: 10px;">
+                        📧 mokdadvip@hotmail.com | 📞 01006765664 | 📱      WhatsApp SA: +966 50 640 3548     
+                    </p>
+                    <p style="color: rgba(255,255,255,0.9); margin-bottom: 15px;">
+                        WhatsApp SA: +568280194  | 📘 Facebook: @masarschools
+                    </p>
+                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; border-right: 4px solid #00c853;">
+                        <p style="color: #00c853; font-weight: 700; font-size: 1.1rem; margin-bottom: 5px;">✨ ما زال هناك الكثير من المفاجآت في السيستم</p>
+                        <p style="color: rgba(255,255,255,0.9);">تواصل معنا لتحصل على المزيد من الميزات والتحديثات الحصرية</p>
+                    </div>
+                </div>
+                
+                <div class="welcome-stats">
+                    <div class="stat-card">
+                        <h3>19+</h3>
+                        <p>موديول متكامل</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>100+</h3>
+                        <p>شاشة وظيفية</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>50+</h3>
+                        <p>كيان نظامي</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>4</h3>
+                        <p>أدوار محددة</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>AI</h3>
+                        <p>مساعد ذكي متكامل</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم البدء السريع -->
+        <section class="quick-start-section animate-in" id="quick-start">
+            <h2>🚀 ابدأ رحلتك مع مَسَار</h2>
+            <p>اتبع هذه الخطوات البسيطة للبدء مع النظام في دقائق معدودة</p>
+            
+            <div class="quick-steps">
+                <div class="quick-step">
+                    <div class="quick-step-number">1</div>
+                    <div class="quick-step-title">إنشاء الحساب</div>
+                    <div class="quick-step-description">سجل الدخول باستخدام بيانات المسؤول أو أنشئ حساباً جديداً</div>
+                </div>
+                
+                <div class="quick-step">
+                    <div class="quick-step-number">2</div>
+                    <div class="quick-step-title">إعداد المدرسة</div>
+                    <div class="quick-step-description">أدخل بيانات المدرسة الأساسية والموظفين</div>
+                </div>
+                
+                <div class="quick-step">
+                    <div class="quick-step-number">3</div>
+                    <div class="quick-step-title">تسجيل الطلاب</div>
+                    <div class="quick-step-description">أضف الطلاب الجدد أو استورد بياناتهم من ملف</div>
+                </div>
+                
+                <div class="quick-step">
+                    <div class="quick-step-number">4</div>
+                    <div class="quick-step-title">إدارة الأدوار والصلاحيات</div>
+                    <div class="quick-step-description">أنشئ الأدوار الافتراضية (معلم، موظف، كنترول، ولي الأمر) وعين الصلاحيات المناسبة</div>
+                </div>
+                
+                <div class="quick-step">
+                    <div class="quick-step-number">5</div>
+                    <div class="quick-step-title">إدارة اليوم</div>
+                    <div class="quick-step-description">ابدأ باستخدام الموديولات: الحضور، الكنترول، الفواتير، نظام HR المتقدم</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم الهيكل النظامي -->
+        <section class="tree-container animate-in" id="architecture">
+            <div class="tree-header">
+                <h2>🏗️ الهيكل النظامي الشامل</h2>
+                <p>مخطط شجري تفاعلي يوضح بنية نظام مَسَار للمدارس</p>
+            </div>
+            
+            <div class="tree">
+                <div class="tree-node">
+                    <div class="tree-node-content main">نظام مَسَار للمدارس</div>
+                    <div class="tree-children">
+                        <div class="tree-child">لوحة التحكم والاتصال</div>
+                        <div class="tree-child">المؤسسة والمدارس</div>
+                        <div class="tree-child">شؤون الطلاب وأولياء الأمور</div>
+                        <div class="tree-child">الكادر التعليمي والموارد البشرية</div>
+                        <div class="tree-child">نظام الموارد البشرية المتقدم</div>
+                        <div class="tree-child">الحضور والمناداة</div>
+                        <div class="tree-child">النقل والنقليات</div>
+                        <div class="tree-child">العيادة المدرسية</div>
+                        <div class="tree-child">إدارة الخريجين</div>
+                        <div class="tree-child">القبول والتسجيل</div>
+                        <div class="tree-child">الكانتين ونقاط البيع</div>
+                        <div class="tree-child">الأكاديميات والاختبارات</div>
+                        <div class="tree-child">الحسابات والفوترة</div>
+                        <div class="tree-child">عمليات فتح الفصل</div>
+                        <div class="tree-child">إدارة المخازن</div>
+                        <div class="tree-child">إدارة المشتريات</div>
+                        <div class="tree-child">عمليات غلق الفصل</div>
+                        <div class="tree-child">مركز التقارير</div>
+                        <div class="tree-child">الإعدادات</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم الموديولات -->
+        <section class="animate-in" id="modules">
+            <div class="tree-header">
+                <h2>📦 الموديولات التفصيلية</h2>
+                <p>استعراض شامل لجميع موديولات النظام ووظائفها</p>
+            </div>
+
+            <div class="modules-grid">
+                <!-- لوحة التحكم والاتصال -->
+                <div class="module-card">
+                    <div class="module-header academic">
+                        <div class="icon">📊</div>
+                        <h3>لوحة التحكم والاتصال</h3>
+                        <span class="badge">Dashboard & Communication</span>
+                    </div>
+                    <div class="module-body">
+                        <p>نقطة الانطلاق الرئيسية للنظام مع أدوات الاتصال الفوري.</p>
+                        <ul class="module-features">
+                            <li>لوحة تحكم تفاعلية مع إحصائيات حية</li>
+                            <li>نظام دردشة داخلي SignalR</li>
+                            <li>مساعد ذكي AI متكامل</li>
+                            <li>إشعارات فورية في الوقت الحقيقي</li>
+                            <li>تنبيهات المهام والأحداث</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">تحسين التواصل وسرعة اتخاذ القرار</div>
+                    </div>
+                </div>
+
+                <!-- المؤسسة والمدارس -->
+                <div class="module-card">
+                    <div class="module-header academic">
+                        <div class="icon">🏢</div>
+                        <h3>المؤسسة والمدارس</h3>
+                        <span class="badge">Institution & Schools</span>
+                    </div>
+                    <div class="module-body">
+                        <p>إدارة شاملة للمؤسسات التعليمية وفروعها.</p>
+                        <ul class="module-features">
+                            <li>إدارة المؤسسات المتعددة (Multi-Tenant)</li>
+                            <li>إدارة المدارس والفروع</li>
+                            <li>إدارة الفصول والشعب</li>
+                            <li>إدارة المراحل الدراسية</li>
+                            <li>الإعدادات العامة والنسخ الاحتياطية</li>
+                            <li>إدارة التراخيص</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">تنظيم هيكلي للمؤسسة التعليمية</div>
+                    </div>
+                </div>
+
+                <!-- شؤون الطلاب وأولياء الأمور -->
+                <div class="module-card">
+                    <div class="module-header students">
+                        <div class="icon">👨‍🎓</div>
+                        <h3>شؤون الطلاب وأولياء الأمور</h3>
+                        <span class="badge">Students & Guardians</span>
+                    </div>
+                    <div class="module-body">
+                        <p>إدارة شاملة لبيانات الطلاب وأولياء الأمور.</p>
+                        <ul class="module-features">
+                            <li>دليل الطلاب الشامل</li>
+                            <li>تسجيل طالب جديد</li>
+                            <li>الملف الشامل للطالب</li>
+                            <li>البطاقة الرقمية QR</li>
+                            <li>ترفيع ونقل الفصول</li>
+                            <li>أرشيف المستندات</li>
+                            <li>إدارة أولياء الأمور وربط الأبناء</li>
+                            <li>تحليل الغياب والحضور</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">إدارة كاملة للبيانات الطلابية</div>
+                    </div>
+                </div>
+
+                <!-- الكادر التعليمي والموارد البشرية -->
+                <div class="module-card">
+                    <div class="module-header hr">
+                        <div class="icon">👥</div>
+                        <h3>الكادر التعليمي والموارد البشرية</h3>
+                        <span class="badge">HR & Employees</span>
+                    </div>
+                    <div class="module-body">
+                        <p>إدارة شاملة للموظفين والمعلمين والرواتب.</p>
+                        <ul class="module-features">
+                            <li>سجل المعلمين والموظفين</li>
+                            <li>إضافة وتعديل بيانات الموظفين</li>
+                            <li>جدول الحصص للمعلمين</li>
+                            <li>مسير المرتبات</li>
+                            <li>إدارة الإجازات</li>
+                            <li>رصيد الإجازات</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">أتمتة العمليات HR والرواتب</div>
+                    </div>
+                </div>
+
+                <!-- نظام الموارد البشرية المتقدم -->
+                <div class="module-card">
+                    <div class="module-header hr">
+                        <div class="icon">🎯</div>
+                        <h3>نظام الموارد البشرية المتقدم</h3>
+                        <span class="badge">Advanced HR System</span>
+                    </div>
+                    <div class="module-body">
+                        <p>نظام متقدم لإدارة الموارد البشرية مع لوحة تحكم شاملة.</p>
+                        <ul class="module-features">
+                            <li>لوحة تحكم HR تفاعلية</li>
+                            <li>إدارة العقود والموظفين</li>
+                            <li>نظام الرواتب المتقدم</li>
+                            <li>الحضور البصري المتطور</li>
+                            <li>مكافأة نهاية الخدمة</li>
+                            <li>استيراد الحضور البصري</li>
+                            <li>إدارة الإجازات المتقدمة</li>
+                            <li>تقارير HR شاملة</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">نظام HR متكامل ومتقدم</div>
+                    </div>
+                </div>
+
+                <!-- الحضور والمناداة -->
+                <div class="module-card">
+                    <div class="module-header attendance">
+                        <div class="icon">📋</div>
+                        <h3>الحضور والمناداة</h3>
+                        <span class="badge">Attendance & Call System</span>
+                    </div>
+                    <div class="module-body">
+                        <p>نظام متطور للحضور والغياب والمناداة الإلكترونية.</p>
+                        <ul class="module-features">
+                            <li>كشف الحضور اليومي</li>
+                            <li>المتابعة اللحظية SignalR</li>
+                            <li>نظام المناداة الإلكتروني</li>
+                            <li>التحضير السريع</li>
+                            <li>تحليلات الحضور والغياب</li>
+                            <li>تنبيهات لأولياء الأمور</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">توفير الوقت ودقة الحضور</div>
+                    </div>
+                </div>
+
+                <!-- النقل والنقليات -->
+                <div class="module-card">
+                    <div class="module-header transport">
+                        <div class="icon">🚌</div>
+                        <h3>النقل والنقليات</h3>
+                        <span class="badge">Transport & Logistics</span>
+                    </div>
+                    <div class="module-body">
+                        <p>إدارة شاملة لنقل الطلاب والحافلات المدرسية.</p>
+                        <ul class="module-features">
+                            <li>لوحة إحصائيات النقل</li>
+                            <li>إدارة الحافلات والصيانة</li>
+                            <li>خطوط السير والمحطات</li>
+                            <li>إدارة السائقين والمشرفين</li>
+                            <li>جداول الحافلات</li>
+                            <li>اشتراكات الطلاب</li>
+                            <li>التتبع اللحظي GPS</li>
+                            <li>سجلات الوقود والصيانة</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">سلامة الطلاب وتوفير تكاليف النقل</div>
+                    </div>
+                </div>
+
+                <!-- العيادة المدرسية -->
+                <div class="module-card">
+                    <div class="module-header clinic">
+                        <div class="icon">🏥</div>
+                        <h3>العيادة المدرسية</h3>
+                        <span class="badge">School Clinic</span>
+                    </div>
+                    <div class="module-body">
+                        <p>نظام متكامل لإدارة العيادة المدرسية والسجلات الصحية.</p>
+                        <ul class="module-features">
+                            <li>لوحة متابعة العيادة</li>
+                            <li>تسجيل الزيارات الطبية</li>
+                            <li>السجلات الصحية للطلاب</li>
+                            <li>صيدلية العيادة والمخزون</li>
+                            <li>الإجازات والتقارير الطبية</li>
+                            <li>تقارير العيادة والحالات المزمنة</li>
+                            <li>تنبيهات انتهاء صلاحية الأدوية</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">رعاية صحية شاملة للطلاب</div>
+                    </div>
+                </div>
+
+                <!-- إدارة الخريجين -->
+                <div class="module-card">
+                    <div class="module-header alumni">
+                        <div class="icon">🎓</div>
+                        <h3>إدارة الخريجين</h3>
+                        <span class="badge">Alumni Management</span>
+                    </div>
+                    <div class="module-body">
+                        <p>نظام متكامل لإدارة خريجي المدرسة والتخرج.</p>
+                        <ul class="module-features">
+                            <li>لوحة متابعة الخريجين</li>
+                            <li>دليل الخريجين</li>
+                            <li>إضافة خريج جديد</li>
+                            <li>إبراء التخرج الشامل</li>
+                            <li>إدارة وثائق التخرج</li>
+                            <li>تخرج الطالب</li>
+                            <li>التكامل مع المالية</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">تواصل مستمر مع الخريجين</div>
+                    </div>
+                </div>
+
+                <!-- القبول والتسجيل -->
+                <div class="module-card">
+                    <div class="module-header admission">
+                        <div class="icon">📝</div>
+                        <h3>القبول والتسجيل</h3>
+                        <span class="badge">Admission & Registration</span>
+                    </div>
+                    <div class="module-body">
+                        <p>نظام متكامل لإدارة عمليات القبول والتسجيل.</p>
+                        <ul class="module-features">
+                            <li>لوحة متابعة القبول</li>
+                            <li>طلبات الالتحاق</li>
+                            <li>إنشاء طلب جديد</li>
+                            <li>جدول المقابلات والاختبارات</li>
+                            <li>اعتماد القبول وتحويل لطالب</li>
+                            <li>إدارة المستندات</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">أتمتة عمليات القبول والتسجيل</div>
+                    </div>
+                </div>
+
+                <!-- الكانتين ونقاط البيع -->
+                <div class="module-card">
+                    <div class="module-header canteen">
+                        <div class="icon">🏪</div>
+                        <h3>الكانتين ونقاط البيع</h3>
+                        <span class="badge">Canteen & POS</span>
+                    </div>
+                    <div class="module-body">
+                        <p>نظام متكامل لإدارة الكانتين ونقاط البيع.</p>
+                        <ul class="module-features">
+                            <li>إدارة الورديات</li>
+                            <li>نقاط البيع POS</li>
+                            <li>الصالة والسفري والدليفري</li>
+                            <li>إدارة المنتجات والتصنيفات</li>
+                            <li>إدارة الطلبات</li>
+                            <li>مناطق التوصيل والطاولات</li>
+                            <li>التكامل مع النظام المالي</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">إدارة مبيعات احترافية</div>
+                    </div>
+                </div>
+
+                <!-- الأكاديميات والاختبارات -->
+                <div class="module-card">
+                    <div class="module-header academic">
+                        <div class="icon">📚</div>
+                        <h3>الأكاديميات والاختبارات</h3>
+                        <span class="badge">Academics & Exams</span>
+                    </div>
+                    <div class="module-body">
+                        <p>نظام متكامل للكنترول والجدول المدرسي.</p>
+                        <ul class="module-features">
+                            <li>لوحة الكنترول</li>
+                            <li>شيت الكنترول</li>
+                            <li>أرقام الجلوس</li>
+                            <li>الشهادات</li>
+                            <li>الجدول المدرسي وتوليده</li>
+                            <li>سجل المخالفات السلوكية</li>
+                            <li>تحليل الأداء الأكاديمي</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">إدارة أكاديمية شاملة</div>
+                    </div>
+                </div>
+
+                <!-- الحسابات والفوترة -->
+                <div class="module-card">
+                    <div class="module-header finance">
+                        <div class="icon">💰</div>
+                        <h3>الحسابات والفوترة</h3>
+                        <span class="badge">Finance & Billing</span>
+                    </div>
+                    <div class="module-body">
+                        <p>نظام مالي متكامل مع تكامل ZATCA.</p>
+                        <ul class="module-features">
+                            <li>الفواتير الإلكترونية ZATCA</li>
+                            <li>تحصيل الأقساط</li>
+                            <li>حالة ZATCA</li>
+                            <li>كشف حساب الطالب</li>
+                            <li>حسابات الطلاب</li>
+                            <li>دفتر الأستاذ العام</li>
+                            <li>الميزانية العمومية وقائمة الدخل</li>
+                            <li>التكامل مع نظام نور Noor</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">التوافق مع الهيئة ZATCA</div>
+                    </div>
+                </div>
+
+                <!-- عمليات فتح الفصل -->
+                <div class="module-card">
+                    <div class="module-header academic">
+                        <div class="icon">🔓</div>
+                        <h3>عمليات فتح الفصل الدراسي</h3>
+                        <span class="badge">Term Opening</span>
+                    </div>
+                    <div class="module-body">
+                        <p>إدارة عمليات بداية الفصل الدراسي.</p>
+                        <ul class="module-features">
+                            <li>فتح الفصل الدراسي</li>
+                            <li>قائمة الفصول الدراسية</li>
+                            <li>تفاصيل الفصل</li>
+                            <li>إعداد البيانات الأكاديمية</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">بداية منظمة للفصل الدراسي</div>
+                    </div>
+                </div>
+
+                <!-- إدارة المخازن -->
+                <div class="module-card">
+                    <div class="module-header inventory">
+                        <div class="icon">📦</div>
+                        <h3>إدارة المخازن</h3>
+                        <span class="badge">Inventory Management</span>
+                    </div>
+                    <div class="module-body">
+                        <p>نظام متكامل لإدارة المخازن والمخزون.</p>
+                        <ul class="module-features">
+                            <li>إدارة المخازن والمواقع</li>
+                            <li>إدارة الأصناف والمخزون</li>
+                            <li>تقارير المخزون</li>
+                            <li>حركات المخزون</li>
+                            <li>تعديلات المخزون</li>
+                            <li>تنبيهات المخزون</li>
+                            <li>نقل المخزون بين المخازن</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">تحكم كامل بالمخزون</div>
+                    </div>
+                </div>
+
+                <!-- إدارة المشتريات -->
+                <div class="module-card">
+                    <div class="module-header inventory">
+                        <div class="icon">🛒</div>
+                        <h3>إدارة المشتريات</h3>
+                        <span class="badge">Procurement</span>
+                    </div>
+                    <div class="module-body">
+                        <p>نظام متكامل لإدارة المشتريات والموردين.</p>
+                        <ul class="module-features">
+                            <li>إدارة الموردين</li>
+                            <li>طلبات الشراء</li>
+                            <li>أوامر الشراء</li>
+                            <li>فواتير الشراء</li>
+                            <li>تقارير المشتريات</li>
+                            <li>التكامل المالي</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">أتمتة عمليات الشراء</div>
+                    </div>
+                </div>
+
+                <!-- عمليات غلق الفصل -->
+                <div class="module-card">
+                    <div class="module-header academic">
+                        <div class="icon">🔒</div>
+                        <h3>عمليات غلق الفصل الدراسي</h3>
+                        <span class="badge">Term Closure</span>
+                    </div>
+                    <div class="module-body">
+                        <p>إدارة عمليات نهاية الفصل الدراسي.</p>
+                        <ul class="module-features">
+                            <li>قائمة الغلق</li>
+                            <li>غلق الفصل الدراسي</li>
+                            <li>الأرشيف</li>
+                            <li>تفاصيل الأرشيف</li>
+                            <li>إغلاق مالي وأكاديمي</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">إنهاء منظم للفصل الدراسي</div>
+                    </div>
+                </div>
+
+                <!-- مركز التقارير -->
+                <div class="module-card">
+                    <div class="module-header reports">
+                        <div class="icon">📊</div>
+                        <h3>مركز التقارير</h3>
+                        <span class="badge">Reports Center</span>
+                    </div>
+                    <div class="module-body">
+                        <p>مركز شامل لتوليد وإدارة التقارير.</p>
+                        <ul class="module-features">
+                            <li>لوحة التقارير</li>
+                            <li>تصدير التقارير</li>
+                            <li>تقارير مالية</li>
+                            <li>تقارير أكاديمية</li>
+                            <li>تقارير إدارية</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">تقارير شاملة ومفصلة</div>
+                    </div>
+                </div>
+
+                <!-- الإعدادات -->
+                <div class="module-card">
+                    <div class="module-header settings">
+                        <div class="icon">⚙️</div>
+                        <h3>الإعدادات</h3>
+                        <span class="badge">Settings</span>
+                    </div>
+                    <div class="module-body">
+                        <p>إعدادات النظام الشاملة والأمان.</p>
+                        <ul class="module-features">
+                            <li>الإعدادات العامة</li>
+                            <li>الصلاحيات والأدوار</li>
+                            <li>إدارة التراخيص</li>
+                            <li>إعدادات ZATCA</li>
+                            <li>نظام نور Noor</li>
+                            <li>إعدادات WhatsApp</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">تخصيص كامل للنظام</div>
+                    </div>
+                </div>
+
+                <!-- إدارة المستخدمين والصلاحيات والأدوار -->
+                <div class="module-card">
+                    <div class="module-header settings">
+                        <div class="icon">🔐</div>
+                        <h3>إدارة المستخدمين والصلاحيات والأدوار</h3>
+                        <span class="badge">Users & Permissions</span>
+                    </div>
+                    <div class="module-body">
+                        <p>نظام متكامل لإدارة المستخدمين والأدوار والصلاحيات.</p>
+                        <ul class="module-features">
+                            <li>إدارة المستخدمين</li>
+                            <li>إدارة الأدوار</li>
+                            <li>إدارة الصلاحيات</li>
+                            <li>إنشاء الأدوار الافتراضية</li>
+                            <li>تعيين الصلاحيات الافتراضية</li>
+                            <li>عرض تفاصيل الأدوار</li>
+                            <li>تعديل وحذف الأدوار</li>
+                            <li>نظام صلاحيات شجري متقدم</li>
+                        </ul>
+                    </div>
+                    <div class="module-footer">
+                        <div class="benefit">تحكم كامل في الصلاحيات والأدوار</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم أدوار المستخدمين -->
+        <section class="roles-section animate-in" id="roles">
+            <div class="tree-header">
+                <h2>👥 أدوار المستخدمين</h2>
+                <p>استعراض تجربة المستخدم حسب الدور الوظيفي</p>
+            </div>
+
+            <div class="role-card">
+                <div class="role-header">
+                    <div class="role-icon">👨‍💼</div>
+                    <div class="role-title">أصحاب ومدراء المدارس</div>
+                </div>
+                <p class="role-description">يتمتع المديرون بوصول شامل إلى جميع أقسام النظام مع تقارير إدارية متقدمة ولوحة تحكم استراتيجية لمراقبة أداء المؤسسة التعليمية بالكامل.</p>
+                <div class="role-modules">
+                    <span class="role-module">لوحة التحكم</span>
+                    <span class="role-module">التقارير</span>
+                    <span class="role-module">المالية</span>
+                    <span class="role-module">الموارد البشرية</span>
+                    <span class="role-module">الإعدادات</span>
+                    <span class="role-module">إدارة المؤسسة</span>
+                </div>
+            </div>
+
+            <div class="role-card">
+                <div class="role-header">
+                    <div class="role-icon">👨‍🏫</div>
+                    <div class="role-title">دور المعلم (Teacher)</div>
+                </div>
+                <p class="role-description">دور مخصص للمعلمين يسمح بإدارة الفصول والدرجات والتواصل مع أولياء الأمور، مع صلاحيات أكاديمية محددة.</p>
+                <div class="role-modules">
+                    <span class="role-module">مشاهدة الطلاب</span>
+                    <span class="role-module">إدارة الدرجات</span>
+                    <span class="role-module">أخذ الحضور</span>
+                    <span class="role-module">إدارة الفصول</span>
+                    <span class="role-module">الجدول المدرسي</span>
+                    <span class="role-module">الدردشة والتواصل</span>
+                    <span class="role-module">تسجيل السلوك</span>
+                    <span class="role-module">التقارير الأكاديمية</span>
+                </div>
+            </div>
+
+            <div class="role-card">
+                <div class="role-header">
+                    <div class="role-icon">�</div>
+                    <div class="role-title">دور الموظف (Employee)</div>
+                </div>
+                <p class="role-description">دور مخصص للموظفين يسمح بإدارة الموارد البشرية الأساسية والرواتب والحضور.</p>
+                <div class="role-modules">
+                    <span class="role-module">مشاهدة الموظفين</span>
+                    <span class="role-module">إدارة الحضور</span>
+                    <span class="role-module">إدارة الإجازات</span>
+                    <span class="role-module">مشاهدة الرواتب</span>
+                    <span class="role-module">التقارير الأساسية</span>
+                    <span class="role-module">الإشعارات</span>
+                </div>
+            </div>
+
+            <div class="role-card">
+                <div class="role-header">
+                    <div class="role-icon">🎛️</div>
+                    <div class="role-title">دور الكنترول (Controller)</div>
+                </div>
+                <p class="role-description">دور إداري متقدم يسمح بالإدارة الكاملة للنظام بما في ذلك الطلاب والموظفين والنقل والماليات.</p>
+                <div class="role-modules">
+                    <span class="role-module">إدارة الطلاب</span>
+                    <span class="role-module">إدارة الموظفين</span>
+                    <span class="role-module">إدارة النقل</span>
+                    <span class="role-module">إدارة الكانتين</span>
+                    <span class="role-module">الإدارة المالية</span>
+                    <span class="role-module">الموارد البشرية</span>
+                    <span class="role-module">جميع التقارير</span>
+                    <span class="role-module">الإعدادات العامة</span>
+                </div>
+            </div>
+
+            <div class="role-card">
+                <div class="role-header">
+                    <div class="role-icon">👨‍👩‍👧</div>
+                    <div class="role-title">دور ولي الأمر (Guardian)</div>
+                </div>
+                <p class="role-description">دور مخصص لأولياء الأمور يسمح بمشاهدة بيانات أبنائهم والتواصل مع المدرسة ودفع الرسوم.</p>
+                <div class="role-modules">
+                    <span class="role-module">مشاهدة بيانات الأبناء</span>
+                    <span class="role-module">السجل الأكاديمي</span>
+                    <span class="role-module">الدرجات والعلامات</span>
+                    <span class="role-module">الحضور والغياب</span>
+                    <span class="role-module">الفواتير والدفع</span>
+                    <span class="role-module">الدردشة والتواصل</span>
+                </div>
+            </div>
+
+            <div class="role-card">
+                <div class="role-header">
+                    <div class="role-icon">👨‍💻</div>
+                    <div class="role-title">موظفو العمليات</div>
+                </div>
+                <p class="role-description">يتمتع موظفو العمليات بوصول إلى الأقسام التشغيلية مثل الكانتين، النقل، العيادة، المخازن، والمشتريات لإدارة العمليات اليومية بكفاءة.</p>
+                <div class="role-modules">
+                    <span class="role-module">الكانتين</span>
+                    <span class="role-module">النقل</span>
+                    <span class="role-module">العيادة</span>
+                    <span class="role-module">المخازن</span>
+                    <span class="role-module">المشتريات</span>
+                    <span class="role-module">القبول</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم نظام الصلاحيات -->
+        <section class="roles-section animate-in" id="permissions">
+            <div class="tree-header">
+                <h2>🔐 نظام الصلاحيات والأدوار</h2>
+                <p>نظام صلاحيات شجري متقدم مع أدوار محددة مسبقاً</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: var(--gradient-primary);">🔑</div>
+                    <div class="card-title">نظام الصلاحيات الشجري</div>
+                </div>
+                <div class="card-content">
+                    <p>يتميز نظام مَسَار بنظام صلاحيات شجري متقدم يسمح بتحكم دقيق في الوصول لكل جزء من النظام. يتضمن النظام:</p>
+                    <ul style="margin-top: 15px; padding-right: 20px;">
+                        <li style="margin-bottom: 10px;"><strong>الصلاحيات الشجري:</strong> هيكل هرمي يسمح بتحديد صلاحيات مفصلة لكل موديول وشاشة وإجراء</li>
+                        <li style="margin-bottom: 10px;"><strong>الأدوار المُحددة:</strong> أدوار جاهزة (معلم، موظف، كنترول، ولي الأمر) مع صلاحيات مخصصة</li>
+                        <li style="margin-bottom: 10px;"><strong>إدارة المستخدمين:</strong> واجهة متكاملة لإدارة المستخدمين وتعيين الأدوار</li>
+                        <li style="margin-bottom: 10px;"><strong>تخصيص الصلاحيات:</strong> إمكانية تعديل الصلاحيات لكل دور حسب احتياجات المؤسسة</li>
+                        <li style="margin-bottom: 10px;"><strong>عرض التفاصيل:</strong> صفحة تفاصيل شاملة لكل دور تعرض الصلاحيات والمستخدمين</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: var(--gradient-secondary);">🎯</div>
+                    <div class="card-title">الأدوار الافتراضية والصلاحيات</div>
+                </div>
+                <div class="card-content">
+                    <p>يوفر النظام أربعة أدوار أساسية مع صلاحيات مخصصة:</p>
+                    
+                    <div style="margin-top: 20px;">
+                        <h4 style="color: var(--primary-color); margin-bottom: 10px;">👨‍🏫 دور المعلم (Teacher)</h4>
+                        <p style="margin-bottom: 15px;">صلاحيات أكاديمية محددة:</p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
+                            <span class="role-module">Students.View</span>
+                            <span class="role-module">Students.ViewAcademic</span>
+                            <span class="role-module">Grades.View</span>
+                            <span class="role-module">Grades.Create</span>
+                            <span class="role-module">Grades.Edit</span>
+                            <span class="role-module">Attendance.View</span>
+                            <span class="role-module">Attendance.TakeAttendance</span>
+                            <span class="role-module">Classrooms.View</span>
+                            <span class="role-module">Chat.View</span>
+                            <span class="role-module">Chat.SendMessage</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <h4 style="color: var(--danger-color); margin-bottom: 10px;">👤 دور الموظف (Employee)</h4>
+                        <p style="margin-bottom: 15px;">صلاحيات الموارد البشرية الأساسية:</p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
+                            <span class="role-module">Employees.View</span>
+                            <span class="role-module">Employees.ViewAttendance</span>
+                            <span class="role-module">Employees.ManageLeaves</span>
+                            <span class="role-module">Employees.ViewSalary</span>
+                            <span class="role-module">HR.EmployeesView</span>
+                            <span class="role-module">HR.LeavesView</span>
+                            <span class="role-module">HR.AttendanceView</span>
+                            <span class="role-module">Settings.View</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <h4 style="color: var(--warning-color); margin-bottom: 10px;">🎛️ دور الكنترول (Controller)</h4>
+                        <p style="margin-bottom: 15px;">صلاحيات إدارية شاملة:</p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
+                            <span class="role-module">Students.View/Create/Edit/Delete</span>
+                            <span class="role-module">Employees.View/Create/Edit/Delete</span>
+                            <span class="role-module">Guardians.View/Create/Edit/Delete</span>
+                            <span class="role-module">Transport.Manage</span>
+                            <span class="role-module">Canteen.Manage</span>
+                            <span class="role-module">Financial.View</span>
+                            <span class="role-module">HR.Dashboard</span>
+                            <span class="role-module">Reports.All</span>
+                            <span class="role-module">Settings.Manage</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <h4 style="color: var(--info-color); margin-bottom: 10px;">👨‍👩‍👧 دور ولي الأمر (Guardian)</h4>
+                        <p style="margin-bottom: 15px;">صلاحيات مشاهدة محدودة:</p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
+                            <span class="role-module">Students.View</span>
+                            <span class="role-module">Students.ViewAcademic</span>
+                            <span class="role-module">Grades.View</span>
+                            <span class="role-module">Attendance.View</span>
+                            <span class="role-module">Invoices.View</span>
+                            <span class="role-module">Invoices.Pay</span>
+                            <span class="role-module">Chat.View</span>
+                            <span class="role-module">Chat.SendMessage</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: var(--gradient-accent);">⚡</div>
+                    <div class="card-title">إدارة الأدوار والصلاحيات</div>
+                </div>
+                <div class="card-content">
+                    <p>واجهة إدارة متكاملة في القائمة الجانبية "المستخدمون والصلاحيات والأدوار":</p>
+                    <ul style="margin-top: 15px; padding-right: 20px;">
+                        <li style="margin-bottom: 10px;"><strong>إدارة المستخدمين:</strong> إنشاء وتعديل وحذف المستخدمين</li>
+                        <li style="margin-bottom: 10px;"><strong>إدارة الأدوار:</strong> إنشاء الأدوار الافتراضية بنقرة واحدة</li>
+                        <li style="margin-bottom: 10px;"><strong>تعيين الصلاحيات:</strong> تعيين الصلاحيات الافتراضية لكل دور تلقائياً</li>
+                        <li style="margin-bottom: 10px;"><strong>عرض التفاصيل:</strong> صفحة تفاصيل شاملة لكل دور</li>
+                        <li style="margin-bottom: 10px;"><strong>تعديل وحذف:</strong> إدارة كاملة للأدوار والصلاحيات</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- سيناريو يوم العمل -->
+        <section class="animate-in" id="scenario">
+            <div class="tree-header">
+                <h2>📅 سيناريو يوم عمل كامل</h2>
+                <p>جولة تفاعلية خلال يوم دراسي نموذجي في نظام مَسَار</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-time">7:00 صباحاً</div>
+                        <div class="timeline-title">🌅 بداية اليوم - الإعدادات</div>
+                        <div class="timeline-description">
+                            يبدأ اليوم بفتح النظام والتحقق من الإشعارات الجديدة. مدير المدرسة يراجع لوحة التحكم للاطلاع على ملخص اليوم من الحضور، الغياب، والمعاملات المالية المعلقة.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-time">7:30 صباحاً</div>
+                        <div class="timeline-title">🚌 تفعيل النقل المدرسي</div>
+                        <div class="timeline-description">
+                            مشرفو النقل يفعلون نظام التتبع اللحظي GPS للحافلات. يتم تأكيد وصول السائقين وبداية الرحلات. الطلاب المسجلون في خدمة النقل يتم متابعتهم عبر التطبيق.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-time">8:00 صباحاً</div>
+                        <div class="timeline-title">📋 تسجيل الحضور والمناداة</div>
+                        <div class="timeline-description">
+                            المعلمون يسجلون الحضور عبر نظام التحضير السريع. نظام المناداة الإلكتروني يُستخدم لاستدعاء الطلاب المتأخرنين. الإشعارات تُرسل تلقائياً لأولياء الأمور.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-time">9:00 صباحاً</div>
+                        <div class="timeline-title">🏥 العيادة المدرسية</div>
+                        <div class="timeline-description">
+                            ممرض العيادة يبدأ يومه بمراجعة السجلات الصحية. يتم تسجيل أي زيارات طبية جديدة وتحديث المخزون. الإشعارات تُرسل للإدارة في حال وجود حالات طارئة.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-time">10:00 صباحاً</div>
+                        <div class="timeline-title">📚 العمليات الأكاديمية</div>
+                        <div class="timeline-description">
+                            المعلمون يُدخلون الدرجات في نظام الكنترول. المساعد الذكي AI يُساعد في تحليل أداء الطلاب وتقديم توصيات تحسينية. نظام الإنذار المبكر يُحدد الطلاب ذوي المخاطر.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-time">12:00 ظهراً</div>
+                        <div class="timeline-title">🏪 الكانتين ونقاط البيع</div>
+                        <div class="timeline-description">
+                            موظفو الكانتين يفتحون الوردية ويبدأون في استقبال الطلاب. نظام POS يُسجل المبيعات تلقائياً. التقارير اليومية تُعرض لمدير المدرسة.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-time">2:00 مساءً</div>
+                        <div class="timeline-title">💰 العمليات المالية</div>
+                        <div class="timeline-description">
+                            المحاسب يُسدد دفعات الوالدين ويُصدر الفواتير الإلكترونية المضمنة ZATCA. تقارير الدخل والنفقات تُحضر للمدير لمراجعة الوضع المالي اليومي.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-time">3:00 مساءً</div>
+                        <div class="timeline-title">🎓 القبول والتسجيل</div>
+                        <div class="timeline-description">
+                            موظفو القبول يراجعون طلبات الالتحاق الجديدة ويجرون المقابلات. الطلبات المقبولة تُحول تلقائياً لسجلات الطلاب الرسمية.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-time">4:00 مساءً</div>
+                        <div class="timeline-title">📦 المخازن والمشتريات</div>
+                        <div class="timeline-description">
+                            مدير المخازن يراجع مستويات المخزون ويُطلب المواد الناقصة. طلبات الشراء تُرسل للموردين المعتمدين تلقائياً.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-time">5:00 مساءً</div>
+                        <div class="timeline-title">🏠 نهاية اليوم - المغادرة</div>
+                        <div class="timeline-description">
+                            نظام النقل يتأكد من مغادرة جميع الطلاب المسجلين. التقرير اليومي الشامل يُرسل للإدارة. النظام يُجهز البيانات لليوم التالي تلقائياً.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم المواصفات التقنية -->
+        <section class="tech-specs animate-in" id="tech-specs">
+            <h2>⚙️ المواصفات التقنية</h2>
+            <div class="specs-grid">
+                <div class="spec-item">
+                    <div class="spec-label">الإطار البرمجي</div>
+                    <div class="spec-value">ASP.NET Core MVC (.NET 10.0)</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">قاعدة البيانات</div>
+                    <div class="spec-value">SQL Server</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Entity Framework</div>
+                    <div class="spec-value">EF Core 10.0</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">التعريف</div>
+                    <div class="spec-value">ASP.NET Core Identity</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">التواصل الحي</div>
+                    <div class="spec-value">SignalR</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">المهام الخلفية</div>
+                    <div class="spec-value">Hangfire</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">الذكاء الاصطناعي</div>
+                    <div class="spec-value">AI Engine مدمج</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">التكامل الحكومي</div>
+                    <div class="spec-value">ZATCA + Noor</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">التصميم</div>
+                    <div class="spec-value">Bootstrap RTL + Alpine.js</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">المتعدد المستأجرين</div>
+                    <div class="spec-value">Multi-Tenant Architecture</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">عدد الموديولات</div>
+                    <div class="spec-value">19 موديول متكامل</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">عدد الشاشات</div>
+                    <div class="spec-value">100+ شاشة وظيفية</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">الأدوار المُحددة</div>
+                    <div class="spec-value">4 أدوار أساسية (معلم، موظف، كنترول، ولي الأمر)</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">نظام الصلاحيات</div>
+                    <div class="spec-value">شجري متقدم مع صلاحيات مخصصة</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم الطباعة -->
+        <div class="print-section">
+            <button class="btn btn-primary" onclick="printGuide()">🖨️ طباعة الدليل</button>
+            <button class="btn btn-secondary" onclick="downloadPDF()">📄 حفظ كـ PDF</button>
+        </div>
+    </main>
+
+    <!-- الفوتر -->
+    <footer class="footer">
+        <h3>نظام مَسَار للمدارس</h3>
+        <p>الحل الشامل لإدارة المؤسسات التعليمية</p>
+        <div class="footer-links">
+            <a href="#welcome">الرئيسية</a>
+            <a href="#modules">الموديولات</a>
+            <a href="#roles">الأدوار</a>
+            <a href="#scenario">السيناريو</a>
+        </div>
+        <p>© 2026 جميع الحقوق محفوظة - شركة مسار للبرمجيات والتقنية</p>
+        <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">
+            📧 mokdadvip@hotmail.com | 📞 01006765664 |   WhatsApp SA: +966 50 640 3548   
+        </p>
+        <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.8; direction: ltr; text-align: right;">
+            📱    WhatsApp SA: +568280194  | 📘 Facebook: @masarschools
+        </p>
+        <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);">
+            <p style="color: #00c853; font-weight: 700; font-size: 1rem; margin-bottom: 5px;">✨ ما زال هناك الكثير من المفاجآت في السيستم</p>
+            <p style="font-size: 0.85rem; opacity: 0.9;">تواصل معنا لتحصل على المزيد من الميزات والتحديثات الحصرية</p>
+        </div>
+    </footer>
+
+    <script>
+        // إخفاء شريط التحميل عند اكتمال التحميل
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }, 500);
+        });
+
+        // تبديل الشريط الجانبي للموبايل
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // البحث في الدليل
+        function searchGuide() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const allElements = document.querySelectorAll('.module-card, .role-card, .timeline-item');
+            
+            allElements.forEach(element => {
+                const text = element.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    element.style.display = '';
+                } else {
+                    element.style.display = 'none';
+                }
+            });
+        }
+
+        // طباعة الدليل
+        function printGuide() {
+            window.print();
+        }
+
+        // حفظ كـ PDF
+        function downloadPDF() {
+            alert('لحفظ الدليل كـ PDF، يرجى استخدام خيار "حفظ كـ PDF" من نافذة الطباعة');
+            window.print();
+        }
+
+        // التمرير السلس للروابط
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+                
+                // تحديث الرابط النشط في الشريط الجانبي
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // إغلاق الشريط الجانبي في الموبايل
+                if (window.innerWidth <= 992) {
+                    document.getElementById('sidebar').classList.remove('active');
+                }
+            });
+        });
+
+        // تحديث الرابط النشط عند التمرير
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // إضافة تأثيرات الظهور عند التمرير
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.module-card, .role-card, .timeline-item').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

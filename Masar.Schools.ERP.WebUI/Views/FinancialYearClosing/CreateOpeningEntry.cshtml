@@ -1,0 +1,52 @@
+@model Masar.Schools.ERP.Domain.Entities.FinancialPeriod
+
+@{
+    ViewData["Title"] = "إنشاء القيد الافتتاحي";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info">
+                    <h5 class="mb-0">
+                        <i class="bi bi-file-earmark-plus"></i> إنشاء القيد الافتتاحي
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>معلومات:</strong> سيتم إنشاء قيد افتتاحي تلقائي يرحل أرصدة الأصول والالتزامات وحقوق الملكية من الفترة السابقة إلى هذه الفترة.
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">تفاصيل الفترة</h6>
+                            <dl class="row">
+                                <dt class="col-sm-3">اسم الفترة:</dt>
+                                <dd class="col-sm-9">@Model.PeriodName</dd>
+                                <dt class="col-sm-3">تاريخ البدء:</dt>
+                                <dd class="col-sm-9">@Model.StartDate.ToString("yyyy-MM-dd")</dd>
+                                <dt class="col-sm-3">تاريخ الانتهاء:</dt>
+                                <dd class="col-sm-9">@Model.EndDate.ToString("yyyy-MM-dd")</dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <form asp-action="CreateOpeningEntryPost" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-info">
+                                <i class="bi bi-file-earmark-plus"></i> إنشاء القيد الافتتاحي
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-right"></i> إلغاء
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,283 @@
+@model Masar.Schools.ERP.Domain.DTOs.AlumniRecordDto
+
+@{
+    ViewData["Title"] = "تفاصيل الخريج";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">دليل الخريجين</a></li>
+                    <li class="breadcrumb-item active">تفاصيل الخريج</li>
+                </ol>
+            </nav>
+            <h2 class="mb-3"><i class="bi bi-mortarboard"></i> تفاصيل الخريج</h2>
+        </div>
+    </div>
+
+    @if (Model != null)
+    {
+        <div class="row">
+            <!-- Student Information -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-person"></i> معلومات الطالب</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>اسم الطالب:</th>
+                                <td>@Model.StudentName</td>
+                            </tr>
+                            <tr>
+                                <th>رقم الخريج:</th>
+                                <td>@Model.AlumniNumber</td>
+                            </tr>
+                            <tr>
+                                <th>سنة التخرج:</th>
+                                <td>@Model.GraduationYear</td>
+                            </tr>
+                            <tr>
+                                <th>تاريخ التخرج:</th>
+                                <td>@Model.GraduationDate.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                            <tr>
+                                <th>المعدل النهائي:</th>
+                                <td>@Model.FinalGPA?.ToString("F2")</td>
+                            </tr>
+                            <tr>
+                                <th>المرحلة الدراسية:</th>
+                                <td>@Model.GradeLevelArabic</td>
+                            </tr>
+                            <tr>
+                                <th>الشعبة:</th>
+                                <td>@Model.SectionArabic</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- University Information -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-building"></i> معلومات الجامعة</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>الجامعة:</th>
+                                <td>@Model.UniversityArabic</td>
+                            </tr>
+                            <tr>
+                                <th>التخصص:</th>
+                                <td>@Model.MajorArabic</td>
+                            </tr>
+                            <tr>
+                                <th>تاريخ الالتحاق:</th>
+                                <td>@Model.UniversityEnrollmentDate?.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                            <tr>
+                                <th>تاريخ تخرج الجامعي:</th>
+                                <td>@Model.UniversityGraduationDate?.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employment Information -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-briefcase"></i> معلومات التوظيف</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>حالة التوظيف:</th>
+                                <td>
+                                    <span class="badge @(Model.EmploymentStatus == "Employed" ? "bg-success" : "bg-secondary")">
+                                        @Model.EmploymentStatusArabic
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>الشركة:</th>
+                                <td>@Model.CompanyNameArabic</td>
+                            </tr>
+                            <tr>
+                                <th>المسمى الوظيفي:</th>
+                                <td>@Model.JobTitleArabic</td>
+                            </tr>
+                            <tr>
+                                <th>المجال:</th>
+                                <td>@Model.IndustryArabic</td>
+                            </tr>
+                            <tr>
+                                <th>تاريخ بدء العمل:</th>
+                                <td>@Model.EmploymentStartDate?.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-envelope"></i> معلومات الاتصال</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>البريد الإلكتروني الشخصي:</th>
+                                <td>@Model.PersonalEmail</td>
+                            </tr>
+                            <tr>
+                                <th>رقم الهاتف:</th>
+                                <td>@Model.PersonalPhone</td>
+                            </tr>
+                            <tr>
+                                <th>LinkedIn:</th>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(Model.LinkedInProfile))
+                                    {
+                                        <a href="@Model.LinkedInProfile" target="_blank">@Model.LinkedInProfile</a>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>الموقع الإلكتروني:</th>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(Model.Website))
+                                    {
+                                        <a href="@Model.Website" target="_blank">@Model.Website</a>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>العنوان الحالي:</th>
+                                <td>@Model.CurrentAddressArabic</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Information -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-info-circle"></i> حالة السجل</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>نشط:</th>
+                                <td>
+                                    @if (Model.IsActive)
+                                    {
+                                        <span class="badge bg-success">نعم</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">لا</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>موثق:</th>
+                                <td>
+                                    @if (Model.IsVerified)
+                                    {
+                                        <span class="badge bg-success">نعم</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">لا</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>آخر تواصل:</th>
+                                <td>@Model.LastContactDate?.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                            <tr>
+                                <th>تاريخ الإنشاء:</th>
+                                <td>@Model.CreatedAt.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                            <tr>
+                                <th>آخر تحديث:</th>
+                                <td>@Model.LastUpdated?.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-trophy"></i> الإنجازات</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>@Model.AchievementsArabic</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="col-12 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-card-text"></i> ملاحظات</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>@Model.NotesArabic</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex gap-2">
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                                <i class="bi bi-pencil"></i> تعديل
+                            </a>
+                            <a asp-action="Documents" asp-route-alumniRecordId="@Model.Id" class="btn btn-secondary">
+                                <i class="bi bi-file-earmark"></i> الوثائق
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> حذف
+                            </a>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> العودة للقائمة
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle"></i> لم يتم العثور على سجل الخريج
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Add any details-specific JavaScript here
+    </script>
+}

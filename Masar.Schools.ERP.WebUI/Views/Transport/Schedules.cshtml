@@ -1,0 +1,136 @@
+@model List<Masar.Schools.ERP.Domain.DTOs.BusScheduleDto>
+@{
+    ViewData["Title"] = "جداول الحافلات";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">جداول الحافلات</h3>
+                    <div class="card-tools">
+                        <a href="@Url.Action("CreateSchedule", "Transport")" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> إضافة جدول جديد
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="schedulesTable">
+                            <thead>
+                                <tr>
+                                    <th>الحافلة</th>
+                                    <th>خط السير</th>
+                                    <th>السائق</th>
+                                    <th>المشرف</th>
+                                    <th>نوع الرحلة</th>
+                                    <th>وقت المغادرة</th>
+                                    <th>وقت الوصول</th>
+                                    <th>المدرسة</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    @foreach (var schedule in Model)
+                                    {
+                                        <tr>
+                                            <td>@schedule.BusNumber</td>
+                                            <td>@schedule.RouteName</td>
+                                            <td>@schedule.DriverName</td>
+                                            <td>@schedule.SupervisorName</td>
+                                            <td>
+                                                @if (schedule.TripType == "Morning")
+                                                {
+                                                    <span class="badge badge-info">صباحي</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-warning">مسائي</span>
+                                                }
+                                            </td>
+                                            <td>@schedule.DepartureTime.ToString(@"hh\:mm")</td>
+                                            <td>@schedule.ArrivalTime.ToString(@"hh\:mm")</td>
+                                            <td>@schedule.SchoolName</td>
+                                            <td>
+                                                @if (schedule.IsActive)
+                                                {
+                                                    <span class="badge badge-success">نشط</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">غير نشط</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a href="@Url.Action("EditSchedule", "Transport", new { id = schedule.Id })" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="@Url.Action("DeleteSchedule", "Transport", new { id = schedule.Id })" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من حذف هذا الجدول؟')">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="10" class="text-center">لا توجد جداول مسجلة</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof $ !== 'undefined') {
+                $(document).ready(function() {
+                    $('#schedulesTable').DataTable({
+                        "language": {
+                            "sEmptyTable": "لا توجد بيانات",
+                            "sInfo": "عرض _START_ إلى _END_ من _TOTAL_ سجل",
+                            "sInfoEmpty": "عرض 0 إلى 0 من 0 سجل",
+                            "sInfoFiltered": "(مفلترة من _MAX_ سجل)",
+                            "sInfoPostFix": "",
+                            "sInfoThousands": ",",
+                            "sLengthMenu": "عرض _MENU_ سجلات",
+                            "sLoadingRecords": "جاري التحميل...",
+                            "sProcessing": "جاري المعالجة...",
+                            "sSearch": "بحث:",
+                            "sZeroRecords": "لا توجد نتائج",
+                            "oPaginate": {
+                                "sFirst": "الأول",
+                                "sLast": "الأخير",
+                                "sNext": "التالي",
+                                "sPrevious": "السابق"
+                            },
+                            "oAria": {
+                                "sSortAscending": ": تفعيل لترتيب العمود تصاعدياً",
+                                "sSortDescending": ": تفعيل لترتيب العمود تنازلياً"
+                            }
+                        },
+                        "order": [[0, "asc"]]
+                    });
+                });
+            } else {
+                console.error('jQuery is not loaded');
+            }
+        });
+    </script>
+}

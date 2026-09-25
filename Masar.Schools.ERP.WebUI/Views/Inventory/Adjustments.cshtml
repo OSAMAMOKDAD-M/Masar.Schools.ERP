@@ -1,0 +1,68 @@
+@model List<Masar.Schools.ERP.Domain.DTOs.StockAdjustmentDto>
+
+@{
+    ViewData["Title"] = "تعديلات المخزون";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">تعديلات المخزون</h3>
+                    <div class="card-tools">
+                        <a asp-action="CreateAdjustment" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> تعديل جديد
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>رقم التعديل</th>
+                                <th>التاريخ</th>
+                                <th>المخزن</th>
+                                <th>النوع</th>
+                                <th>القيمة</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                @foreach (var adjustment in Model)
+                                {
+                                    <tr>
+                                        <td>@adjustment.AdjustmentNumber</td>
+                                        <td>@adjustment.AdjustmentDate.ToString("yyyy-MM-dd")</td>
+                                        <td>@adjustment.WarehouseName</td>
+                                        <td>@adjustment.AdjustmentTypeArabic</td>
+                                        <td>@adjustment.TotalValue.ToString("C")</td>
+                                        <td>
+                                            <span class="badge bg-@(adjustment.Status == "Approved" ? "success" : "warning")">
+                                                @adjustment.StatusArabic
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info">
+                                                <i class="bi bi-eye"></i> عرض
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center">لا توجد تعديلات مخزون</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

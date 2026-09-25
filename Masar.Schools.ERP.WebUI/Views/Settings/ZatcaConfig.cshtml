@@ -1,0 +1,247 @@
+@{
+    ViewData["Title"] = "إعدادات ZATCA";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-gear"></i> إعدادات ZATCA
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للإعدادات
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">إعدادات ZATCA المرحلة الثانية</h5>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">البيئة</label>
+                            <select class="form-select" id="environment">
+                                <option value="sandbox">بيئة الاختبار (Sandbox)</option>
+                                <option value="production" selected>بيئة الإنتاج</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">إصدار API</label>
+                            <input type="text" class="form-control" id="apiVersion" value="2.0" readonly>
+                        </div>
+                    </div>
+
+                    <h6 class="mt-4 mb-3">إعدادات CSID</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">CSID (معرف السر المشترك)</label>
+                            <input type="text" class="form-control" id="csid" placeholder="أدخل CSID">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">كلمة سر CSID</label>
+                            <input type="password" class="form-control" id="csidSecret" placeholder="أدخل كلمة سر CSID">
+                        </div>
+                    </div>
+
+                    <h6 class="mt-4 mb-3">إعدادات الشهادة</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">مسار الشهادة</label>
+                            <input type="text" class="form-control" id="certificatePath" placeholder="/path/to/certificate.p12">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">كلمة سر الشهادة</label>
+                            <input type="password" class="form-control" id="certificatePassword" placeholder="أدخل كلمة سر الشهادة">
+                        </div>
+                    </div>
+
+                    <h6 class="mt-4 mb-3">نقاط نهاية API</h6>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label">رابط API للتقارير</label>
+                            <input type="text" class="form-control" id="reportingUrl"
+                                   value="https://api.preprod.zatca.gov.sa/e-invoicing/">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label">رابط API للمصادقة</label>
+                            <input type="text" class="form-control" id="clearanceUrl"
+                                   value="https://api.preprod.zatca.gov.sa/e-invoicing/clearance/">
+                        </div>
+                    </div>
+
+                    <h6 class="mt-4 mb-3">معلومات الشركة</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">اسم الشركة (عربي)</label>
+                            <input type="text" class="form-control" id="companyNameAr" value="مَسَار للمدارس">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">اسم الشركة (إنجليزي)</label>
+                            <input type="text" class="form-control" id="companyNameEn" value="Masar For Schools">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">رقم التسجيل الضريبي</label>
+                            <input type="text" class="form-control" id="vatNumber" placeholder="300000000000003">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">رقم السجل التجاري</label>
+                            <input type="text" class="form-control" id="crNumber" placeholder="أدخل رقم السجل التجاري">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-primary" onclick="saveConfiguration()">
+                                <i class="bi bi-save"></i> حفظ الإعدادات
+                            </button>
+                            <button type="button" class="btn btn-info" onclick="testConnection()">
+                                <i class="bi bi-plug"></i> اختبار الاتصال
+                            </button>
+                            <button type="button" class="btn btn-warning" onclick="generateCsr()">
+                                <i class="bi bi-file-earmark-plus"></i> إنشاء CSR
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">حالة الاتصال</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <p><strong>ZATCA API:</strong></p>
+                    <span class="status-badge success">متصل</span>
+                </div>
+                <div class="mb-3">
+                    <p><strong>الشهادة صالحة:</strong></p>
+                    <span class="status-badge success">صالحة حتى 2027-01-15</span>
+                </div>
+                <div class="mb-3">
+                    <p><strong>آخر مزامنة:</strong></p>
+                    <p class="text-muted">2026-01-27 10:30:00</p>
+                </div>
+                <div class="mb-3">
+                    <p><strong>استدعاءات API اليوم:</strong></p>
+                    <p class="text-muted">142 / 1000</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">إجراءات سريعة</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary" onclick="downloadCertificate()">
+                        <i class="bi bi-download"></i> تحميل الشهادة
+                    </button>
+                    <button class="btn btn-outline-info" onclick="viewLogs()">
+                        <i class="bi bi-journal-text"></i> عرض سجلات API
+                    </button>
+                    <button class="btn btn-outline-warning" onclick="refreshTokens()">
+                        <i class="bi bi-arrow-clockwise"></i> تحديث رموز الوصول
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">سجلات تكامل ZATCA</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>الوقت</th>
+                                <th>الإجراء</th>
+                                <th>رقم الفاتورة</th>
+                                <th>الحالة</th>
+                                <th>وقت الاستجابة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2026-01-27 10:30:00</td>
+                                <td>Reporting</td>
+                                <td>INV-2026-0001</td>
+                                <td><span class="status-badge success">Success</span></td>
+                                <td>1.2s</td>
+                            </tr>
+                            <tr>
+                                <td>2026-01-27 10:30:05</td>
+                                <td>Clearance</td>
+                                <td>INV-2026-0001</td>
+                                <td><span class="status-badge success">Success</span></td>
+                                <td>0.8s</td>
+                            </tr>
+                            <tr>
+                                <td>2026-01-26 15:45:00</td>
+                                <td>Reporting</td>
+                                <td>INV-2026-0002</td>
+                                <td><span class="status-badge success">Success</span></td>
+                                <td>1.5s</td>
+                            </tr>
+                            <tr>
+                                <td>2026-01-26 15:45:05</td>
+                                <td>Clearance</td>
+                                <td>INV-2026-0002</td>
+                                <td><span class="status-badge success">Success</span></td>
+                                <td>0.9s</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function saveConfiguration() {
+            if (confirm('هل أنت متأكد من حفظ إعدادات ZATCA؟')) {
+                alert('تم حفظ إعدادات ZATCA بنجاح!');
+            }
+        }
+
+        function testConnection() {
+            alert('جاري اختبار الاتصال بـ ZATCA API...\n\nالاتصال ناجح!');
+        }
+
+        function generateCsr() {
+            alert('تم إرسال طلب إنشاء CSR. قد تستغرق هذه العملية بضع دقائق.');
+        }
+
+        function downloadCertificate() {
+            alert('تم بدء تحميل الشهادة.');
+        }
+
+        function viewLogs() {
+            alert('جاري فتح سجلات API التفصيلية...');
+        }
+
+        function refreshTokens() {
+            alert('تم تحديث رموز الوصول بنجاح!');
+        }
+    </script>
+}

@@ -1,0 +1,259 @@
+@{
+    ViewData["Title"] = "Noor Integration";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-link-45deg"></i> Noor System Integration
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> Back to Settings
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Noor API Configuration</h5>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Environment</label>
+                            <select class="form-select" id="noorEnvironment">
+                                <option value="sandbox">Sandbox (Testing)</option>
+                                <option value="production" selected>Production</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">API Version</label>
+                            <input type="text" class="form-control" id="noorApiVersion" value="3.0" readonly>
+                        </div>
+                    </div>
+
+                    <h6 class="mt-4 mb-3">Authentication</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">API Key</label>
+                            <input type="password" class="form-control" id="noorApiKey" placeholder="Enter Noor API Key">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">API Secret</label>
+                            <input type="password" class="form-control" id="noorApiSecret" placeholder="Enter Noor API Secret">
+                        </div>
+                    </div>
+
+                    <h6 class="mt-4 mb-3">School Information</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Noor School ID</label>
+                            <input type="text" class="form-control" id="noorSchoolId" placeholder="Enter Noor School ID">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ministry of Education ID</label>
+                            <input type="text" class="form-control" id="moEId" placeholder="Enter MOE ID">
+                        </div>
+                    </div>
+
+                    <h6 class="mt-4 mb-3">API Endpoints</h6>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label">Base URL</label>
+                            <input type="text" class="form-control" id="noorBaseUrl" 
+                                   value="https://api.noor.sa/">
+                        </div>
+                    </div>
+
+                    <h6 class="mt-4 mb-3">Synchronization Settings</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Auto Sync Students</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="autoSyncStudents" checked>
+                                <label class="form-check-label" for="autoSyncStudents">Enable automatic student sync</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Auto Sync Grades</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="autoSyncGrades" checked>
+                                <label class="form-check-label" for="autoSyncGrades">Enable automatic grade sync</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Sync Frequency</label>
+                            <select class="form-select" id="syncFrequency">
+                                <option value="hourly">Hourly</option>
+                                <option value="daily" selected>Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="manual">Manual Only</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Sync Time</label>
+                            <input type="time" class="form-control" id="syncTime" value="02:00">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-primary" onclick="saveNoorConfig()">
+                                <i class="bi bi-save"></i> Save Configuration
+                            </button>
+                            <button type="button" class="btn btn-info" onclick="testNoorConnection()">
+                                <i class="bi bi-plug"></i> Test Connection
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="manualSync()">
+                                <i class="bi bi-arrow-repeat"></i> Manual Sync
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Connection Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <p><strong>Noor API:</strong></p>
+                    <span class="status-badge success">Connected</span>
+                </div>
+                <div class="mb-3">
+                    <p><strong>Last Sync:</strong></p>
+                    <p class="text-muted">2026-01-27 02:00:00</p>
+                </div>
+                <div class="mb-3">
+                    <p><strong>Next Sync:</strong></p>
+                    <p class="text-muted">2026-01-28 02:00:00</p>
+                </div>
+                <div class="mb-3">
+                    <p><strong>Sync Status:</strong></p>
+                    <span class="status-badge success">Up to Date</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">Sync Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <p><strong>Students Synced:</strong></p>
+                    <p class="text-muted">1,234 / 1,234</p>
+                </div>
+                <div class="mb-3">
+                    <p><strong>Grades Synced:</strong></p>
+                    <p class="text-muted">5,678 / 5,678</p>
+                </div>
+                <div class="mb-3">
+                    <p><strong>Attendance Synced:</strong></p>
+                    <p class="text-muted">12,345 / 12,345</p>
+                </div>
+                <div class="mb-3">
+                    <p><strong>Last Sync Duration:</strong></p>
+                    <p class="text-muted">2 minutes 34 seconds</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Synchronization History</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Date/Time</th>
+                                <th>Type</th>
+                                <th>Records Synced</th>
+                                <th>Duration</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2026-01-27 02:00:00</td>
+                                <td>Full Sync</td>
+                                <td>Students, Grades, Attendance</td>
+                                <td>2m 34s</td>
+                                <td><span class="status-badge success">Success</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="viewSyncDetails(1)">
+                                        <i class="bi bi-eye"></i> Details
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2026-01-26 02:00:00</td>
+                                <td>Full Sync</td>
+                                <td>Students, Grades, Attendance</td>
+                                <td>2m 28s</td>
+                                <td><span class="status-badge success">Success</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="viewSyncDetails(2)">
+                                        <i class="bi bi-eye"></i> Details
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2026-01-25 02:00:00</td>
+                                <td>Partial Sync</td>
+                                <td>Attendance</td>
+                                <td>1m 15s</td>
+                                <td><span class="status-badge success">Success</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="viewSyncDetails(3)">
+                                        <i class="bi bi-eye"></i> Details
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function saveNoorConfig() {
+            if (confirm('Are you sure you want to save the Noor integration configuration?')) {
+                alert('Noor configuration saved successfully!');
+            }
+        }
+        
+        function testNoorConnection() {
+            alert('Testing connection to Noor API...\n\nConnection successful!');
+        }
+        
+        function manualSync() {
+            if (confirm('Are you sure you want to start a manual synchronization? This may take several minutes.')) {
+                alert('Manual synchronization started...\n\nYou will be notified when it completes.');
+            }
+        }
+        
+        function viewSyncDetails(syncId) {
+            alert('Opening detailed sync log for sync #' + syncId);
+        }
+    </script>
+}

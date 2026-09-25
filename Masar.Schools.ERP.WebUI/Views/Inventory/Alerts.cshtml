@@ -1,0 +1,123 @@
+@model Masar.Schools.ERP.Infrastructure.Services.InventoryAlertSummaryDto
+
+@{
+    ViewData["Title"] = "تنبيهات المخزون";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">تنبيهات المخزون</h3>
+                    <div>
+                        <form asp-action="CheckAlerts" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-sync"></i> فحص التنبيهات
+                            </button>
+                        </form>
+                        <span class="text-muted">آخر فحص: @Model.LastChecked.ToString("yyyy-MM-dd HH:mm:ss")</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="alert alert-warning">
+                                <h4><i class="fas fa-exclamation-triangle"></i> أصناف منخفضة المخزون</h4>
+                                <p class="mb-0">عدد الأصناف: <strong>@Model.LowStockCount</strong></p>
+                                <p class="mb-0">القيمة المعرضة للخطر: <strong>@Model.TotalValueAtRisk.ToString("N2")</strong></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-danger">
+                                <h4><i class="fas fa-boxes"></i> أصناف زائدة عن الحد الأقصى</h4>
+                                <p class="mb-0">عدد الأصناف: <strong>@Model.OverStockCount</strong></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (Model.LowStockItems.Any())
+                    {
+                        <h4 class="mt-4">أصناف منخفضة المخزون</h4>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-warning">
+                                <thead>
+                                    <tr>
+                                        <th>الكود (SKU)</th>
+                                        <th>الاسم</th>
+                                        <th>الرصيد الحالي</th>
+                                        <th>الحد الأدنى</th>
+                                        <th>القيمة</th>
+                                        <th>الإجراء</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.LowStockItems)
+                                    {
+                                        <tr>
+                                            <td>@item.SKU</td>
+                                            <td>@item.ItemName</td>
+                                            <td class="text-danger font-weight-bold">@item.CurrentStock</td>
+                                            <td>@item.ReorderLevel</td>
+                                            <td>@item.TotalValue.ToString("N2") @item.Currency</td>
+                                            <td>
+                                                <a asp-action="CreateTransaction" class="btn btn-sm btn-success">
+                                                    <i class="fas fa-plus"></i> طلب
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+
+                    @if (Model.OverStockItems.Any())
+                    {
+                        <h4 class="mt-4">أصناف زائدة عن الحد الأقصى</h4>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-danger">
+                                <thead>
+                                    <tr>
+                                        <th>الكود (SKU)</th>
+                                        <th>الاسم</th>
+                                        <th>الرصيد الحالي</th>
+                                        <th>الحد الأقصى</th>
+                                        <th>القيمة</th>
+                                        <th>الإجراء</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.OverStockItems)
+                                    {
+                                        <tr>
+                                            <td>@item.SKU</td>
+                                            <td>@item.ItemName</td>
+                                            <td class="text-danger font-weight-bold">@item.CurrentStock</td>
+                                            <td>@item.MaxStockLevel</td>
+                                            <td>@item.TotalValue.ToString("N2") @item.Currency</td>
+                                            <td>
+                                                <a asp-action="CreateTransfer" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-exchange-alt"></i> نقل
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+
+                    @if (!Model.LowStockItems.Any() && !Model.OverStockItems.Any())
+                    {
+                        <div class="alert alert-success mt-4">
+                            <h4><i class="fas fa-check-circle"></i> لا توجد تنبيهات</h4>
+                            <p class="mb-0">جميع الأصناف في مستويات المخزون المحددة.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

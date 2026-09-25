@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Masar.Schools.ERP.Application/Masar.Schools.ERP.Application.csproj" />
+  <Project Path="Masar.Schools.ERP.Domain/Masar.Schools.ERP.Domain.csproj" />
+  <Project Path="Masar.Schools.ERP.Infrastructure/Masar.Schools.ERP.Infrastructure.csproj" />
+  <Project Path="Masar.Schools.ERP.Licensing/Masar.Schools.ERP.Licensing.csproj" />
+  <Project Path="Masar.Schools.ERP.WebUI/Masar.Schools.ERP.WebUI.csproj" />
+</Solution>

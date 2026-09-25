@@ -1,0 +1,350 @@
+@model Masar.Schools.ERP.Domain.DTOs.GraduationClearanceRecordDto
+
+@{
+    ViewData["Title"] = "تفاصيل الإبراء";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Clearance">إبراء التخرج</a></li>
+                    <li class="breadcrumb-item active">تفاصيل الإبراء</li>
+                </ol>
+            </nav>
+            <h2 class="mb-3"><i class="bi bi-check-circle"></i> تفاصيل الإبراء</h2>
+        </div>
+    </div>
+
+    @if (Model != null)
+    {
+        <div class="row">
+            <!-- Student Information -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-person"></i> معلومات الطالب</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>اسم الطالب:</th>
+                                <td>@Model.StudentName</td>
+                            </tr>
+                            <tr>
+                                <th>سنة التخرج:</th>
+                                <td>@Model.GraduationYear</td>
+                            </tr>
+                            <tr>
+                                <th>المرحلة:</th>
+                                <td>@Model.GradeLevelArabic</td>
+                            </tr>
+                            <tr>
+                                <th>الشعبة:</th>
+                                <td>@Model.Section</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clearance Status -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-info-circle"></i> حالة الإبراء</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>الحالة العامة:</th>
+                                <td>
+                                    <span class="badge @(Model.ClearanceStatus == "Cleared" ? "bg-success" : Model.ClearanceStatus == "Pending" ? "bg-warning" : "bg-danger")">
+                                        @Model.ClearanceStatusArabic
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>تاريخ الإنشاء:</th>
+                                <td>@Model.CreatedAt.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                            <tr>
+                                <th>آخر تحديث:</th>
+                                <td>@Model.LastUpdated?.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                            <tr>
+                                <th>أنشأ بواسطة:</th>
+                                <td>@Model.CreatedByEmployeeName</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Clearance -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-cash"></i> الإبراء المالي</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>الحالة:</th>
+                                <td>
+                                    @if (Model.FinancialCleared)
+                                    {
+                                        <span class="badge bg-success">موافق</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">غير موافق</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>تاريخ الإبراء:</th>
+                                <td>@Model.FinancialClearanceDate?.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                            <tr>
+                                <th>الرصيد المتبقي:</th>
+                                <td>@Model.OutstandingBalance?.ToString("F2")</td>
+                            </tr>
+                            <tr>
+                                <th>ملاحظات:</th>
+                                <td>@Model.FinancialClearanceNotesArabic</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Administrative Clearance -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-building"></i> الإبراء الإداري</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>الحالة:</th>
+                                <td>
+                                    @if (Model.AdministrativeCleared)
+                                    {
+                                        <span class="badge bg-success">موافق</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">غير موافق</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>تاريخ الإبراء:</th>
+                                <td>@Model.AdministrativeClearanceDate?.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                            <tr>
+                                <th>إرجاع الكتب:</th>
+                                <td>
+                                    @if (Model.ReturnedLibraryBooks)
+                                    {
+                                        <span class="badge bg-success">نعم</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">لا</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>إرجاع المعدات:</th>
+                                <td>
+                                    @if (Model.ReturnedEquipment)
+                                    {
+                                        <span class="badge bg-success">نعم</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">لا</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>ملاحظات:</th>
+                                <td>@Model.AdministrativeClearanceNotesArabic</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Clearance -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-book"></i> الإبراء الأكاديمي</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>الحالة:</th>
+                                <td>
+                                    @if (Model.AcademicCleared)
+                                    {
+                                        <span class="badge bg-success">موافق</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">غير موافق</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>تاريخ الإبراء:</th>
+                                <td>@Model.AcademicClearanceDate?.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                            <tr>
+                                <th>جميع الدرجات مسجلة:</th>
+                                <td>
+                                    @if (Model.AllGradesRecorded)
+                                    {
+                                        <span class="badge bg-success">نعم</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">لا</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>جميع المتطلبات مستوفاة:</th>
+                                <td>
+                                    @if (Model.AllRequirementsMet)
+                                    {
+                                        <span class="badge bg-success">نعم</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">لا</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>ملاحظات:</th>
+                                <td>@Model.AcademicClearanceNotesArabic</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clinic Clearance -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-hospital"></i> إبراء العيادة</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>الحالة:</th>
+                                <td>
+                                    @if (Model.ClinicCleared)
+                                    {
+                                        <span class="badge bg-success">موافق</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">غير موافق</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>تاريخ الإبراء:</th>
+                                <td>@Model.ClinicClearanceDate?.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                            <tr>
+                                <th>ملاحظات:</th>
+                                <td>@Model.ClinicClearanceNotesArabic</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Approval -->
+            <div class="col-12 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-check-circle"></i> الموافقة النهائية</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>الحالة:</th>
+                                <td>
+                                    @if (Model.FinalApproval)
+                                    {
+                                        <span class="badge bg-success">موافق</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">معلق</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>تاريخ الموافقة:</th>
+                                <td>@Model.FinalApprovalDate?.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                            <tr>
+                                <th>وافق بواسطة:</th>
+                                <td>@Model.ApprovedByEmployeeName</td>
+                            </tr>
+                            <tr>
+                                <th>ملاحظات:</th>
+                                <td>@Model.FinalApprovalNotesArabic</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="col-12 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-card-text"></i> ملاحظات عامة</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>@Model.NotesArabic</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex gap-2">
+                            <a asp-action="EditClearance" asp-route-id="@Model.Id" class="btn btn-primary">
+                                <i class="bi bi-pencil"></i> تعديل
+                            </a>
+                            <a asp-action="Clearance" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> العودة للقائمة
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle"></i> لم يتم العثور على سجل الإبراء
+        </div>
+    }
+</div>

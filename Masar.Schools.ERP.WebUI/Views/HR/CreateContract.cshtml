@@ -1,0 +1,105 @@
+@model Masar.Schools.ERP.Infrastructure.Interfaces.ContractCreateDto
+@{
+    ViewData["Title"] = "إنشاء عقد جديد";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-primary">
+                <i class="bi bi-file-plus"></i> إنشاء عقد جديد
+            </h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="CreateContract" method="post">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="EmployeeId" class="form-label">الموظف</label>
+                            <select asp-for="EmployeeId" asp-items="ViewBag.Employees" class="form-select" required>
+                                <option value="">اختر الموظف</option>
+                            </select>
+                            <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="StartDate" class="form-label">تاريخ البدء</label>
+                                <input asp-for="StartDate" class="form-control" type="date" required>
+                                <span asp-validation-for="StartDate" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="EndDate" class="form-label">تاريخ الانتهاء</label>
+                                <input asp-for="EndDate" class="form-control" type="date" required>
+                                <span asp-validation-for="EndDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Salary" class="form-label">الراتب</label>
+                            <input asp-for="Salary" class="form-control" type="number" step="0.01" required>
+                            <span asp-validation-for="Salary" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="JobTitle" class="form-label">المسمى الوظيفي (إنجليزي)</label>
+                                <input asp-for="JobTitle" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="JobTitleArabic" class="form-label">المسمى الوظيفي (عربي)</label>
+                                <input asp-for="JobTitleArabic" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Department" class="form-label">القسم (إنجليزي)</label>
+                                <input asp-for="Department" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DepartmentArabic" class="form-label">القسم (عربي)</label>
+                                <input asp-for="DepartmentArabic" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Notes" class="form-label">ملاحظات</label>
+                            <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> حفظ العقد
+                            </button>
+                            <a asp-action="Contracts" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> إلغاء
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">معلومات سريعة</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-info-circle"></i> سيتم حساب مدة العقد تلقائياً</li>
+                        <li><i class="bi bi-info-circle"></i> العقد الحالي سيتم أرشفته تلقائياً</li>
+                        <li><i class="bi bi-info-circle"></i> بيانات الموظف سيتم تحديثها</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

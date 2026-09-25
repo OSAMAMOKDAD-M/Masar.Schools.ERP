@@ -1,0 +1,88 @@
+@model IEnumerable<Masar.Schools.ERP.WebUI.Controllers.JournalEntryLineWithBalance>
+@using Masar.Schools.ERP.Domain.Entities
+@{
+    ViewData["Title"] = "رصيد الحساب";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">دفتر الأستاذ العام</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">رصيد الحساب</li>
+                </ol>
+            </nav>
+            
+            <h2 class="text-end mb-3">رصيد الحساب</h2>
+            
+            @if (ViewBag.Account != null)
+            {
+                <div class="card shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>@ViewBag.Account.AccountNameAr</h5>
+                                <p class="text-muted">@ViewBag.Account.AccountNameEn</p>
+                                <p class="mb-0"><strong>رقم الحساب:</strong> @ViewBag.Account.AccountCode</p>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <p><strong>رصيد البداية:</strong> @ViewBag.StartingBalance?.ToString("N2") ر.س</p>
+                                <p><strong>رصيد النهاية:</strong> @ViewBag.EndingBalance?.ToString("N2") ر.س</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="get" class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">من تاريخ</label>
+                            <input type="date" name="fromDate" class="form-control" value="@ViewBag.FromDate?.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">إلى تاريخ</label>
+                            <input type="date" name="toDate" class="form-control" value="@ViewBag.ToDate?.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">تصفية</button>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>رقم القيد</th>
+                                    <th>الوصف</th>
+                                    <th>الطالب</th>
+                                    <th>مدين</th>
+                                    <th>دائن</th>
+                                    <th>الرصيد الجاري</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.JournalEntryLine.JournalEntry.EntryDate.ToString("yyyy-MM-dd")</td>
+                                        <td>@item.JournalEntryLine.JournalEntry.EntryNumber</td>
+                                        <td>@item.JournalEntryLine.Description</td>
+                                        <td>@item.JournalEntryLine.Student?.FullNameArabic ?? "-"</td>
+                                        <td class="text-success">@item.JournalEntryLine.Debit.ToString("N2")</td>
+                                        <td class="text-danger">@item.JournalEntryLine.Credit.ToString("N2")</td>
+                                        <td class="fw-bold">@item.RunningBalance.ToString("N2")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

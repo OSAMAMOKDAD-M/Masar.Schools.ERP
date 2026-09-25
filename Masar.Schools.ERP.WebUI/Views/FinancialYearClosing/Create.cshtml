@@ -1,0 +1,64 @@
+@model Masar.Schools.ERP.Domain.Entities.FinancialPeriod
+
+@{
+    ViewData["Title"] = "إنشاء فترة مالية جديدة";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-plus-circle"></i> إنشاء فترة مالية جديدة
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="PeriodName" class="form-label">اسم الفترة</label>
+                                    <input asp-for="PeriodName" class="form-control" placeholder="مثال: 2024-2025" required />
+                                    <span asp-validation-for="PeriodName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="StartDate" class="form-label">تاريخ البدء</label>
+                                    <input asp-for="StartDate" type="date" class="form-control" required />
+                                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="EndDate" class="form-label">تاريخ الانتهاء</label>
+                                    <input asp-for="EndDate" type="date" class="form-control" required />
+                                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="IsActive" class="form-label">نشطة</label>
+                                    <div class="form-check">
+                                        <input asp-for="IsActive" class="form-check-input" type="checkbox" checked />
+                                        <label asp-for="IsActive" class="form-check-label">فعالة</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> حفظ
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-right"></i> رجوع
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

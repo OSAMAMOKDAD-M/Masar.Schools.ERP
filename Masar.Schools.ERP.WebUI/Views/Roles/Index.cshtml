@@ -1,0 +1,100 @@
+@model List<Masar.Schools.ERP.Domain.Entities.MasarRole>
+@{
+    ViewData["Title"] = "إدارة الأدوار";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-end">إدارة الأدوار</h2>
+        <div>
+            <form asp-action="CreateDefaultRoles" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-success me-2">
+                    <i class="bi bi-magic"></i> إنشاء الأدوار الافتراضية
+                </button>
+            </form>
+            <form asp-action="AssignDefaultPermissions" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-info me-2">
+                    <i class="bi bi-key"></i> تعيين الصلاحيات الافتراضية
+                </button>
+            </form>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> إضافة دور جديد
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="bi bi-shield-check"></i> قائمة الأدوار</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover text-end">
+                        <thead class="table-light">
+                            <tr>
+                                <th>اسم الدور</th>
+                                <th>الوصف</th>
+                                <th>الحالة</th>
+                                <th>المستخدمين</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var role in Model)
+                            {
+                                <tr>
+                                    <td>@role.Name</td>
+                                    <td>@role.DescriptionArabic ?? role.Description</td>
+                                    <td>
+                                        @if (role.IsActive)
+                                        {
+                                            <span class="badge bg-success">نشط</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">غير نشط</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">@role.RolePermissions?.Count ?? 0</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="Details" asp-route-id="@role.Id" class="btn btn-primary" title="التفاصيل">
+                                                <i class="bi bi-info-circle"></i>
+                                            </a>
+                                            <a asp-action="ManagePermissions" asp-route-id="@role.Id" class="btn btn-warning" title="الصلاحيات">
+                                                <i class="bi bi-key"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@role.Id" class="btn btn-info" title="تعديل">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@role.Id" class="btn btn-danger" title="حذف">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-4">
+                    <i class="bi bi-shield-check fs-1 text-muted"></i>
+                    <p class="text-muted mt-2">لا توجد أدوار</p>
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> إضافة دور جديد
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

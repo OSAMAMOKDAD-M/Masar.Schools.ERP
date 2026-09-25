@@ -1,0 +1,104 @@
+@model List<Masar.Schools.ERP.Domain.DTOs.MedicalExcuseDto>
+
+@{
+    ViewData["Title"] = "الإجازات والتقارير الطبية";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3"><i class="bi bi-file-medical"></i> الإجازات والتقارير الطبية</h2>
+            <a asp-action="CreateMedicalExcuse" class="btn btn-primary float-end">
+                <i class="bi bi-plus-circle"></i> إنشاء إجازة طبية
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <a asp-action="ActiveMedicalExcuses" class="btn btn-success w-100">
+                <i class="bi bi-activity"></i> الإجازات النشطة
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>الطالب</th>
+                                <th>نوع الإجازة</th>
+                                <th>السبب</th>
+                                <th>تاريخ البداية</th>
+                                <th>تاريخ النهاية</th>
+                                <th>الأيام</th>
+                                <th>الحالة</th>
+                                <th>أرسل للمعلمين</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Any())
+                            {
+                                @foreach (var excuse in Model)
+                                {
+                                    <tr>
+                                        <td>@excuse.StudentName</td>
+                                        <td>@excuse.ExcuseType</td>
+                                        <td>@excuse.Reason</td>
+                                        <td>@excuse.StartDate.ToString("yyyy-MM-dd")</td>
+                                        <td>@excuse.EndDate.ToString("yyyy-MM-dd")</td>
+                                        <td>@excuse.NumberOfDays</td>
+                                        <td>
+                                            @if (excuse.IsActive)
+                                            {
+                                                <span class="badge bg-success">نشطة</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">منتهية</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (excuse.SentToTeachers)
+                                            {
+                                                <span class="badge bg-success">نعم</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">لا</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-action="MedicalExcuseDetails" asp-route-id="@excuse.Id" class="btn btn-sm btn-info">
+                                                <i class="bi bi-eye"></i> عرض
+                                            </a>
+                                            <a asp-action="EditMedicalExcuse" asp-route-id="@excuse.Id" class="btn btn-sm btn-warning">
+                                                <i class="bi bi-pencil"></i> تعديل
+                                            </a>
+                                            @if (!excuse.SentToTeachers)
+                                            {
+                                                <a asp-action="SendToTeachers" asp-route-id="@excuse.Id" class="btn btn-sm btn-success">
+                                                    <i class="bi bi-send"></i> إرسال للمعلمين
+                                                </a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="10" class="text-center">لا توجد بيانات</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

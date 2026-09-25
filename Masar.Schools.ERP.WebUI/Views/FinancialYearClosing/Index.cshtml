@@ -1,0 +1,100 @@
+@model List<Masar.Schools.ERP.Domain.Entities.FinancialPeriod>
+
+@{
+    ViewData["Title"] = "إغلاق السنة المالية";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar-check"></i> إدارة الفترات المالية
+                    </h5>
+                    <div>
+                        <a asp-action="Create" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> فترة جديدة
+                        </a>
+                        <form asp-action="PostUnpostedEntries" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-arrow-repeat"></i> ترحيل القيود
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>اسم الفترة</th>
+                                    <th>تاريخ البدء</th>
+                                    <th>تاريخ الانتهاء</th>
+                                    <th>الحالة</th>
+                                    <th>تاريخ الإغلاق</th>
+                                    <th>بواسطة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    @foreach (var period in Model)
+                                    {
+                                        <tr>
+                                            <td>@period.PeriodName</td>
+                                            <td>@period.StartDate.ToString("yyyy-MM-dd")</td>
+                                            <td>@period.EndDate.ToString("yyyy-MM-dd")</td>
+                                            <td>
+                                                @if (period.IsClosed)
+                                                {
+                                                    <span class="badge bg-danger">مغلقة</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-success">مفتوحة</span>
+                                                }
+                                            </td>
+                                            <td>@(period.ClosedDate?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
+                                            <td>@(period.ClosedBy ?? "-")</td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    @if (!period.IsClosed)
+                                                    {
+                                                        <a asp-action="Close" asp-route-id="@period.Id" class="btn btn-sm btn-danger">
+                                                            <i class="bi bi-lock"></i> إغلاق
+                                                        </a>
+                                                        <a asp-action="CreateOpeningEntry" asp-route-id="@period.Id" class="btn btn-sm btn-info">
+                                                            <i class="bi bi-file-earmark-plus"></i> قيد افتتاحي
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a asp-action="Reopen" asp-route-id="@period.Id" class="btn btn-sm btn-warning">
+                                                            <i class="bi bi-unlock"></i> إعادة فتح
+                                                        </a>
+                                                    }
+                                                    <a asp-action="AuditLogs" asp-route-id="@period.Id" class="btn btn-sm btn-secondary">
+                                                        <i class="bi bi-journal-text"></i> سجل المراجعة
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center">لا توجد فترات مالية</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

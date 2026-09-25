@@ -1,0 +1,61 @@
+@model Masar.Schools.ERP.Domain.DTOs.CreatePurchaseOrderRequest
+
+@{
+    ViewData["Title"] = "إنشاء أمر شراء";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">إنشاء أمر شراء جديد</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreatePurchaseOrder" method="post">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="SupplierId">المورد</label>
+                                    <select asp-for="SupplierId" class="form-control" required>
+                                        <option value="">اختر المورد</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="WarehouseId">المخزن</label>
+                                    <select asp-for="WarehouseId" class="form-control" required>
+                                        <option value="">اختر المخزن</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="ExpectedDeliveryDate">تاريخ التسليم المتوقع</label>
+                                    <input asp-for="ExpectedDeliveryDate" type="date" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="PaymentTerms">شروط الدفع</label>
+                                    <input asp-for="PaymentTerms" class="form-control" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Notes">ملاحظات</label>
+                            <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">حفظ</button>
+                            <a asp-action="PurchaseOrders" class="btn btn-secondary">إلغاء</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

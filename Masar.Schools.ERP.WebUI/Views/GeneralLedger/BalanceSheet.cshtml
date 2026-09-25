@@ -1,0 +1,178 @@
+@model Masar.Schools.ERP.WebUI.Controllers.BalanceSheetViewModel
+@using Masar.Schools.ERP.Domain.Entities
+@{
+    ViewData["Title"] = "الميزانية العمومية";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">دفتر الأستاذ العام</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">الميزانية العمومية</li>
+                </ol>
+            </nav>
+            
+            <h2 class="text-end mb-3">الميزانية العمومية</h2>
+            
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">كحتى تاريخ</label>
+                            <input type="date" name="asOfDate" class="form-control" value="@ViewBag.AsOfDate?.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">عرض الميزانية</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">الأصول (Assets)</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>رقم الحساب</th>
+                                        <th>اسم الحساب</th>
+                                        <th class="text-end">الرصيد</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var asset in Model.Assets)
+                                    {
+                                        <tr>
+                                            <td>@asset.Account.AccountCode</td>
+                                            <td>@asset.Account.AccountNameAr</td>
+                                            <td class="text-end">@asset.Balance.ToString("N2")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot class="table-light fw-bold">
+                                    <tr>
+                                        <td colspan="2" class="text-end">إجمالي الأصول:</td>
+                                        <td class="text-end">@ViewBag.TotalAssets?.ToString("N2")</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0">الالتزامات (Liabilities)</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>رقم الحساب</th>
+                                        <th>اسم الحساب</th>
+                                        <th class="text-end">الرصيد</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var liability in Model.Liabilities)
+                                    {
+                                        <tr>
+                                            <td>@liability.Account.AccountCode</td>
+                                            <td>@liability.Account.AccountNameAr</td>
+                                            <td class="text-end">@liability.Balance.ToString("N2")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot class="table-light fw-bold">
+                                    <tr>
+                                        <td colspan="2" class="text-end">إجمالي الالتزامات:</td>
+                                        <td class="text-end">@ViewBag.TotalLiabilities?.ToString("N2")</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">حقوق الملكية (Equity)</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>رقم الحساب</th>
+                                        <th>اسم الحساب</th>
+                                        <th class="text-end">الرصيد</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var equityItem in Model.Equity)
+                                    {
+                                        <tr>
+                                            <td>@equityItem.Account.AccountCode</td>
+                                            <td>@equityItem.Account.AccountNameAr</td>
+                                            <td class="text-end">@equityItem.Balance.ToString("N2")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot class="table-light fw-bold">
+                                    <tr>
+                                        <td colspan="2" class="text-end">إجمالي حقوق الملكية:</td>
+                                        <td class="text-end">@ViewBag.TotalEquity?.ToString("N2")</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card shadow-sm sticky-top" style="top: 100px;">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">ملخص الميزانية</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <h6>إجمالي الأصول</h6>
+                                <h3 class="text-primary">@ViewBag.TotalAssets?.ToString("N2") ر.س</h3>
+                            </div>
+                            <div class="mb-3">
+                                <h6>إجمالي الالتزامات</h6>
+                                <h3 class="text-warning">@ViewBag.TotalLiabilities?.ToString("N2") ر.س</h3>
+                            </div>
+                            <div class="mb-3">
+                                <h6>إجمالي حقوق الملكية</h6>
+                                <h3 class="text-info">@ViewBag.TotalEquity?.ToString("N2") ر.س</h3>
+                            </div>
+                            <hr>
+                            <div class="mb-3">
+                                <h6>الالتزامات + حقوق الملكية</h6>
+                                <h3 class="text-success">@((ViewBag.TotalLiabilities + ViewBag.TotalEquity)?.ToString("N2")) ر.س</h3>
+                            </div>
+                            
+                            @if (ViewBag.TotalAssets == (ViewBag.TotalLiabilities + ViewBag.TotalEquity))
+                            {
+                                <div class="alert alert-success mt-3 text-center">
+                                    <i class="fas fa-check-circle"></i> الميزانية متوازنة
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger mt-3 text-center">
+                                    <i class="fas fa-exclamation-triangle"></i> الميزانية غير متوازنة!
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

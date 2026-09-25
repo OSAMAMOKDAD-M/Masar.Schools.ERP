@@ -1,0 +1,88 @@
+@model List<Masar.Schools.ERP.Domain.DTOs.SupplierDto>
+
+@{
+    ViewData["Title"] = "الموردين";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">قائمة الموردين</h3>
+                    <a asp-action="CreateSupplier" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> إضافة مورد جديد
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>الكود</th>
+                                    <th>الاسم</th>
+                                    <th>الاسم بالعربية</th>
+                                    <th>المدينة</th>
+                                    <th>الهاتف</th>
+                                    <th>البريد الإلكتروني</th>
+                                    <th>الفئة</th>
+                                    <th>التقييم</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var supplier in Model)
+                                {
+                                    <tr>
+                                        <td>@supplier.Code</td>
+                                        <td>@supplier.Name</td>
+                                        <td>@supplier.NameArabic</td>
+                                        <td>@supplier.City</td>
+                                        <td>@supplier.Phone</td>
+                                        <td>@supplier.Email</td>
+                                        <td>@supplier.SupplierCategory</td>
+                                        <td>
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= supplier.Rating)
+                                                {
+                                                    <i class="fas fa-star text-warning"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="far fa-star text-muted"></i>
+                                                }
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (supplier.IsActive)
+                                            {
+                                                <span class="badge badge-success">نشط</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-danger">غير نشط</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-action="EditSupplier" asp-route-id="@supplier.Id" class="btn btn-sm btn-info">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form asp-action="DeleteSupplier" asp-route-id="@supplier.Id" method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من حذف هذا المورد؟')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

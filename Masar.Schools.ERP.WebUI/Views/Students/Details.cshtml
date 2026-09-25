@@ -1,0 +1,229 @@
+@model Student
+@{
+    ViewData["Title"] = "تفاصيل الطالب";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-person"></i> تفاصيل الطالب
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للقائمة
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Student Profile Card -->
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+                {
+                    <img src="@Model.ProfileImagePath" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                }
+                else
+                {
+                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mb-3" style="width: 150px; height: 150px; margin: 0 auto;">
+                        <i class="bi bi-person display-4 text-white"></i>
+                    </div>
+                }
+                <h4>@Model.FullNameArabic</h4>
+                <p class="text-muted">@Model.FullName</p>
+                <p class="mb-1"><strong>رقم الطالب:</strong> @Model.StudentNumber</p>
+                <p class="mb-1"><strong>الفصل:</strong> @Model.ClassRoom?.NameArabic</p>
+                <p class="mb-1"><strong>المدرسة:</strong> @Model.School?.NameArabic</p>
+                <div class="mt-3">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">
+                        <i class="bi bi-pencil"></i> تعديل
+                    </a>
+                    <a asp-action="DigitalCard" asp-route-id="@Model.Id" class="btn btn-success btn-sm">
+                        <i class="bi bi-card-heading"></i> البطاقة الرقمية
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Details -->
+    <div class="col-md-8 mb-3">
+        <!-- Personal Information -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="bi bi-person-badge"></i> المعلومات الشخصية
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>الاسم الكامل (عربي):</strong> @Model.FullNameArabic</p>
+                        <p><strong>الاسم الكامل (إنجليزي):</strong> @Model.FullName</p>
+                        <p><strong>رقم الهوية:</strong> @Model.NationalId</p>
+                        <p><strong>تاريخ الميلاد:</strong> @Model.BirthDate?.ToString("yyyy-MM-dd")</p>
+                        <p><strong>الجنس:</strong> @(Model.Gender == "Male" ? "ذكر" : "أنثى")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>فصيلة الدم:</strong> @Model.BloodType</p>
+                        <p><strong>رقم الهاتف:</strong> @Model.PhoneNumber</p>
+                        <p><strong>البريد الإلكتروني:</strong> @Model.Email</p>
+                        <p><strong>العنوان:</strong> @Model.Address</p>
+                        <p><strong>تاريخ التسجيل:</strong> @Model.EnrollmentDate?.ToString("yyyy-MM-dd")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guardian Information -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="bi bi-person-hearts"></i> ولي الأمر
+            </div>
+            <div class="card-body">
+                @if (Model.Guardian != null)
+                {
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>الاسم:</strong> @Model.Guardian.FullNameArabic</p>
+                            <p><strong>رقم الهوية:</strong> @Model.Guardian.NationalId</p>
+                            <p><strong>رقم الهاتف:</strong> @Model.Guardian.PhoneNumber</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>المهنة:</strong> @Model.Guardian.OccupationArabic</p>
+                            <p><strong>صلة القرابة:</strong> @Model.Guardian.RelationshipArabic</p>
+                            <p><strong>رقم الواتساب:</strong> @Model.Guardian.WhatsAppNumber</p>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">لم يتم ربط ولي الأمر</p>
+                }
+            </div>
+        </div>
+
+        <!-- Medical Information -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="bi bi-heart-pulse"></i> المعلومات الطبية
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>فصيلة الدم:</strong> @Model.BloodType</p>
+                        <p><strong>ملاحظات طبية:</strong> @Model.MedicalNotes</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>جهة الاتصال الطارئة:</strong> @Model.EmergencyContactName</p>
+                        <p><strong>رقم الطوارئ:</strong> @Model.EmergencyContactPhone</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Attendance Records -->
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-calendar-check"></i> سجل الحضور والغياب
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>الحالة</th>
+                                <th>وقت الدخول</th>
+                                <th>وقت الخروج</th>
+                                <th>الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var attendance in Model.AttendanceRecords.OrderByDescending(a => a.Date).Take(10))
+                            {
+                                <tr>
+                                    <td>@attendance.Date.ToString("yyyy-MM-dd")</td>
+                                    <td>
+                                        @if (attendance.Status == "Present")
+                                        {
+                                            <span class="status-badge success">حاضر</span>
+                                        }
+                                        else if (attendance.Status == "Absent")
+                                        {
+                                            <span class="status-badge danger">غائب</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge warning">@attendance.Status</span>
+                                        }
+                                    </td>
+                                    <td>@attendance.CheckInTime?.ToString("HH:mm")</td>
+                                    <td>@attendance.CheckOutTime?.ToString("HH:mm")</td>
+                                    <td>@attendance.Notes</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Academic Records -->
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-journal-bookmark"></i> السجل الأكاديمي
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>المادة</th>
+                                <th>المعلم</th>
+                                <th>الدرجة النصية</th>
+                                <th>الدرجة النهائية</th>
+                                <th>المجموع</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var grade in Model.Grades)
+                            {
+                                <tr>
+                                    <td>@grade.SubjectArabic</td>
+                                    <td>@grade.Teacher?.FullNameArabic</td>
+                                    <td>@grade.MidtermScore</td>
+                                    <td>@grade.FinalScore</td>
+                                    <td>@grade.TotalScore / @grade.MaxScore</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Financial Records -->
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-cash-coin"></i> السجل المالي
+            </div>
+            <div class="card-body">
+                <p class="text-muted">يمكنك عرض السجل المالي من صفحة الفواتير</p>
+                <a asp-controller="Invoices" asp-action="StudentStatement" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">
+                    <i class="bi bi-file-earmark-spreadsheet"></i> عرض كشف الحساب
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,131 @@
+@model Masar.Schools.ERP.Licensing.Models.LicenseModel
+@{
+    ViewData["Title"] = "تم إصدار الترخيص بنجاح";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string? licenseKey = ViewBag.LicenseKey as string;
+    Guid licenseId = ViewBag.LicenseId != null ? Guid.Parse(ViewBag.LicenseId.ToString()!) : Guid.Empty;
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-success">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-check-circle"></i> تم إصدار الترخيص بنجاح</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        <i class="bi bi-shield-check"></i>
+                        تم إصدار ترخيص جديد للعميل <strong>@Model.ClientName</strong>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="fw-bold">معلومات الترخيص:</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td><strong>معرف الترخيص:</strong></td>
+                                <td><code>@Model.LicenseId</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>العميل:</strong></td>
+                                <td>@Model.ClientName</td>
+                            </tr>
+                            <tr>
+                                <td><strong>نوع الترخيص:</strong></td>
+                                <td>@Model.LicenseType</td>
+                            </tr>
+                            <tr>
+                                <td><strong>فترة الصلاحية:</strong></td>
+                                <td>من @Model.ValidFrom.ToString("yyyy-MM-dd") إلى @Model.ValidUntil.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                            <tr>
+                                <td><strong>الحد الأقصى للطلاب:</strong></td>
+                                <td>@Model.MaxStudents طالب</td>
+                            </tr>
+                            <tr>
+                                <td><strong>الحد الأقصى للمستخدمين:</strong></td>
+                                <td>@Model.MaxUsers مستخدم</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="fw-bold">الموديولات المفعلة:</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            @if (Model.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.Core))
+                            {<span class="badge bg-primary">الوحدات الأساسية</span>}
+                            @if (Model.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.ZATCA))
+                            {<span class="badge bg-info">ZATCA</span>}
+                            @if (Model.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.WhatsApp))
+                            {<span class="badge bg-success">واتساب</span>}
+                            @if (Model.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.Transport))
+                            {<span class="badge bg-warning">النقل</span>}
+                            @if (Model.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.Clinic))
+                            {<span class="badge bg-danger">العيادة</span>}
+                            @if (Model.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.Canteen))
+                            {<span class="badge bg-secondary">المقصف</span>}
+                            @if (Model.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.Timetable))
+                            {<span class="badge bg-dark">الجدول</span>}
+                            @if (Model.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.Behavior))
+                            {<span class="badge bg-light text-dark">السلوك</span>}
+                            @if (Model.Modules.HasFlag(Masar.Schools.ERP.Licensing.Models.LicenseModules.AdvancedReporting))
+                            {<span class="badge bg-info text-dark">التقارير المتقدمة</span>}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="fw-bold">مفتاح الترخيص المشفر:</h6>
+                        <div class="input-group">
+                            <input type="text" class="form-control font-monospace" value="@licenseKey" readonly id="licenseKey" />
+                            <button class="btn btn-outline-primary" onclick="copyLicenseKey()">
+                                <i class="bi bi-clipboard"></i> نسخ
+                            </button>
+                        </div>
+                        <small class="text-muted">أرسل هذا المفتاح للعميل مع تعليمات التفعيل</small>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>هام:</strong> احفظ هذا المفتاح في مكان آمن. لا يمكن استرداده إذا فقد.
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a asp-action="Index" class="btn btn-primary">
+                            <i class="bi bi-list"></i> العودة لقائمة التراخيص
+                        </a>
+                        <a asp-action="Generate" class="btn btn-secondary">
+                            <i class="bi bi-plus-circle"></i> إصدار ترخيص آخر
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyLicenseKey() {
+    const licenseKey = document.getElementById('licenseKey');
+    licenseKey.select();
+    document.execCommand('copy');
+    
+    // Show feedback
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="bi bi-check"></i> تم النسخ';
+    btn.classList.remove('btn-outline-primary');
+    btn.classList.add('btn-success');
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.classList.remove('btn-success');
+        btn.classList.add('btn-outline-primary');
+    }, 2000);
+}
+</script>
+
+<footer class="footer text-muted border-top py-3 text-center bg-light mt-auto">
+    <div class="container-fluid">
+        <span>© 2026 <strong>نظام مَسَار للمدارس</strong> - جميع الحقوق محفوظة - شركة مسار للبرمجيات mokdadvipr@gmail.com .. 01006765664 (نسخة 1.0.0)</span>
+    </div>
+</footer>

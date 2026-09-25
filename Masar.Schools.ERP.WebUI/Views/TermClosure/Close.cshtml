@@ -1,0 +1,403 @@
+@model Masar.Schools.ERP.Domain.Entities.AcademicTerm
+@{
+    ViewData["Title"] = "إغلاق الفصل الدراسي";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">إغلاق الفصل الدراسي - @Model.TermNameArabic</h3>
+                    <div class="card-tools">
+                        <a href="@Url.Action("Index", "TermClosure")" class="btn btn-secondary">
+                            <i class="fas fa-arrow-right"></i> العودة
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Validation Section -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-info">
+                            <h4 class="card-title"><i class="fas fa-check-circle"></i> فحص التحقق قبل الإغلاق</h4>
+                        </div>
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary" onclick="validateTerm()">
+                                <i class="fas fa-search"></i> فحص حالة الفصل
+                            </button>
+                            
+                            <div id="validation-results" style="display: none; margin-top: 20px;">
+                                <div id="overall-status" class="alert"></div>
+                                
+                                <!-- Module Status Cards -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header" id="grades-status-header">
+                                                <h5>الكنترول والدرجات</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="progress mb-2">
+                                                    <div id="grades-progress" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                                </div>
+                                                <p id="grades-message"></p>
+                                                <ul id="grades-warnings" class="text-warning" style="list-style: none; padding: 0;"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header" id="invoices-status-header">
+                                                <h5>الفواتير</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="progress mb-2">
+                                                    <div id="invoices-progress" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                                </div>
+                                                <p id="invoices-message"></p>
+                                                <ul id="invoices-warnings" class="text-warning" style="list-style: none; padding: 0;"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header" id="attendance-status-header">
+                                                <h5>الحضور والغياب</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="progress mb-2">
+                                                    <div id="attendance-progress" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                                </div>
+                                                <p id="attendance-message"></p>
+                                                <ul id="attendance-warnings" class="text-warning" style="list-style: none; padding: 0;"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header" id="transport-status-header">
+                                                <h5>النقل</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="progress mb-2">
+                                                    <div id="transport-progress" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                                </div>
+                                                <p id="transport-message"></p>
+                                                <ul id="transport-warnings" class="text-warning" style="list-style: none; padding: 0;"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Summary Stats -->
+                                <div class="row mt-4">
+                                    <div class="col-md-3">
+                                        <div class="info-box bg-primary">
+                                            <span class="info-box-icon"><i class="fas fa-user-graduate"></i></span>
+                                            <div class="info-box-content">
+                                                <span class="info-box-text">الطلاب للترحيل</span>
+                                                <span class="info-box-number" id="students-to-promote">0</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="info-box bg-success">
+                                            <span class="info-box-icon"><i class="fas fa-money-bill-wave"></i></span>
+                                            <div class="info-box-content">
+                                                <span class="info-box-text">إجمالي الفواتير</span>
+                                                <span class="info-box-number" id="total-invoices">0</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="info-box bg-info">
+                                            <span class="info-box-icon"><i class="fas fa-check"></i></span>
+                                            <div class="info-box-content">
+                                                <span class="info-box-text">المدفوعات</span>
+                                                <span class="info-box-number" id="total-paid">0</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="info-box bg-danger">
+                                            <span class="info-box-icon"><i class="fas fa-exclamation-triangle"></i></span>
+                                            <div class="info-box-content">
+                                                <span class="info-box-text">المتأخرات</span>
+                                                <span class="info-box-number" id="total-outstanding">0</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Closing Options Checklist -->
+                    <div class="card mb-4" id="closing-options" style="display: none;">
+                        <div class="card-header bg-warning">
+                            <h4 class="card-title"><i class="fas fa-tasks"></i> خيارات الإغلاق</h4>
+                        </div>
+                        <div class="card-body">
+                            <form id="close-term-form">
+                                <input type="hidden" name="TermId" value="@Model.Id" />
+                                
+                                <div class="form-group">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="LockGradesAndControl" class="form-check-input" checked disabled />
+                                                <label class="form-check-label">
+                                                    <strong>قفل الكنترول والدرجات نهائياً</strong>
+                                                    <small class="d-block text-muted">سيتم قفل جميع الدرجات ومنع أي تعديلات</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="FinalizeAttendance" class="form-check-input" checked disabled />
+                                                <label class="form-check-label">
+                                                    <strong>حساب النسب النهائية للحضور</strong>
+                                                    <small class="d-block text-muted">سيتم حساب النسبة النهائية لكل طالب</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="SendAttendanceReports" class="form-check-input" checked />
+                                                <label class="form-check-label">
+                                                    <strong>إرسال تقارير الحضور لأولياء الأمور</strong>
+                                                    <small class="d-block text-muted">سيتم إرسال تقارير عبر WhatsApp</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="CloseFinancialPeriod" class="form-check-input" checked disabled />
+                                                <label class="form-check-label">
+                                                    <strong>إغلاق الدورة المحاسبية</strong>
+                                                    <small class="d-block text-muted">سيتم إغلاق الدورة المالية للفصل</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="AuditZatcaInvoices" class="form-check-input" checked />
+                                                <label class="form-check-label">
+                                                    <strong>مراجعة ZATCA</strong>
+                                                    <small class="d-block text-muted">سيتم مطابقة الفواتير مع ZATCA</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="PromoteStudents" class="form-check-input" checked />
+                                                <label class="form-check-label">
+                                                    <strong>ترحيل الطلاب للصف الأعلى</strong>
+                                                    <small class="d-block text-muted">سيتم ترحيل الطلاب الناجحين</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="ArchiveRecords" class="form-check-input" checked disabled />
+                                                <label class="form-check-label">
+                                                    <strong>أرشفة السجلات</strong>
+                                                    <small class="d-block text-muted">سيتم أرشفة جميع سجلات الفصل</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="UnlinkTransport" class="form-check-input" checked />
+                                                <label class="form-check-label">
+                                                    <strong>فك ارتباط النقل</strong>
+                                                    <small class="d-block text-muted">سيتم فك ارتباط اشتراكات النقل</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>ملاحظات الإغلاق</label>
+                                    <textarea name="Notes" class="form-control" rows="3" placeholder="أي ملاحظات إضافية..."></textarea>
+                                </div>
+
+                                <div class="alert alert-danger">
+                                    <h5><i class="fas fa-exclamation-triangle"></i> تحذير هام</h5>
+                                    <p>سيتم تنفيذ جميع الخطوات في معاملة واحدة صارمة. بعد الإغلاق، لا يمكن التراجع عن العملية إلا من خلال استعادة الأرشيف.</p>
+                                </div>
+
+                                <button type="button" class="btn btn-danger btn-lg" id="close-btn" onclick="closeTerm()" disabled>
+                                    <i class="fas fa-lock"></i> اعتماد وإغلاق الفصل النهائي
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let validationData = null;
+
+        function validateTerm() {
+            const termId = '@Model.Id';
+            
+            $('#validation-results').hide();
+            $('#closing-options').hide();
+            
+            $.ajax({
+                url: '@Url.Action("Validate", "TermClosure")',
+                type: 'POST',
+                data: { termId: termId },
+                success: function(response) {
+                    if (response.success) {
+                        validationData = response.data;
+                        displayValidationResults(response.data);
+                    } else {
+                        alert('فشل الفحص: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('حدث خطأ أثناء الفحص');
+                }
+            });
+        }
+
+        function displayValidationResults(data) {
+            $('#validation-results').show();
+            
+            // Overall status
+            const overallStatus = $('#overall-status');
+            if (data.canClose) {
+                overallStatus.removeClass('alert-danger').addClass('alert-success');
+                overallStatus.html('<i class="fas fa-check-circle"></i> ' + data.statusMessage);
+            } else {
+                overallStatus.removeClass('alert-success').addClass('alert-danger');
+                overallStatus.html('<i class="fas fa-times-circle"></i> ' + data.statusMessage);
+            }
+            
+            // Grades status
+            updateModuleStatus('grades', data.gradesStatus);
+            
+            // Invoices status
+            updateModuleStatus('invoices', data.invoicesStatus);
+            
+            // Attendance status
+            updateModuleStatus('attendance', data.attendanceStatus);
+            
+            // Transport status
+            updateModuleStatus('transport', data.transportStatus);
+            
+            // Summary stats
+            $('#students-to-promote').text(data.studentsToPromote);
+            $('#total-invoices').text(data.totalInvoicesAmount.toLocaleString('en-US') + ' ريال');
+            $('#total-paid').text(data.totalPaidAmount.toLocaleString('en-US') + ' ريال');
+            $('#total-outstanding').text(data.totalOutstandingAmount.toLocaleString('en-US') + ' ريال');
+            
+            // Show closing options if ready
+            if (data.canClose) {
+                $('#closing-options').show();
+                $('#close-btn').prop('disabled', false);
+            } else {
+                $('#close-btn').prop('disabled', true);
+            }
+        }
+
+        function updateModuleStatus(module, status) {
+            const header = $(`#${module}-status-header`);
+            const progress = $(`#${module}-progress`);
+            const message = $(`#${module}-message`);
+            const warnings = $(`#${module}-warnings`);
+            
+            progress.css('width', status.completionPercentage + '%');
+            progress.removeClass('bg-success bg-warning bg-danger');
+            
+            if (status.isReady) {
+                progress.addClass('bg-success');
+                header.removeClass('bg-danger bg-warning').addClass('bg-success');
+            } else {
+                progress.addClass('bg-warning');
+                header.removeClass('bg-success bg-danger').addClass('bg-warning');
+            }
+            
+            message.text(status.message);
+            
+            warnings.empty();
+            status.warnings.forEach(function(warning) {
+                warnings.append('<li><i class="fas fa-exclamation-triangle"></i> ' + warning + '</li>');
+            });
+        }
+
+        function closeTerm() {
+            if (!confirm('هل أنت متأكد من إغلاق الفصل الدراسي نهائياً؟ سيتم تنفيذ جميع الخطوات في معاملة واحدة صارمة.')) {
+                return;
+            }
+
+            const formData = $('#close-term-form').serialize();
+            
+            $.ajax({
+                url: '@Url.Action("CloseTerm", "TermClosure")',
+                type: 'POST',
+                data: formData,
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert('تم إغلاق الفصل الدراسي بنجاح!');
+                        window.location.href = '@Url.Action("Index", "TermClosure")';
+                    } else {
+                        alert('فشل الإغلاق: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('حدث خطأ أثناء الإغلاق');
+                }
+            });
+        }
+    </script>
+}

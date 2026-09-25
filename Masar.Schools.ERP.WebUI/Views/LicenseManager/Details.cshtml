@@ -1,0 +1,153 @@
+@model LicenseModel
+@{
+    ViewData["Title"] = "تفاصيل الترخيص";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 class="text-end mb-3">تفاصيل الترخيص</h2>
+            <div class="btn-group">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-right"></i> العودة للتراخيص
+                </a>
+                <a asp-action="Generate" class="btn btn-primary">
+                    <i class="fas fa-key"></i> توليد ترخيص جديد
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">معلومات الترخيص</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">معرف الترخيص:</label>
+                        <p class="form-control-plaintext">@Model.LicenseId</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">اسم المدرسة/العميل:</label>
+                        <p class="form-control-plaintext">@Model.ClientName</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">نوع الترخيص:</label>
+                        <p class="form-control-plaintext">@Model.LicenseType</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">عدد الطلاب المسموح:</label>
+                        <p class="form-control-plaintext">@Model.MaxStudents</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">عدد المستخدمين المسموح:</label>
+                        <p class="form-control-plaintext">@Model.MaxUsers</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">تاريخ البدء:</label>
+                        <p class="form-control-plaintext">@Model.ValidFrom.ToString("yyyy-MM-dd")</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">تاريخ الانتهاء:</label>
+                        <p class="form-control-plaintext">@Model.ValidUntil.ToString("yyyy-MM-dd")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">حالة الترخيص</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">الأيام المتبقية:</label>
+                        <p class="form-control-plaintext">
+                            @((Model.ValidUntil - DateTime.Now).Days) يوم
+                        </p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">البصمة الرقمية:</label>
+                        <p class="form-control-plaintext">@Model.MachineId</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">تاريخ التوليد:</label>
+                        <p class="form-control-plaintext">@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">صادر بواسطة:</label>
+                        <p class="form-control-plaintext">@Model.IssuedBy</p>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">ملاحظات:</label>
+                            <p class="form-control-plaintext">@Model.Notes</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">الموديولات المفعلة</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @if (Model.Modules != LicenseModules.None)
+                        {
+                            @foreach (LicenseModules module in Enum.GetValues<LicenseModules>())
+                            {
+                                if (module != LicenseModules.None && Model.Modules.HasFlag(module))
+                                {
+                                    <div class="col-md-4 mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" checked disabled>
+                                            <label class="form-check-label">@module</label>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <div class="col-md-12">
+                            <p class="text-muted">لا توجد موديولات مفعلة</p>
+                        </div>
+                    }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">العمليات</h5>
+                </div>
+                <div class="card-body">
+                    <div class="btn-group flex-wrap">
+                        <a asp-action="Generate" class="btn btn-outline-primary">
+                            <i class="fas fa-key"></i> توليد ترخيص جديد
+                        </a>
+                        <a asp-action="GenerateKeys" class="btn btn-outline-success">
+                            <i class="fas fa-key"></i> توليد مفاتيح جديدة
+                        </a>
+                        <a asp-action="Revoke" class="btn btn-outline-danger">
+                            <i class="fas fa-ban"></i> إلغاء الترخيص
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

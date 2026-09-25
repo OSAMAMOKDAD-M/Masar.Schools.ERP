@@ -1,0 +1,153 @@
+@model LoginWith2faViewModel
+@{
+    ViewData["Title"] = "مَسَار للمدارس - المصادقة الثنائية";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link href="~/css/fonts.css" rel="stylesheet">
+    <link href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --masar-primary: #1a5f7a;
+            --masar-secondary: #159895;
+            --masar-accent: #57c5b6;
+            --masar-light: #f0f8ff;
+            --masar-dark: #0d3b4c;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--masar-primary) 0%, var(--masar-secondary) 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, var(--masar-primary) 0%, var(--masar-secondary) 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .masar-logo {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .login-body {
+            padding: 30px;
+        }
+
+        .btn-masar {
+            background: linear-gradient(135deg, var(--masar-primary) 0%, var(--masar-secondary) 100%);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-masar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(21, 152, 149, 0.4);
+            color: white;
+        }
+
+        .alert-masar {
+            border-radius: 10px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="masar-logo">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h2>المصادقة الثنائية</h2>
+                <p class="mb-0">أدخل رمز التحقق المرسل إلى جهازك</p>
+            </div>
+
+            <div class="login-body">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger alert-masar mb-4">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    </div>
+                }
+
+                <form method="post">
+                    @Html.AntiForgeryToken()
+                    
+                    <input type="hidden" asp-for="RememberMe" />
+                    <input type="hidden" asp-for="ReturnUrl" />
+
+                    <div class="mb-4">
+                        <label asp-for="TwoFactorCode" class="form-label">رمز التحقق</label>
+                        <input asp-for="TwoFactorCode" class="form-control form-control-lg text-center" 
+                               placeholder="XXXXXX" maxlength="6" required autofocus>
+                        <span asp-validation-for="TwoFactorCode" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" asp-for="RememberMachine">
+                            <label class="form-check-label" asp-for="RememberMachine">
+                                تذكر هذا الجهاز
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-masar w-100 btn-lg">
+                        <i class="fas fa-check-circle me-2"></i>
+                        تحقق
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <a asp-action="Login" asp-route-returnurl="@Model.ReturnUrl" class="text-decoration-none">
+                        <i class="fas fa-arrow-right me-1"></i>
+                        العودة إلى تسجيل الدخول
+                    </a>
+                </div>
+
+                <div class="text-center mt-4">
+                    <p class="text-muted small">
+                        © 2026 نظام مَسَار للمدارس - بوابتك الآمنة للإدارة المدرسية الذكية
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

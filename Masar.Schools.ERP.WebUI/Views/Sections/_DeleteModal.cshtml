@@ -1,0 +1,14 @@
+@model Masar.Schools.ERP.Domain.Entities.Section
+
+<div class="alert alert-warning">
+    <h5>تأكيد الحذف</h5>
+    <p>هل أنت متأكد من حذف الشعبة "<strong>@Model.NameArabic</strong>"؟</p>
+    <p class="mb-0">هذا الإجراء لا يمكن التراجع عنه.</p>
+</div>
+
+<input type="hidden" id="deleteId" value="@Model.Id" />
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+    <button type="button" class="btn btn-danger" onclick="confirmDelete('@Model.Id')">تأكيد الحذف</button>
+</div>

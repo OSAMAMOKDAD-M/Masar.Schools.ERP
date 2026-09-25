@@ -1,0 +1,108 @@
+@model List<Masar.Schools.ERP.Domain.DTOs.PurchaseOrderDto>
+
+@{
+    ViewData["Title"] = "أوامر الشراء";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">قائمة أوامر الشراء</h3>
+                    <a asp-action="CreatePurchaseOrder" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> إضافة أمر شراء جديد
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>رقم الأمر</th>
+                                    <th>المورد</th>
+                                    <th>المخزن</th>
+                                    <th>تاريخ الطلب</th>
+                                    <th>تاريخ التسليم المتوقع</th>
+                                    <th>الإجمالي</th>
+                                    <th>المدفوع</th>
+                                    <th>المتبقي</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in Model)
+                                {
+                                    <tr>
+                                        <td>@order.OrderNumber</td>
+                                        <td>@order.SupplierName</td>
+                                        <td>@order.WarehouseName</td>
+                                        <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                                        <td>@order.ExpectedDeliveryDate.ToString("yyyy-MM-dd")</td>
+                                        <td>@order.TotalAmount @order.Currency</td>
+                                        <td>@order.PaidAmount @order.Currency</td>
+                                        <td>@order.RemainingAmount @order.Currency</td>
+                                        <td>
+                                            @switch (order.Status)
+                                            {
+                                                case "Draft":
+                                                    <span class="badge badge-secondary">مسودة</span>
+                                                    break;
+                                                case "Pending":
+                                                    <span class="badge badge-warning">قيد الانتظار</span>
+                                                    break;
+                                                case "Approved":
+                                                    <span class="badge badge-info">معتم</span>
+                                                    break;
+                                                case "Received":
+                                                    <span class="badge badge-success">مستلم</span>
+                                                    break;
+                                                case "Cancelled":
+                                                    <span class="badge badge-danger">ملغي</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge badge-secondary">@order.Status</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-action="PurchaseOrderDetails" asp-route-id="@order.Id" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            @if (order.Status == "Pending")
+                                            {
+                                                <form asp-action="ApprovePurchaseOrder" asp-route-id="@order.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('هل أنت متأكد من اعتماد هذا الأمر؟')">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                            @if (order.Status == "Approved")
+                                            {
+                                                <form asp-action="ReceivePurchaseOrder" asp-route-id="@order.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-info" onclick="return confirm('هل أنت متأكد من استلام هذا الأمر؟')">
+                                                        <i class="fas fa-truck"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                            @if (order.Status == "Draft" || order.Status == "Pending")
+                                            {
+                                                <form asp-action="CancelPurchaseOrder" asp-route-id="@order.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من إلغاء هذا الأمر؟')">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

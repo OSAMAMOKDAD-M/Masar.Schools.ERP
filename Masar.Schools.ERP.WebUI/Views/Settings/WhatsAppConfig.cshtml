@@ -1,0 +1,98 @@
+@model WhatsAppConfigDto
+@{
+    ViewData["Title"] = "إعدادات واتساب";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">إعدادات واتساب</h3>
+                    <div class="card-tools">
+                        <a href="@Url.Action("Index", "Settings")" class="btn btn-secondary">
+                            <i class="fas fa-arrow-right"></i> العودة
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        إعدادات واتساب لإرسال إشعارات الحضور والفواتير والمخالفات السلوكية لأولياء الأمور.
+                    </div>
+
+                    <form asp-action="WhatsAppConfig" method="post">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>مفتاح API</label>
+                                    <input asp-for="ApiKey" class="form-control" type="password" required />
+                                    <span asp-validation-for="ApiKey" class="text-danger"></span>
+                                    <small class="text-muted">مفتاح API الخاص بخدمة واتساب</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>رابط API</label>
+                                    <input asp-for="ApiUrl" class="form-control" required />
+                                    <span asp-validation-for="ApiUrl" class="text-danger"></span>
+                                    <small class="text-muted">رابط API الخاص بخدمة واتساب</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>رقم المرسل</label>
+                            <input asp-for="SenderNumber" class="form-control" required />
+                            <span asp-validation-for="SenderNumber" class="text-danger"></span>
+                            <small class="text-muted">رقم واتساب الذي سيتم إرسال الرسائل منه (مع رمز الدولة)</small>
+                        </div>
+
+                        <hr>
+
+                        <h5>إعدادات الإشعارات</h5>
+
+                        <div class="form-group">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="EnableAttendanceNotifications" asp-for="EnableAttendanceNotifications" checked>
+                                <label class="custom-control-label" for="EnableAttendanceNotifications">إشعارات الحضور</label>
+                            </div>
+                            <small class="text-muted">إرسال إشعار عند تسجيل حضور الطالب أو غيابه</small>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="EnableInvoiceNotifications" asp-for="EnableInvoiceNotifications" checked>
+                                <label class="custom-control-label" for="EnableInvoiceNotifications">إشعارات الفواتير</label>
+                            </div>
+                            <small class="text-muted">إرسال إشعار عند إصدار فاتورة جديدة</small>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="EnableBehavioralNotifications" asp-for="EnableBehavioralNotifications" checked>
+                                <label class="custom-control-label" for="EnableBehavioralNotifications">إشعارات المخالفات السلوكية</label>
+                            </div>
+                            <small class="text-muted">إرسال إشعار عند تسجيل مخالفة سلوكية</small>
+                        </div>
+
+                        <hr>
+
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>ملاحظة:</strong> بعد حفظ الإعدادات، يجب تحديث ملف appsettings.json يدوياً للتفعيل الدائم.
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> حفظ الإعدادات
+                        </button>
+                        <a href="@Url.Action("Index", "Settings")" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> إلغاء
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

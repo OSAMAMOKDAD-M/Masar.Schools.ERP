@@ -1,0 +1,84 @@
+@{
+    ViewData["Title"] = "بث رسالة جماعية";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-broadcast"></i> بث رسالة جماعية
+        </h1>
+        <p class="text-muted">إرسال رسالة إلى مجموعة من أولياء الأمور</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Broadcast" method="post">
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="mb-3">
+                        <label class="form-label">المستهدفين</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="allGuardians" name="allGuardians" value="true">
+                            <label class="form-check-label" for="allGuardians">
+                                جميع أولياء الأمور
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="specificSchool" name="specificSchool" value="true">
+                            <label class="form-check-label" for="specificSchool">
+                                مدرسة محددة
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3" id="schoolContainer" style="display: none;">
+                        <label class="form-label">المدرسة</label>
+                        <select class="form-select" name="schoolId">
+                            <option value="">اختر المدرسة...</option>
+                            <!-- سيتم ملؤها ديناميكياً -->
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">الموضوع</label>
+                        <input type="text" class="form-control" name="subject" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">الرسالة</label>
+                        <textarea class="form-control" name="message" rows="5" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="sendWhatsApp" name="sendWhatsApp" value="true">
+                            <label class="form-check-label" for="sendWhatsApp">
+                                إرسال عبر WhatsApp
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send"></i> إرسال البث
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> عودة
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('specificSchool').addEventListener('change', function() {
+            document.getElementById('schoolContainer').style.display = this.checked ? 'block' : 'none';
+        });
+    </script>
+}

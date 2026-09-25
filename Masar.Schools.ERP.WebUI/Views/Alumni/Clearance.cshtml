@@ -1,0 +1,146 @@
+@model IEnumerable<Masar.Schools.ERP.Domain.DTOs.GraduationClearanceRecordDto>
+
+@{
+    ViewData["Title"] = "إبراء التخرج";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3"><i class="bi bi-check-circle"></i> إبراء التخرج</h2>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" asp-action="Clearance">الكل</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="PendingClearance">معلق</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Clearance Records -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">سجلات الإبراء</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>اسم الطالب</th>
+                                        <th>سنة التخرج</th>
+                                        <th>الحالة</th>
+                                        <th>الإبراء المالي</th>
+                                        <th>الإبراء الإداري</th>
+                                        <th>الإبراء الأكاديمي</th>
+                                        <th>إبراء العيادة</th>
+                                        <th>الموافقة النهائية</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var record in Model)
+                                    {
+                                        <tr>
+                                            <td>@record.StudentName</td>
+                                            <td>@record.GraduationYear</td>
+                                            <td>
+                                                <span class="badge @(record.ClearanceStatus == "Cleared" ? "bg-success" : record.ClearanceStatus == "Pending" ? "bg-warning" : "bg-danger")">
+                                                    @record.ClearanceStatusArabic
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if (record.FinancialCleared)
+                                                {
+                                                    <span class="badge bg-success">موافق</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">غير موافق</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (record.AdministrativeCleared)
+                                                {
+                                                    <span class="badge bg-success">موافق</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">غير موافق</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (record.AcademicCleared)
+                                                {
+                                                    <span class="badge bg-success">موافق</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">غير موافق</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (record.ClinicCleared)
+                                                {
+                                                    <span class="badge bg-success">موافق</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">غير موافق</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (record.FinalApproval)
+                                                {
+                                                    <span class="badge bg-success">موافق</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning">معلق</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="ClearanceDetails" asp-route-id="@record.Id" class="btn btn-sm btn-info" title="التفاصيل">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <a asp-action="EditClearance" asp-route-id="@record.Id" class="btn btn-sm btn-primary" title="تعديل">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> لا توجد سجلات إبراء حالياً
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Add any clearance-specific JavaScript here
+    </script>
+}

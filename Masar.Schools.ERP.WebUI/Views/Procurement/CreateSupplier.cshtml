@@ -1,0 +1,170 @@
+@model Masar.Schools.ERP.Domain.DTOs.SupplierDto
+
+@{
+    ViewData["Title"] = "إنشاء مورد جديد";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">إنشاء مورد جديد</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateSupplier" method="post">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Name" class="control-label">الاسم</label>
+                                    <input asp-for="Name" class="form-control" required />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="NameArabic" class="control-label">الاسم بالعربية</label>
+                                    <input asp-for="NameArabic" class="form-control" required />
+                                    <span asp-validation-for="NameArabic" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Code" class="control-label">الكود</label>
+                                    <input asp-for="Code" class="form-control" required />
+                                    <span asp-validation-for="Code" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="SupplierCategory" class="control-label">فئة المورد</label>
+                                    <select asp-for="SupplierCategory" class="form-control">
+                                        <option value="Standard">عادي</option>
+                                        <option value="Preferred">مفضل</option>
+                                        <option value="Key">رئيسي</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="CommercialRegistration" class="control-label">السجل التجاري</label>
+                                    <input asp-for="CommercialRegistration" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="TaxNumber" class="control-label">الرقم الضريبي</label>
+                                    <input asp-for="TaxNumber" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Phone" class="control-label">الهاتف</label>
+                                    <input asp-for="Phone" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Email" class="control-label">البريد الإلكتروني</label>
+                                    <input asp-for="Email" class="form-control" type="email" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Address" class="control-label">العنوان</label>
+                            <textarea asp-for="Address" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="City" class="control-label">المدينة</label>
+                                    <input asp-for="City" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Currency" class="control-label">العملة</label>
+                                    <select asp-for="Currency" class="form-control">
+                                        <option value="SAR">ريال سعودي</option>
+                                        <option value="USD">دولار أمريكي</option>
+                                        <option value="EUR">يورو</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="ContactPerson" class="control-label">جهة الاتصال</label>
+                                    <input asp-for="ContactPerson" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="ContactPhone" class="control-label">هاتف جهة الاتصال</label>
+                                    <input asp-for="ContactPhone" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="PaymentTerms" class="control-label">شروط الدفع</label>
+                                    <select asp-for="PaymentTerms" class="form-control">
+                                        <option value="Net 30">Net 30 يوم</option>
+                                        <option value="Net 60">Net 60 يوم</option>
+                                        <option value="Net 90">Net 90 يوم</option>
+                                        <option value="Immediate">فوري</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="CreditLimit" class="control-label">الحد الائتماني</label>
+                                    <input asp-for="CreditLimit" class="form-control" type="number" step="0.01" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Rating" class="control-label">التقييم (1-5)</label>
+                            <input asp-for="Rating" class="form-control" type="number" min="1" max="5" value="3" />
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Notes" class="control-label">ملاحظات</label>
+                            <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> حفظ
+                            </button>
+                            <a asp-action="Suppliers" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> رجوع
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

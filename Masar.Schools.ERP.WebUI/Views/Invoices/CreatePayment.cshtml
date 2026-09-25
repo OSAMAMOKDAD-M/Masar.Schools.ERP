@@ -1,0 +1,178 @@
+@{
+    ViewData["Title"] = "إنشاء دفع";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-cash-coin"></i> إنشاء دفع
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للفواتير
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">تفاصيل الدفع</h5>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">الطالب</label>
+                            <select class="form-select" id="studentSelect">
+                                <option value="">اختر الطالب</option>
+                                <option value="1" selected>أحمد محمد أحمد (20260001)</option>
+                                <option value="2">محمد علي محمد (20260002)</option>
+                                <option value="3">سارة أحمد محمد (20260003)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">الفاتورة</label>
+                            <select class="form-select" id="invoiceSelect">
+                                <option value="">اختر الفاتورة</option>
+                                <option value="1" selected>INV-2026-0001 (Tuition Fee)</option>
+                                <option value="2">INV-2026-0002 (Books Fee)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">مبلغ الدفع</label>
+                            <input type="number" class="form-control" id="paymentAmount" value="5000.00" step="0.01">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">طريقة الدفع</label>
+                            <select class="form-select" id="paymentMethod">
+                                <option value="cash">نقداً</option>
+                                <option value="bank">تحويل بنكي</option>
+                                <option value="mada">مدى</option>
+                                <option value="sadad">سداد</option>
+                                <option value="applepay">آبل باي</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">تاريخ الدفع</label>
+                            <input type="date" class="form-control" id="paymentDate" value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">رقم المرجع</label>
+                            <input type="text" class="form-control" id="referenceNumber" placeholder="رقم المعاملة">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label">ملاحظات</label>
+                            <textarea class="form-control" id="paymentNotes" rows="3" placeholder="ملاحظات إضافية..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-primary" onclick="createPayment()">
+                                <i class="bi bi-check-circle"></i> إنشاء الدفع
+                            </button>
+                            <button type="button" class="btn btn-info" onclick="generateInvoice()">
+                                <i class="bi bi-file-earmark-text"></i> إنشاء فاتورة ZATCA
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> إلغاء
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">ملخص الفاتورة</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tr>
+                        <td>رقم الفاتورة:</td>
+                        <td class="fw-bold">INV-2026-0001</td>
+                    </tr>
+                    <tr>
+                        <td>تاريخ الفاتورة:</td>
+                        <td>2026-01-15</td>
+                    </tr>
+                    <tr>
+                        <td>تاريخ الاستحقاق:</td>
+                        <td>2026-02-15</td>
+                    </tr>
+                    <tr>
+                        <td>المبلغ الإجمالي:</td>
+                        <td class="fw-bold">15,000.00 ر.س</td>
+                    </tr>
+                    <tr>
+                        <td>المبلغ المدفوع:</td>
+                        <td class="text-success">10,000.00 ر.س</td>
+                    </tr>
+                    <tr>
+                        <td>المتبقي:</td>
+                        <td class="text-danger">5,000.00 ر.س</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">حالة ZATCA</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    اختر طريقة الدفع لتحديد نوع فاتورة ZATCA
+                </div>
+                <div id="zatcaStatus">
+                    <p><strong>نوع الفاتورة:</strong> <span class="text-muted">سيتم تحديده</span></p>
+                    <p><strong>رمز QR:</strong> <span class="text-muted">في الانتظار</span></p>
+                    <p><strong>حالة XML:</strong> <span class="text-muted">في الانتظار</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function createPayment() {
+            const amount = document.getElementById('paymentAmount').value;
+            const method = document.getElementById('paymentMethod').value;
+            const student = document.getElementById('studentSelect').value;
+
+            if (student && amount) {
+                alert(`تم إنشاء دفع بقيمة ${amount} ر.س بنجاح عبر ${method.toUpperCase()}!`);
+            } else {
+                alert('يرجى ملء جميع الحقول المطلوبة.');
+            }
+        }
+
+        function generateInvoice() {
+            const method = document.getElementById('paymentMethod').value;
+            let invoiceType = method === 'cash' ? 'مبسطة B2C' : 'قياسية B2B';
+
+            document.getElementById('zatcaStatus').innerHTML = `
+                <p><strong>نوع الفاتورة:</strong> <span class="text-success">${invoiceType}</span></p>
+                <p><strong>رمز QR:</strong> <span class="text-success">تم الإنشاء</span></p>
+                <p><strong>حالة XML:</strong> <span class="text-success">جاهز للإرسال</span></p>
+            `;
+
+            alert('تم إنشاء فاتورة ZATCA بنجاح!');
+        }
+    </script>
+}

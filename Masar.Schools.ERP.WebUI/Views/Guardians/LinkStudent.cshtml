@@ -1,0 +1,78 @@
+@model List<Student>
+@{
+    ViewData["Title"] = "ربط الطلاب";
+    Layout = "_Layout";
+    var guardian = ViewBag.Guardian as Guardian;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">ربط الطلاب بولي الأمر - @guardian?.FullNameArabic</h3>
+                    <div class="card-tools">
+                        <a href="@Url.Action("Details", "Guardians", new { id = guardian?.Id })" class="btn btn-secondary">
+                            <i class="fas fa-arrow-right"></i> العودة
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        هذه القائمة تعرض الطلاب الذين ليس لديهم ولي أمر محدد حالياً. يمكنك ربطهم بولي الأمر @guardian?.FullNameArabic
+                    </div>
+
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>رقم الطالب</th>
+                                        <th>الاسم (عربي)</th>
+                                        <th>الاسم (إنجليزي)</th>
+                                        <th>الفصل</th>
+                                        <th>المدرسة</th>
+                                        <th>تاريخ الميلاد</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var student in Model)
+                                    {
+                                        <tr>
+                                            <td>@student.StudentNumber</td>
+                                            <td><strong>@student.FullNameArabic</strong></td>
+                                            <td>@student.FullName</td>
+                                            <td>@student.ClassRoom?.NameArabic</td>
+                                            <td>@student.School?.NameArabic</td>
+                                            <td>@student.BirthDate?.ToString("yyyy-MM-dd")</td>
+                                            <td>
+                                                <form asp-action="LinkStudent" method="post" style="display: inline;">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="guardianId" value="@guardian?.Id" />
+                                                    <input type="hidden" name="studentId" value="@student.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('هل أنت متأكد من ربط الطالب @student.FullNameArabic بولي الأمر @guardian?.FullNameArabic؟')">
+                                                        <i class="fas fa-link"></i> ربط
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            لا يوجد طلاب متاحين للربط حالياً. جميع الطلاب لديهم ولي أمر محدد.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

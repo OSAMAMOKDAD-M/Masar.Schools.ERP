@@ -1,0 +1,79 @@
+@model Masar.Schools.ERP.Domain.Entities.MasarRole
+@{
+    ViewData["Title"] = "تفاصيل الدور";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-end">تفاصيل الدور</h2>
+        <div>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> عودة
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0"><i class="bi bi-info-circle"></i> معلومات الدور</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">اسم الدور:</dt>
+                        <dd class="col-sm-8">@Model.Name</dd>
+
+                        <dt class="col-sm-4">الوصف:</dt>
+                        <dd class="col-sm-8">@Model.Description ?? "غير محدد"</dd>
+
+                        <dt class="col-sm-4">الوصف العربي:</dt>
+                        <dd class="col-sm-8">@Model.DescriptionArabic ?? "غير محدد"</dd>
+
+                        <dt class="col-sm-4">الحالة:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.IsActive)
+                            {
+                                <span class="badge bg-success">نشط</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">غير نشط</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <div class="alert alert-info">
+                        <h6><i class="bi bi-key"></i> الصلاحيات</h6>
+                        <p class="mb-0">
+                            عدد الصلاحيات: <strong>@Model.RolePermissions?.Count ?? 0</strong>
+                        </p>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <h6><i class="bi bi-key"></i> الصلاحيات</h6>
+                        <p class="mb-0">
+                            إدارة الصلاحيات متاحة من خلال زر "الصلاحيات" في صفحة الأدوار
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="d-flex gap-2">
+                <a asp-action="ManagePermissions" asp-route-id="@Model.Id" class="btn btn-warning">
+                    <i class="bi bi-key"></i> إدارة الصلاحيات
+                </a>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info">
+                    <i class="bi bi-pencil"></i> تعديل
+                </a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> حذف
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

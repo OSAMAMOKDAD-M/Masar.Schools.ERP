@@ -1,0 +1,132 @@
+@model List<Masar.Schools.ERP.Domain.Entities.HR.AttendanceLog>
+@{
+    ViewData["Title"] = "الحضور البصري";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-primary">
+                <i class="bi bi-fingerprint"></i> الحضور البصري
+            </h2>
+            <p class="text-muted">إدارة سجلات الحضور والانصراف من أجهزة البصمة</p>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <a asp-action="ImportAttendance" class="btn btn-primary">
+                <i class="bi bi-upload"></i> استيراد من Excel
+            </a>
+            <a asp-action="CreatePermit" class="btn btn-success">
+                <i class="bi bi-clock"></i> إضافة تصريح
+            </a>
+            <button class="btn btn-info" onclick="exportToExcel()">
+                <i class="bi bi-file-excel"></i> تصدير Excel
+            </button>
+        </div>
+    </div>
+
+    <!-- Date Filter -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <div class="input-group">
+                <input type="date" class="form-control" id="fromDate" value="@DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd")">
+                <input type="date" class="form-control" id="toDate" value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                <button class="btn btn-primary" onclick="filterByDate()">
+                    <i class="bi bi-filter"></i> تصفية
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>الموظف</th>
+                            <th>المعرف البصري</th>
+                            <th>التاريخ</th>
+                            <th>الوقت</th>
+                            <th>الاتجاه</th>
+                            <th>المصدر</th>
+                            <th>الجهاز</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var log in Model)
+                        {
+                            <tr>
+                                <td>@log.Employee?.FullNameArabic</td>
+                                <td>@log.BiometricId</td>
+                                <td>@log.EventAt.ToString("yyyy-MM-dd")</td>
+                                <td>@log.EventAt.ToString("HH:mm:ss")</td>
+                                <td>
+                                    @if (log.Direction == "IN")
+                                    {
+                                        <span class="badge bg-success">دخول</span>
+                                    }
+                                    else if (log.Direction == "OUT")
+                                    {
+                                        <span class="badge bg-danger">خروج</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">غير مصنف</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (log.Source == "Excel")
+                                    {
+                                        <span class="badge bg-info">Excel</span>
+                                    }
+                                    else if (log.Source == "Biomeric")
+                                    {
+                                        <span class="badge bg-primary">بصمة</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@log.Source</span>
+                                    }
+                                </td>
+                                <td>@log.DeviceName</td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteLog('@log.Id')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function filterByDate() {
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            window.location.href = `/HR/Attendance?from=${fromDate}&to=${toDate}`;
+        }
+
+        function exportToExcel() {
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            window.location.href = `/HR/ExportAttendanceToExcel?from=${fromDate}&to=${toDate}`;
+        }
+
+        function deleteLog(id) {
+            if (confirm('هل تريد حذف هذا السجل؟')) {
+                fetch(`/HR/DeleteAttendanceLog/${id}`, {
+                    method: 'POST'
+                }).then(() => location.reload());
+            }
+        }
+    </script>
+}

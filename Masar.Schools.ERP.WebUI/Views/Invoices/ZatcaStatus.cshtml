@@ -1,0 +1,244 @@
+@{
+    ViewData["Title"] = "حالة فاتورة ZATCA";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-file-earmark-text"></i> حالة فاتورة ZATCA
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للفواتير
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">معلومات الفاتورة</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tr>
+                        <td>رقم الفاتورة:</td>
+                        <td class="fw-bold">INV-2026-0001</td>
+                    </tr>
+                    <tr>
+                        <td>نوع الفاتورة:</td>
+                        <td>مبسطة B2C</td>
+                    </tr>
+                    <tr>
+                        <td>تاريخ الفاتورة:</td>
+                        <td>2026-01-15</td>
+                    </tr>
+                    <tr>
+                        <td>المبلغ الإجمالي:</td>
+                        <td class="fw-bold">5,000.00 ر.س</td>
+                    </tr>
+                    <tr>
+                        <td>مبلغ الضريبة:</td>
+                        <td>750.00 ر.س (15%)</td>
+                    </tr>
+                    <tr>
+                        <td>العميل:</td>
+                        <td>أحمد محمد أحمد</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">حالة ZATCA</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <p><strong>حالة الإرسال:</strong></p>
+                    <span class="status-badge success">تم الإبلاغ - تم التحقق</span>
+                </div>
+                <div class="mb-3">
+                    <p><strong>UUID:</strong></p>
+                    <code>123e4567-e89b-12d3-a456-426614174000</code>
+                </div>
+                <div class="mb-3">
+                    <p><strong>رمز QR:</strong></p>
+                    <div class="qr-code-display">
+                        <i class="bi bi-qr-code" style="font-size: 48px;"></i>
+                        <p class="mb-0">تم إنشاء رمز QR</p>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <p><strong>التوقيع الرقمي:</strong></p>
+                    <span class="status-badge success">صالح</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">مستند XML بتنسيق UBL 2.1</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <button class="btn btn-primary" onclick="downloadXml()">
+                        <i class="bi bi-download"></i> تحميل XML
+                    </button>
+                    <button class="btn btn-info" onclick="viewXml()">
+                        <i class="bi bi-eye"></i> عرض XML
+                    </button>
+                    <button class="btn btn-warning" onclick="resubmitZatca()">
+                        <i class="bi bi-arrow-clockwise"></i> إعادة الإرسال إلى ZATCA
+                    </button>
+                </div>
+                
+                <div class="xml-preview" id="xmlPreview" style="display: none;">
+                    <pre class="bg-light p-3 rounded"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"&gt;
+  &lt;cbc:ID&gt;INV-2026-0001&lt;/cbc:ID&gt;
+  &lt;cbc:IssueDate&gt;2026-01-15&lt;/cbc:IssueDate&gt;
+  &lt;cbc:InvoiceTypeCode&gt;388&lt;/cbc:InvoiceTypeCode&gt;
+  &lt;cbc:DocumentCurrencyCode&gt;SAR&lt;/cbc:DocumentCurrencyCode&gt;
+  &lt;cbc:BuyerReference&gt;20260001&lt;/cbc:BuyerReference&gt;
+  &lt;cac:AccountingSupplierParty&gt;
+    &lt;cac:Party&gt;
+      &lt;cbc:ID&gt;300000000000003&lt;/cbc:ID&gt;
+      &lt;cac:PartyLegalEntity&gt;
+        &lt;cbc:RegistrationName&gt;مَسَار للمدارس&lt;/cbc:RegistrationName&gt;
+      &lt;/cac:PartyLegalEntity&gt;
+    &lt;/cac:Party&gt;
+  &lt;/cac:AccountingSupplierParty&gt;
+  &lt;cac:AccountingCustomerParty&gt;
+    &lt;cac:Party&gt;
+      &lt;cbc:ID&gt;300000000000003&lt;/cbc:ID&gt;
+      &lt;cac:PartyLegalEntity&gt;
+        &lt;cbc:RegistrationName&gt;أحمد محمد أحمد&lt;/cbc:RegistrationName&gt;
+      &lt;/cac:PartyLegalEntity&gt;
+    &lt;/cac:Party&gt;
+  &lt;/cac:AccountingCustomerParty&gt;
+  &lt;cac:TaxTotal&gt;
+    &lt;cbc:TaxAmount currencyID="SAR"&gt;750.00&lt;/cbc:TaxAmount&gt;
+    &lt;cac:TaxSubtotal&gt;
+      &lt;cbc:TaxableAmount currencyID="SAR"&gt;5000.00&lt;/cbc:TaxableAmount&gt;
+      &lt;cbc:TaxAmount currencyID="SAR"&gt;750.00&lt;/cbc:TaxAmount&gt;
+      &lt;cac:TaxCategory&gt;
+        &lt;cbc:ID&gt;S&lt;/cbc:ID&gt;
+        &lt;cbc:Percent&gt;15.00&lt;/cbc:Percent&gt;
+      &lt;/cac:TaxCategory&gt;
+    &lt;/cac:TaxSubtotal&gt;
+  &lt;/cac:TaxTotal&gt;
+  &lt;cac:LegalMonetaryTotal&gt;
+    &lt;cbc:LineExtensionAmount currencyID="SAR"&gt;5000.00&lt;/cbc:LineExtensionAmount&gt;
+    &lt;cbc:TaxExclusiveAmount currencyID="SAR"&gt;5000.00&lt;/cbc:TaxExclusiveAmount&gt;
+    &lt;cbc:TaxInclusiveAmount currencyID="SAR"&gt;5750.00&lt;/cbc:TaxInclusiveAmount&gt;
+    &lt;cbc:PayableAmount currencyID="SAR"&gt;5750.00&lt;/cbc:PayableAmount&gt;
+  &lt;/cac:LegalMonetaryTotal&gt;
+  &lt;cac:InvoiceLine&gt;
+    &lt;cbc:ID&gt;1&lt;/cbc:ID&gt;
+    &lt;cbc:InvoicedQuantity unitCode="EA"&gt;1&lt;/cbc:InvoicedQuantity&gt;
+    &lt;cbc:LineExtensionAmount currencyID="SAR"&gt;5000.00&lt;/cbc:LineExtensionAmount&gt;
+    &lt;cac:Item&gt;
+      &lt;cbc:Description&gt;Tuition Fee - First Term&lt;/cbc:Description&gt;
+      &lt;cbc:Name&gt;Tuition Fee&lt;/cbc:Name&gt;
+    &lt;/cac:Item&gt;
+    &lt;cac:Price&gt;
+      &lt;cbc:PriceAmount currencyID="SAR"&gt;5000.00&lt;/cbc:PriceAmount&gt;
+    &lt;/cac:Price&gt;
+  &lt;/cac:InvoiceLine&gt;
+&lt;/Invoice&gt;</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">سجل إرسال ZATCA</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>التاريخ/الوقت</th>
+                                <th>الإجراء</th>
+                                <th>الحالة</th>
+                                <th>الرد</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2026-01-15 10:30:00</td>
+                                <td>إبلاغ</td>
+                                <td><span class="status-badge success">نجح</span></td>
+                                <td>تم الإبلاغ عن الفاتورة بنجاح</td>
+                            </tr>
+                            <tr>
+                                <td>2026-01-15 10:30:05</td>
+                                <td>تحقق</td>
+                                <td><span class="status-badge success">نجح</span></td>
+                                <td>تم التحقق من الفاتورة بنجاح</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .qr-code-display {
+        text-align: center;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .xml-preview {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .xml-preview pre {
+        margin: 0;
+        font-size: 12px;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function downloadXml() {
+            const xmlContent = document.querySelector('#xmlPreview code').textContent;
+            const blob = new Blob([xmlContent], { type: 'application/xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'INV-2026-0001.xml';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        function viewXml() {
+            const preview = document.getElementById('xmlPreview');
+            preview.style.display = preview.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        function resubmitZatca() {
+            if (confirm('هل أنت متأكد من أنك تريد إعادة إرسال هذه الفاتورة إلى ZATCA؟')) {
+                alert('تم إعادة إرسال الفاتورة إلى ZATCA بنجاح!');
+            }
+        }
+    </script>
+}

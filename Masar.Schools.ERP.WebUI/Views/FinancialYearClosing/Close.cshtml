@@ -1,0 +1,57 @@
+@model Masar.Schools.ERP.Domain.Entities.FinancialPeriod
+
+@{
+    ViewData["Title"] = "إغلاق الفترة المالية";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0">
+                        <i class="bi bi-exclamation-triangle"></i> إغلاق الفترة المالية
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>تحذير:</strong> إغلاق الفترة المالية سيمنع أي تعديل على الحركات في هذه الفترة إلا للسوبر أدمن.
+                        سيتم إنشاء قيد إقفال تلقائي للإيرادات والمصروفات.
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">تفاصيل الفترة</h6>
+                            <dl class="row">
+                                <dt class="col-sm-3">اسم الفترة:</dt>
+                                <dd class="col-sm-9">@Model.PeriodName</dd>
+                                <dt class="col-sm-3">تاريخ البدء:</dt>
+                                <dd class="col-sm-9">@Model.StartDate.ToString("yyyy-MM-dd")</dd>
+                                <dt class="col-sm-3">تاريخ الانتهاء:</dt>
+                                <dd class="col-sm-9">@Model.EndDate.ToString("yyyy-MM-dd")</dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <form asp-action="Close" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">ملاحظات الإغلاق</label>
+                            <textarea id="notes" name="notes" class="form-control" rows="3" placeholder="أدخل ملاحظات الإغلاق هنا..."></textarea>
+                        </div>
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-lock"></i> تأكيد الإغلاق
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-right"></i> إلغاء
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

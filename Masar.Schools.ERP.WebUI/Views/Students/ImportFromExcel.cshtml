@@ -1,0 +1,77 @@
+@{
+    ViewData["Title"] = "استيراد الطلاب من Excel";
+    Layout = "_Layout";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-file-earmark-excel"></i> استيراد الطلاب من Excel
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للقائمة
+        </a>
+        <a asp-action="DownloadTemplate" class="btn btn-info">
+            <i class="bi bi-download"></i> تحميل قالب الاستيراد
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">استيراد ملف Excel</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    يرجى تحميل قالب الاستيراد أولاً وتعبئته بالبيانات المطلوبة.
+                </div>
+
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle"></i> @TempData["Success"]
+                    </div>
+                }
+
+                <form asp-action="ImportFromExcel" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="form-group">
+                        <label for="file">ملف Excel</label>
+                        <input type="file" name="file" id="file" class="form-control" accept=".xlsx,.xls" required />
+                        <small class="text-muted">يجب أن يكون الملف بصيغة .xlsx</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-upload"></i> استيراد
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">تعليمات الاستيراد</h5>
+            </div>
+            <div class="card-body">
+                <ol>
+                    <li>حمل قالب الاستيراد من الزر أعلاه</li>
+                    <li>عبئ البيانات في القالب بالتنسيق الصحيح</li>
+                    <li>الحقول المطلوبة تحمل علامة (*)</li>
+                    <li>تاريخ الميلاد يجب أن يكون بصيغة yyyy-MM-dd</li>
+                    <li>الجنس يجب أن يكون "ذكر" أو "أنثى"</li>
+                    <li>الحالة يجب أن تكون "نشط" أو "غير نشط"</li>
+                    <li>يتم إنشاء المدرسة تلقائياً إذا لم تكن موجودة</li>
+                    <li>يتم ربط الطالب بولي الأمر إذا كان موجوداً</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>

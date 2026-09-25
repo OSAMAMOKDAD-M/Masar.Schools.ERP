@@ -1,0 +1,81 @@
+@model Masar.Schools.ERP.Domain.DTOs.PurchaseRequestDto
+
+@{
+    ViewData["Title"] = "تفاصيل طلب الشراء";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">تفاصيل طلب الشراء - @Model.RequestNumber</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">رقم الطلب:</dt>
+                                <dd class="col-sm-8">@Model.RequestNumber</dd>
+                                <dt class="col-sm-4">التاريخ:</dt>
+                                <dd class="col-sm-8">@Model.RequestDate.ToString("yyyy-MM-dd")</dd>
+                                <dt class="col-sm-4">التاريخ المطلوب:</dt>
+                                <dd class="col-sm-8">@Model.RequiredBy.ToString("yyyy-MM-dd")</dd>
+                                <dt class="col-sm-4">القسم:</dt>
+                                <dd class="col-sm-8">@Model.DepartmentName</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">المبلغ:</dt>
+                                <dd class="col-sm-8">@Model.BudgetAmount.ToString("C")</dd>
+                                <dt class="col-sm-4">العملة:</dt>
+                                <dd class="col-sm-8">@Model.Currency</dd>
+                                <dt class="col-sm-4">الحالة:</dt>
+                                <dd class="col-sm-8">
+                                    <span class="badge bg-@(Model.Status == "Approved" ? "success" : Model.Status == "Rejected" ? "danger" : "warning")">
+                                        @Model.StatusArabic
+                                    </span>
+                                </dd>
+                                <dt class="col-sm-4">طالب الطلب:</dt>
+                                <dd class="col-sm-8">@Model.RequestedBy</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-12">
+                            <h5>الغرض</h5>
+                            <p>@Model.Purpose</p>
+                            <h5>الغرض بالعربية</h5>
+                            <p>@Model.PurposeArabic</p>
+                        </div>
+                    </div>
+                    @if (Model.Status == "Pending")
+                    {
+                        <hr />
+                        <div class="row">
+                            <div class="col-12">
+                                <form asp-action="ApprovePurchaseRequest" method="post">
+                                    <input type="hidden" name="id" value="@Model.Id" />
+                                    <input type="hidden" name="approvedBy" value="System" />
+                                    <div class="form-group">
+                                        <label>ملاحظات الاعتماد</label>
+                                        <input type="text" name="notes" class="form-control" />
+                                    </div>
+                                    <button type="submit" class="btn btn-success">اعتماد</button>
+                                    <a asp-action="PurchaseRequests" class="btn btn-secondary">عودة</a>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <hr />
+                        <a asp-action="PurchaseRequests" class="btn btn-secondary">عودة</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

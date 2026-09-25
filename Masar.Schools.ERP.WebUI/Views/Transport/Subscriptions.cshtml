@@ -1,0 +1,140 @@
+@model List<Masar.Schools.ERP.Domain.DTOs.StudentTransportSubscriptionDto>
+@{
+    ViewData["Title"] = "اشتراكات الطلاب";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">اشتراكات الطلاب في النقل</h3>
+                    <div class="card-tools">
+                        <a href="@Url.Action("CreateSubscription", "Transport")" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> إضافة اشتراك جديد
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="subscriptionsTable">
+                            <thead>
+                                <tr>
+                                    <th>اسم الطالب</th>
+                                    <th>خط السير</th>
+                                    <th>المحطة</th>
+                                    <th>الحافلة</th>
+                                    <th>تاريخ البداية</th>
+                                    <th>تاريخ النهاية</th>
+                                    <th>الرسوم الشهرية</th>
+                                    <th>حالة الدفع</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    @foreach (var subscription in Model)
+                                    {
+                                        <tr>
+                                            <td>@subscription.StudentName</td>
+                                            <td>@subscription.RouteName</td>
+                                            <td>@subscription.StopName</td>
+                                            <td>@subscription.BusNumber</td>
+                                            <td>@subscription.SubscriptionStartDate.ToString("yyyy-MM-dd")</td>
+                                            <td>@(subscription.SubscriptionEndDate?.ToString("yyyy-MM-dd") ?? "غير محدد")</td>
+                                            <td>@subscription.MonthlyFee.ToString("N0")</td>
+                                            <td>
+                                                @if (subscription.PaymentStatus == "Paid")
+                                                {
+                                                    <span class="badge badge-success">مدفوع</span>
+                                                }
+                                                else if (subscription.PaymentStatus == "Pending")
+                                                {
+                                                    <span class="badge badge-warning">معلق</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">متأخر</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (subscription.IsActive)
+                                                {
+                                                    <span class="badge badge-success">نشط</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">غير نشط</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a href="@Url.Action("EditSubscription", "Transport", new { id = subscription.Id })" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="@Url.Action("DeleteSubscription", "Transport", new { id = subscription.Id })" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من حذف هذا الاشتراك؟')">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="10" class="text-center">لا توجد اشتراكات مسجلة</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof $ !== 'undefined') {
+                $(document).ready(function() {
+                    $('#subscriptionsTable').DataTable({
+                        "language": {
+                            "sEmptyTable": "لا توجد بيانات",
+                            "sInfo": "عرض _START_ إلى _END_ من _TOTAL_ سجل",
+                            "sInfoEmpty": "عرض 0 إلى 0 من 0 سجل",
+                            "sInfoFiltered": "(مفلترة من _MAX_ سجل)",
+                            "sInfoPostFix": "",
+                            "sInfoThousands": ",",
+                            "sLengthMenu": "عرض _MENU_ سجلات",
+                            "sLoadingRecords": "جاري التحميل...",
+                            "sProcessing": "جاري المعالجة...",
+                            "sSearch": "بحث:",
+                            "sZeroRecords": "لا توجد نتائج",
+                            "oPaginate": {
+                                "sFirst": "الأول",
+                                "sLast": "الأخير",
+                                "sNext": "التالي",
+                                "sPrevious": "السابق"
+                            },
+                            "oAria": {
+                                "sSortAscending": ": تفعيل لترتيب العمود تصاعدياً",
+                                "sSortDescending": ": تفعيل لترتيب العمود تنازلياً"
+                            }
+                        },
+                        "order": [[0, "asc"]]
+                    });
+                });
+            } else {
+                console.error('jQuery is not loaded');
+            }
+        });
+    </script>
+}

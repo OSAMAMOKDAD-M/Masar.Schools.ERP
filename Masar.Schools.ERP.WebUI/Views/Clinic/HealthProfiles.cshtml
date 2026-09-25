@@ -1,0 +1,44 @@
+@model Masar.Schools.ERP.Domain.DTOs.StudentHealthProfileDto
+
+@{
+    ViewData["Title"] = "السجلات الصحية للطلاب";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3"><i class="bi bi-heart-pulse"></i> السجلات الصحية للطلاب</h2>
+            <a asp-action="CreateHealthProfile" class="btn btn-primary float-end">
+                <i class="bi bi-plus-circle"></i> إنشاء ملف صحي جديد
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>الطالب</th>
+                                <th>فصيلة الدم</th>
+                                <th>الحساسية</th>
+                                <th>الأمراض المزمنة</th>
+                                <th>رعاية خاصة</th>
+                                <th>عدد الزيارات</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- سيتم ملؤها ديناميكاً -->
+                            <tr>
+                                <td colspan="7" class="text-center">جاري تحميل البيانات...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

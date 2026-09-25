@@ -1,0 +1,716 @@
+@model Masar.Schools.ERP.Domain.Entities.Student
+@{
+    ViewData["Title"] = "مستندات الطالب";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">مستندات الطالب - @Model.FullNameArabic</h3>
+                    <div class="card-tools">
+                        <a href="@Url.Action("Index", "Students")" class="btn btn-secondary">
+                            <i class="fas fa-arrow-right"></i> العودة
+                        </a>
+                        <button class="btn btn-primary" onclick="showUploadModal()">
+                            <i class="fas fa-upload"></i> رفع مستند
+                        </button>
+                        <button class="btn btn-info" onclick="showBulkUploadModal()">
+                            <i class="fas fa-cloud-upload-alt"></i> رفع جماعي
+                        </button>
+                        <button class="btn btn-warning" onclick="showActivityLog()">
+                            <i class="fas fa-history"></i> سجل النشاط
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- البحث والتصفية المتقدم -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-header">
+                            <h4 class="card-title">البحث والتصفية</h4>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>نوع المستند</label>
+                                        <select id="searchDocumentType" class="form-control">
+                                            <option value="">الكل</option>
+                                            <option value="BirthCertificate">شهادة الميلاد</option>
+                                            <option value="NationalID">الهوية الوطنية</option>
+                                            <option value="ReportCard">كشف الدرجات</option>
+                                            <option value="Medical">سجل طبي</option>
+                                            <option value="Transfer">شهادة نقل</option>
+                                            <option value="Other">أخرى</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>التصنيف</label>
+                                        <select id="searchCategory" class="form-control">
+                                            <option value="">الكل</option>
+                                            <option value="Academic">أكاديمي</option>
+                                            <option value="Medical">طبي</option>
+                                            <option value="Financial">مالي</option>
+                                            <option value="Administrative">إداري</option>
+                                            <option value="Legal">قانوني</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>الحالة</label>
+                                        <select id="searchStatus" class="form-control">
+                                            <option value="">الكل</option>
+                                            <option value="Pending">قيد المراجعة</option>
+                                            <option value="Approved">موافق</option>
+                                            <option value="Rejected">مرفوض</option>
+                                            <option value="Expired">منتهي</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>التوثيق</label>
+                                        <select id="searchVerified" class="form-control">
+                                            <option value="">الكل</option>
+                                            <option value="true">موثق</option>
+                                            <option value="false">غير موثق</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>من تاريخ</label>
+                                        <input type="date" id="searchStartDate" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>إلى تاريخ</label>
+                                        <input type="date" id="searchEndDate" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>السرية</label>
+                                        <select id="searchConfidential" class="form-control">
+                                            <option value="">الكل</option>
+                                            <option value="true">سري</option>
+                                            <option value="false">عام</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>حالة الصلاحية</label>
+                                        <select id="searchExpiry" class="form-control">
+                                            <option value="">الكل</option>
+                                            <option value="expired">منتهي</option>
+                                            <option value="expiring">قريب من الانتهاء</option>
+                                            <option value="valid">ساري</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button class="btn btn-primary" onclick="searchDocuments()">
+                                        <i class="fas fa-search"></i> بحث
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="resetSearch()">
+                                        <i class="fas fa-undo"></i> إعادة تعيين
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="info-box bg-info">
+                                <span class="info-box-icon"><i class="fas fa-file-alt"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">إجمالي المستندات</span>
+                                    <span class="info-box-number">@(Model.Documents?.Count ?? 0)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-success">
+                                <span class="info-box-icon"><i class="fas fa-check-circle"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">الموثقة</span>
+                                    <span class="info-box-number">@(Model.Documents?.Count(d => d.IsVerified) ?? 0)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-warning">
+                                <span class="info-box-icon"><i class="fas fa-clock"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">قيد المراجعة</span>
+                                    <span class="info-box-number">@(Model.Documents?.Count(d => d.Status == "Pending") ?? 0)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-danger">
+                                <span class="info-box-icon"><i class="fas fa-exclamation-triangle"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">منتهية الصلاحية</span>
+                                    <span class="info-box-number">@(Model.Documents?.Count(d => d.ExpiryDate.HasValue && d.ExpiryDate < DateTime.Now) ?? 0)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="documentsTable">
+                            <thead>
+                                <tr>
+                                    <th>نوع المستند</th>
+                                    <th>التصنيف</th>
+                                    <th>اسم الملف</th>
+                                    <th>تاريخ الرفع</th>
+                                    <th>الحالة</th>
+                                    <th>التوثيق</th>
+                                    <th>تاريخ الانتهاء</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Documents != null && Model.Documents.Any())
+                                {
+                                    @foreach (var document in Model.Documents.OrderByDescending(d => d.CreatedAt))
+                                    {
+                                        <tr data-document-id="@document.Id">
+                                            <td>@document.DocumentTypeArabic</td>
+                                            <td>@document.CategoryArabic</td>
+                                            <td>@document.OriginalFileName</td>
+                                            <td>@document.CreatedAt.ToString("yyyy-MM-dd")</td>
+                                            <td>
+                                                <span class="badge bg-@(document.Status == "Approved" ? "success" : document.Status == "Rejected" ? "danger" : "warning")">
+                                                    @document.StatusArabic
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if (document.IsVerified)
+                                                {
+                                                    <span class="badge bg-success"><i class="fas fa-check"></i> موثق</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">غير موثق</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (document.ExpiryDate.HasValue)
+                                                {
+                                                    @if (document.ExpiryDate < DateTime.Now)
+                                                    {
+                                                        <span class="text-danger">@document.ExpiryDate.Value.ToString("yyyy-MM-dd") (منتهي)</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        @document.ExpiryDate.Value.ToString("yyyy-MM-dd")
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-info" onclick="previewDocument('@document.Id')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-success" onclick="downloadDocument('@document.Id')">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-primary" onclick="shareDocument('@document.Id')">
+                                                    <i class="fas fa-share-alt"></i>
+                                                </button>
+                                                @if (!document.IsVerified)
+                                                {
+                                                    <button class="btn btn-sm btn-warning" onclick="verifyDocument('@document.Id')">
+                                                        <i class="fas fa-check-circle"></i>
+                                                    </button>
+                                                }
+                                                <button class="btn btn-sm btn-danger" onclick="deleteDocument('@document.Id')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="8" class="text-center">لا توجد مستندات</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal لرفع مستند -->
+<div class="modal fade" id="uploadDocumentModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">رفع مستند جديد</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadDocumentForm" enctype="multipart/form-data">
+                    <input type="hidden" name="StudentId" value="@Model.Id" />
+                    <div class="form-group">
+                        <label>نوع المستند</label>
+                        <select name="DocumentType" class="form-control" required>
+                            <option value="">اختر نوع المستند</option>
+                            <option value="BirthCertificate">شهادة الميلاد</option>
+                            <option value="NationalID">الهوية الوطنية</option>
+                            <option value="ReportCard">كشف الدرجات</option>
+                            <option value="Medical">سجل طبي</option>
+                            <option value="Transfer">شهادة نقل</option>
+                            <option value="Other">أخرى</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>التصنيف</label>
+                        <select name="Category" class="form-control" required>
+                            <option value="">اختر التصنيف</option>
+                            <option value="Academic">أكاديمي</option>
+                            <option value="Medical">طبي</option>
+                            <option value="Financial">مالي</option>
+                            <option value="Administrative">إداري</option>
+                            <option value="Legal">قانوني</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الملف</label>
+                        <input type="file" name="File" class="form-control" required accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
+                    </div>
+                    <div class="form-group">
+                        <label>الوصف</label>
+                        <textarea name="Description" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>تاريخ الانتهاء (اختياري)</label>
+                        <input type="date" name="ExpiryDate" class="form-control" />
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="IsConfidential" class="form-check-input" />
+                        <label class="form-check-label">مستند سري</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-primary" onclick="uploadDocument()">رفع</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal للرفع الجماعي -->
+<div class="modal fade" id="bulkUploadModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">رفع جماعي للمستندات</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="bulkUploadForm">
+                    <input type="hidden" name="StudentId" value="@Model.Id" />
+                    <div class="form-group">
+                        <label>اختر الملفات</label>
+                        <input type="file" id="bulkFiles" class="form-control" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
+                    </div>
+                    <div id="bulkFileList" class="mb-3"></div>
+                    <button type="button" class="btn btn-secondary" onclick="addBulkFiles()">إضافة الملفات</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-primary" onclick="bulkUploadDocuments()">رفع الكل</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal لمشاركة المستند -->
+<div class="modal fade" id="shareDocumentModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">مشاركة المستند</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="shareDocumentForm">
+                    <input type="hidden" id="shareDocumentId" name="DocumentId" />
+                    <div class="form-group">
+                        <label>البريد الإلكتروني للمستلمين</label>
+                        <textarea id="recipientEmails" class="form-control" rows="3" placeholder="example1@email.com, example2@email.com"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>رسالة (اختياري)</label>
+                        <textarea id="shareMessage" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>تاريخ انتهاء الرابط (اختياري)</label>
+                        <input type="date" id="shareExpiryDate" class="form-control" />
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="allowDownload" class="form-check-input" checked />
+                        <label class="form-check-label">السماح بالتحميل</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="allowPrint" class="form-check-input" />
+                        <label class="form-check-label">السماح بالطباعة</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-primary" onclick="shareDocumentSubmit()">مشاركة</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal لمعاينة المستند -->
+<div class="modal fade" id="previewModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">معاينة المستند</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <iframe id="previewFrame" style="width: 100%; height: 600px; border: none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal لسجل النشاط -->
+<div class="modal fade" id="activityLogModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">سجل نشاط المستندات</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="activityLogContent">
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">جاري التحميل...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showUploadModal() {
+            $('#uploadDocumentModal').modal('show');
+        }
+
+        function showBulkUploadModal() {
+            $('#bulkUploadModal').modal('show');
+        }
+
+        function uploadDocument() {
+            var formData = new FormData($('#uploadDocumentForm')[0]);
+            
+            $.ajax({
+                url: '@Url.Action("UploadDocument", "Students")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    alert('تم رفع المستند بنجاح');
+                    $('#uploadDocumentModal').modal('hide');
+                    location.reload();
+                },
+                error: function() {
+                    alert('حدث خطأ أثناء رفع المستند');
+                }
+            });
+        }
+
+        function previewDocument(id) {
+            $('#previewFrame').attr('src', '/Students/ViewDocument/' + id);
+            $('#previewModal').modal('show');
+        }
+
+        function downloadDocument(id) {
+            window.location.href = '/Students/DownloadDocument/' + id;
+        }
+
+        function shareDocument(id) {
+            $('#shareDocumentId').val(id);
+            $('#shareDocumentModal').modal('show');
+        }
+
+        function shareDocumentSubmit() {
+            var data = {
+                DocumentId: $('#shareDocumentId').val(),
+                RecipientEmails: $('#recipientEmails').val().split(',').map(e => e.trim()),
+                Message: $('#shareMessage').val(),
+                ExpiryDate: $('#shareExpiryDate').val(),
+                AllowDownload: $('#allowDownload').is(':checked'),
+                AllowPrint: $('#allowPrint').is(':checked')
+            };
+
+            $.ajax({
+                url: '/Students/ShareDocument',
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    alert('تم إنشاء رابط المشاركة: ' + response.shareUrl);
+                    $('#shareDocumentModal').modal('hide');
+                },
+                error: function() {
+                    alert('حدث خطأ أثناء إنشاء رابط المشاركة');
+                }
+            });
+        }
+
+        function verifyDocument(id) {
+            if (confirm('هل تريد توثيق هذا المستند؟')) {
+                $.post('/Students/VerifyDocument/' + id, function() {
+                    alert('تم توثيق المستند بنجاح');
+                    location.reload();
+                });
+            }
+        }
+
+        function deleteDocument(id) {
+            if (confirm('هل تريد حذف هذا المستند؟')) {
+                $.post('/Students/DeleteDocument/' + id, function() {
+                    alert('تم حذف المستند بنجاح');
+                    location.reload();
+                });
+            }
+        }
+
+        function searchDocuments() {
+            var filters = {
+                StudentId: '@Model.Id',
+                DocumentType: $('#searchDocumentType').val(),
+                Category: $('#searchCategory').val(),
+                Status: $('#searchStatus').val(),
+                IsVerified: $('#searchVerified').val(),
+                IsConfidential: $('#searchConfidential').val(),
+                StartDate: $('#searchStartDate').val(),
+                EndDate: $('#searchEndDate').val(),
+                ExpiryStatus: $('#searchExpiry').val()
+            };
+
+            $.ajax({
+                url: '/Students/SearchDocuments',
+                type: 'POST',
+                data: filters,
+                success: function(response) {
+                    updateDocumentsTable(response.documents);
+                },
+                error: function() {
+                    alert('حدث خطأ أثناء البحث');
+                }
+            });
+        }
+
+        function resetSearch() {
+            $('#searchDocumentType').val('');
+            $('#searchCategory').val('');
+            $('#searchStatus').val('');
+            $('#searchVerified').val('');
+            $('#searchConfidential').val('');
+            $('#searchStartDate').val('');
+            $('#searchEndDate').val('');
+            $('#searchExpiry').val('');
+            location.reload();
+        }
+
+        function updateDocumentsTable(documents) {
+            var tbody = $('#documentsTable tbody');
+            tbody.empty();
+
+            if (documents.length === 0) {
+                tbody.append('<tr><td colspan="8" class="text-center">لا توجد مستندات</td></tr>');
+                return;
+            }
+
+            documents.forEach(function(doc) {
+                var row = '<tr data-document-id="' + doc.id + '">' +
+                    '<td>' + doc.documentTypeArabic + '</td>' +
+                    '<td>' + doc.categoryArabic + '</td>' +
+                    '<td>' + doc.originalFileName + '</td>' +
+                    '<td>' + new Date(doc.createdAt).toISOString().split('T')[0] + '</td>' +
+                    '<td><span class="badge bg-' + (doc.status === 'Approved' ? 'success' : doc.status === 'Rejected' ? 'danger' : 'warning') + '">' + doc.statusArabic + '</span></td>' +
+                    '<td>' + (doc.isVerified ? '<span class="badge bg-success"><i class="fas fa-check"></i> موثق</span>' : '<span class="badge bg-secondary">غير موثق</span>') + '</td>' +
+                    '<td>' + (doc.expiryDate ? new Date(doc.expiryDate).toISOString().split('T')[0] : '-') + '</td>' +
+                    '<td>' +
+                    '<button class="btn btn-sm btn-info" onclick="previewDocument(\'' + doc.id + '\')"><i class="fas fa-eye"></i></button> ' +
+                    '<button class="btn btn-sm btn-success" onclick="downloadDocument(\'' + doc.id + '\')"><i class="fas fa-download"></i></button> ' +
+                    '<button class="btn btn-sm btn-primary" onclick="shareDocument(\'' + doc.id + '\')"><i class="fas fa-share-alt"></i></button> ' +
+                    (!doc.isVerified ? '<button class="btn btn-sm btn-warning" onclick="verifyDocument(\'' + doc.id + '\')"><i class="fas fa-check-circle"></i></button> ' : '') +
+                    '<button class="btn btn-sm btn-danger" onclick="deleteDocument(\'' + doc.id + '\')"><i class="fas fa-trash"></i></button>' +
+                    '</td></tr>';
+                tbody.append(row);
+            });
+        }
+
+        function addBulkFiles() {
+            var files = $('#bulkFiles')[0].files;
+            var fileList = $('#bulkFileList');
+            fileList.empty();
+
+            for (var i = 0; i < files.length; i++) {
+                var fileItem = '<div class="bulk-file-item mb-2">' +
+                    '<div class="row">' +
+                    '<div class="col-md-4">' +
+                    '<input type="text" class="form-control" value="' + files[i].name + '" readonly />' +
+                    '</div>' +
+                    '<div class="col-md-3">' +
+                    '<select class="form-control bulk-doc-type">' +
+                    '<option value="BirthCertificate">شهادة الميلاد</option>' +
+                    '<option value="NationalID">الهوية الوطنية</option>' +
+                    '<option value="ReportCard">كشف الدرجات</option>' +
+                    '<option value="Medical">سجل طبي</option>' +
+                    '<option value="Transfer">شهادة نقل</option>' +
+                    '<option value="Other">أخرى</option>' +
+                    '</select>' +
+                    '</div>' +
+                    '<div class="col-md-3">' +
+                    '<select class="form-control bulk-doc-category">' +
+                    '<option value="Academic">أكاديمي</option>' +
+                    '<option value="Medical">طبي</option>' +
+                    '<option value="Financial">مالي</option>' +
+                    '<option value="Administrative">إداري</option>' +
+                    '<option value="Legal">قانوني</option>' +
+                    '</select>' +
+                    '</div>' +
+                    '<div class="col-md-2">' +
+                    '<button type="button" class="btn btn-danger" onclick="removeBulkFile(this)">حذف</button>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
+                fileList.append(fileItem);
+            }
+        }
+
+        function removeBulkFile(btn) {
+            $(btn).closest('.bulk-file-item').remove();
+        }
+
+        function bulkUploadDocuments() {
+            var files = $('#bulkFiles')[0].files;
+            if (files.length === 0) {
+                alert('الرجاء اختيار ملفات');
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('StudentId', '@Model.Id');
+
+            for (var i = 0; i < files.length; i++) {
+                var fileItem = $('.bulk-file-item').eq(i);
+                formData.append('Files', files[i]);
+                formData.append('DocumentTypes', fileItem.find('.bulk-doc-type').val());
+                formData.append('Categories', fileItem.find('.bulk-doc-category').val());
+            }
+
+            $.ajax({
+                url: '/Students/BulkUploadDocuments',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    alert('تم رفع ' + response.count + ' مستند بنجاح');
+                    $('#bulkUploadModal').modal('hide');
+                    location.reload();
+                },
+                error: function() {
+                    alert('حدث خطأ أثناء الرفع الجماعي');
+                }
+            });
+        }
+
+        function showActivityLog() {
+            $('#activityLogModal').modal('show');
+            loadActivityLog();
+        }
+
+        function loadActivityLog() {
+            $.ajax({
+                url: '/Students/GetDocumentActivityLog?studentId=@Model.Id',
+                type: 'GET',
+                success: function(response) {
+                    var content = $('#activityLogContent');
+                    content.empty();
+
+                    if (response.length === 0) {
+                        content.append('<p class="text-center">لا يوجد نشاط</p>');
+                        return;
+                    }
+
+                    var table = '<table class="table table-bordered table-striped">' +
+                        '<thead><tr><th>النشاط</th><th>الوصف</th><th>التاريخ</th><th>بواسطة</th></tr></thead>' +
+                        '<tbody>';
+
+                    response.forEach(function(log) {
+                        table += '<tr>' +
+                            '<td>' + log.activityTypeArabic + '</td>' +
+                            '<td>' + (log.descriptionArabic || '-') + '</td>' +
+                            '<td>' + new Date(log.createdAt).toLocaleString('ar-SA') + '</td>' +
+                            '<td>' + (log.createdBy || '-') + '</td>' +
+                            '</tr>';
+                    });
+
+                    table += '</tbody></table>';
+                    content.append(table);
+                },
+                error: function() {
+                    $('#activityLogContent').html('<p class="text-center text-danger">حدث خطأ أثناء تحميل السجل</p>');
+                }
+            });
+        }
+    </script>
+}

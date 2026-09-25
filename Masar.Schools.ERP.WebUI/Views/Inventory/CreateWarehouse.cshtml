@@ -1,0 +1,127 @@
+@model Masar.Schools.ERP.Domain.DTOs.CreateWarehouseRequest
+
+@{
+    ViewData["Title"] = "إنشاء مخزن جديد";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">إنشاء مخزن جديد</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateWarehouse" method="post">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Name" class="control-label">الاسم</label>
+                                    <input asp-for="Name" class="form-control" required />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="NameArabic" class="control-label">الاسم بالعربية</label>
+                                    <input asp-for="NameArabic" class="form-control" required />
+                                    <span asp-validation-for="NameArabic" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Code" class="control-label">الكود</label>
+                                    <input asp-for="Code" class="form-control" required />
+                                    <span asp-validation-for="Code" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="SchoolId" class="control-label">المدرسة</label>
+                                    <select asp-for="SchoolId" class="form-control" required>
+                                        <option value="">اختر المدرسة</option>
+                                        <!-- Will be populated from schools list -->
+                                    </select>
+                                    <span asp-validation-for="SchoolId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="WarehouseType" class="control-label">نوع المخزن</label>
+                                    <select asp-for="WarehouseType" class="form-control">
+                                        <option value="Main">رئيسي</option>
+                                        <option value="Branch">فرعي</option>
+                                        <option value="Canteen">مطعم</option>
+                                        <option value="Transport">نقل</option>
+                                        <option value="Office">مكتب</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Location" class="control-label">الموقع</label>
+                                    <input asp-for="Location" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Manager" class="control-label">المدير</label>
+                                    <input asp-for="Manager" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="ManagerPhone" class="control-label">هاتف المدير</label>
+                                    <input asp-for="ManagerPhone" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Capacity" class="control-label">السعة</label>
+                                    <input asp-for="Capacity" class="form-control" type="number" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="CapacityUnit" class="control-label">وحدة السعة</label>
+                                    <input asp-for="CapacityUnit" class="form-control" placeholder="مثال: م3، كغ، وحدة" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Notes" class="control-label">ملاحظات</label>
+                            <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> حفظ
+                            </button>
+                            <a asp-action="Warehouses" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> رجوع
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

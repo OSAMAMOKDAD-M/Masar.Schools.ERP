@@ -1,0 +1,126 @@
+@model School
+@{
+    ViewData["Title"] = "إضافة مدرسة جديدة";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-plus-circle"></i> إضافة مدرسة جديدة
+        </h1>
+        <p class="text-muted">أدخل بيانات المدرسة الجديدة</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-building"></i> بيانات المدرسة
+            </div>
+            <div class="card-body">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger">
+                        <h5><i class="bi bi-exclamation-triangle"></i> أخطاء في البيانات</h5>
+                        <ul>
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <form asp-action="Create" method="post">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NameArabic" class="form-label">اسم المدرسة (عربي)</label>
+                            <input asp-for="NameArabic" class="form-control" required>
+                            <span asp-validation-for="NameArabic" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Name" class="form-label">اسم المدرسة (إنجليزي)</label>
+                            <input asp-for="Name" class="form-control" required>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Code" class="form-label">كود المدرسة</label>
+                            <input asp-for="Code" class="form-control">
+                            <span asp-validation-for="Code" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NoorSchoolId" class="form-label">رقم المدرسة في نظام نور</label>
+                            <input asp-for="NoorSchoolId" class="form-control">
+                            <span asp-validation-for="NoorSchoolId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Email" class="form-label">البريد الإلكتروني</label>
+                            <input asp-for="Email" class="form-control" type="email">
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Phone" class="form-label">رقم الهاتف</label>
+                            <input asp-for="Phone" class="form-control">
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label">العنوان</label>
+                        <input asp-for="Address" class="form-control">
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="City" class="form-label">المدينة</label>
+                        <input asp-for="City" class="form-control">
+                        <span asp-validation-for="City" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="TenantId" class="form-label">المؤسسة</label>
+                        <select asp-for="TenantId" class="form-select" asp-items="ViewBag.Tenants" id="TenantId" name="TenantId">
+                            <option value="">اختر المؤسسة</option>
+                        </select>
+                        <span asp-validation-for="TenantId" class="text-danger"></span>
+                        @if (ViewBag.SelectedTenantId != null)
+                        {
+                            <script>
+                                document.getElementById('TenantId').value = '@ViewBag.SelectedTenantId';
+                            </script>
+                        }
+                        @if (ViewBag.Tenants == null || ((SelectList)ViewBag.Tenants).Count() == 0)
+                        {
+                            <div class="alert alert-warning mt-2">
+                                <i class="bi bi-exclamation-triangle"></i> لا توجد مؤسسات متاحة. <a asp-controller="Tenants" asp-action="Create" class="alert-link">إضافة مؤسسة جديدة</a>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" checked>
+                            <label asp-for="IsActive" class="form-check-label">نشط</label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> حفظ
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> رجوع
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

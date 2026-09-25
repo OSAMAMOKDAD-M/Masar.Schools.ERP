@@ -1,0 +1,66 @@
+@{
+    ViewData["Title"] = "إنشاء تعديل مخزون";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">إنشاء تعديل مخزون جديد</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateAdjustment" method="post">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>المخزن</label>
+                                    <select name="WarehouseId" class="form-control" required>
+                                        <option value="">اختر المخزن</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>نوع التعديل</label>
+                                    <select name="AdjustmentType" class="form-control" required>
+                                        <option value="Increase">زيادة</option>
+                                        <option value="Decrease">نقصان</option>
+                                        <option value="Damage">تلف</option>
+                                        <option value="Loss">فقدان</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>تاريخ التعديل</label>
+                                    <input type="date" name="AdjustmentDate" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>السبب</label>
+                                    <input type="text" name="Reason" class="form-control" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>السبب بالعربية</label>
+                            <input type="text" name="ReasonArabic" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label>الوصف</label>
+                            <textarea name="Description" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">حفظ</button>
+                            <a asp-action="Adjustments" class="btn btn-secondary">إلغاء</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

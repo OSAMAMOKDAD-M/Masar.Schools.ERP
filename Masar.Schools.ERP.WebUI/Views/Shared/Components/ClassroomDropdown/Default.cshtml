@@ -1,0 +1,62 @@
+@model List<Masar.Schools.ERP.Domain.Entities.ClassRoom>
+
+@{
+    var name = ViewBag.Name as string ?? "ClassroomId";
+    var label = ViewBag.Label as string ?? "الفصل";
+    var selectedId = ViewBag.SelectedId as Guid?;
+    var showCapacity = ViewBag.ShowCapacity as bool? ?? false;
+    var showGrade = ViewBag.ShowGrade as bool? ?? false;
+}
+
+<div class="mb-3">
+    <label for="@name" class="form-label">@label</label>
+    <select id="@name" name="@name" class="form-select">
+        <option value="">اختر الفصل</option>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var classroom in Model)
+            {
+                var isSelected = selectedId.HasValue && selectedId.Value == classroom.Id;
+                var displayName = classroom.NameArabic;
+                
+                if (showGrade && !string.IsNullOrEmpty(classroom.GradeLevelLegacy))
+                {
+                    displayName += $" ({classroom.GradeLevelLegacy})";
+                }
+                
+                if (showCapacity)
+                {
+                    var available = classroom.Capacity - classroom.CurrentCount;
+                    displayName += $" - {available} متاح";
+                }
+                
+                <option value="@classroom.Id" selected="@isSelected">@displayName</option>
+            }
+        }
+        else
+        {
+            <option value="" disabled>لا توجد فصول متاحة</option>
+        }
+    </select>
+    @if (ViewData.ModelState[name]?.Errors.Any() == true)
+    {
+        <span class="text-danger">
+            @foreach (var error in ViewData.ModelState[name].Errors)
+            {
+                @error.ErrorMessage
+            }
+        </span>
+    }
+</div>
+
+<script>
+    // إضافة حدث التغيير لتحديث السعة المتاحة
+    document.getElementById('@name').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.getAttribute('data-capacity')) {
+            const capacity = selectedOption.getAttribute('data-capacity');
+            // يمكن إضافة منطق لعرض السعة المتاحة
+            console.log('Selected classroom capacity:', capacity);
+        }
+    });
+</script>

@@ -1,0 +1,94 @@
+@model Masar.Schools.ERP.Domain.DTOs.AcademicTermDto
+@{
+    ViewData["Title"] = "تفاصيل الفصل الدراسي";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">تفاصيل الفصل الدراسي</h3>
+                    <div class="card-tools">
+                        <a href="@Url.Action("Index", "AcademicTerm")" class="btn btn-secondary">
+                            <i class="fas fa-arrow-right"></i> العودة
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-box bg-info">
+                                <span class="info-box-icon"><i class="fas fa-calendar-alt"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">اسم الفصل</span>
+                                    <span class="info-box-number">@Model.TermNameArabic</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-box bg-@(Model.IsActive ? "success" : "secondary")">
+                                <span class="info-box-icon"><i class="fas fa-@(Model.IsActive ? "check-circle" : "pause-circle")"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">الحالة</span>
+                                    <span class="info-box-number">@Model.StatusArabic</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">معلومات الفصل الدراسي</h4>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <th>اسم الفصل (إنجليزي)</th>
+                                            <td>@Model.TermName</td>
+                                        </tr>
+                                        <tr>
+                                            <th>اسم الفصل (عربي)</th>
+                                            <td>@Model.TermNameArabic</td>
+                                        </tr>
+                                        <tr>
+                                            <th>المدرسة</th>
+                                            <td>@Model.SchoolName</td>
+                                        </tr>
+                                        <tr>
+                                            <th>تاريخ البدء</th>
+                                            <td>@Model.StartDate.ToString("yyyy-MM-dd")</td>
+                                        </tr>
+                                        <tr>
+                                            <th>تاريخ الانتهاء</th>
+                                            <td>@Model.EndDate.ToString("yyyy-MM-dd")</td>
+                                        </tr>
+                                        <tr>
+                                            <th>الحالة</th>
+                                            <td>
+                                                <span class="badge bg-@(Model.IsActive ? "success" : "secondary")">
+                                                    @Model.StatusArabic
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>تاريخ الإنشاء</th>
+                                            <td>@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                        </tr>
+                                        <tr>
+                                            <th>آخر تحديث</th>
+                                            <td>@(Model.UpdatedAt?.ToString("yyyy-MM-dd HH:mm") ?? "لم يتم التحديث")</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

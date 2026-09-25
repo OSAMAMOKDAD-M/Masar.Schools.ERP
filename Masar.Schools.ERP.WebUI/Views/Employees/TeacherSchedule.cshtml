@@ -1,0 +1,129 @@
+@model Employee
+@{
+    ViewData["Title"] = "جدول المعلم";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-calendar-week"></i> جدول المعلم
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة للموظفين
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">@Model.FullNameArabic</h5>
+                <p class="card-text text-muted">@Model.JobTitleArabic - @Model.DepartmentArabic</p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        المدرسة: @Model.School?.NameArabic | الفرع: @Model.Branch?.NameArabic
+                    </small>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" id="scheduleTabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="sunday-tab" data-bs-toggle="tab" href="#sunday" role="tab">الأحد</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="monday-tab" data-bs-toggle="tab" href="#monday" role="tab">الاثنين</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tuesday-tab" data-bs-toggle="tab" href="#tuesday" role="tab">الثلاثاء</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="wednesday-tab" data-bs-toggle="tab" href="#wednesday" role="tab">الأربعاء</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="thursday-tab" data-bs-toggle="tab" href="#thursday" role="tab">الخميس</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content" id="scheduleTabsContent">
+                    <div class="tab-pane fade show active" id="sunday" role="tabpanel">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            سيتم عرض الجدول هنا عند تطبيق كيانات الجدول.
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="monday" role="tabpanel">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            سيتم عرض الجدول هنا عند تطبيق كيانات الجدول.
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="tuesday" role="tabpanel">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            سيتم عرض الجدول هنا عند تطبيق كيانات الجدول.
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="wednesday" role="tabpanel">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            سيتم عرض الجدول هنا عند تطبيق كيانات الجدول.
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="thursday" role="tabpanel">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            سيتم عرض الجدول هنا عند تطبيق كيانات الجدول.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">ملخص أسبوعي</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h3 class="text-primary">0</h3>
+                            <p class="text-muted">إجمالي الحصص</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h3 class="text-success">0</h3>
+                            <p class="text-muted">إجمالي الساعات</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h3 class="text-warning">0</h3>
+                            <p class="text-muted">مواد مختلفة</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h3 class="text-info">0</h3>
+                            <p class="text-muted">فصول مختلفة</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

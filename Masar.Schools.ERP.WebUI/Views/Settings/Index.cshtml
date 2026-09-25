@@ -1,0 +1,63 @@
+@model Tenant
+@{
+    ViewData["Title"] = "الإعدادات";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-gear"></i> إعدادات النظام
+        </h1>
+        <p class="text-muted">إدارة إعدادات النظام والتكاملات الحكومية</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="list-group">
+            <a href="/Settings/Index" class="list-group-item list-group-item-action active">
+                <i class="bi bi-gear"></i> الإعدادات العامة
+            </a>
+            <a href="/Settings/WhatsAppConfig" class="list-group-item list-group-item-action">
+                <i class="bi bi-whatsapp"></i> إعدادات واتساب
+            </a>
+            <a href="/Settings/ZatcaConfig" class="list-group-item list-group-item-action">
+                <i class="bi bi-file-earmark-text"></i> إعدادات ZATCA
+            </a>
+            <a href="/Settings/NoorIntegration" class="list-group-item list-group-item-action">
+                <i class="bi bi-link-45deg"></i> تكامل نظام نور
+            </a>
+            <a href="/Settings/RolesAndPermissions" class="list-group-item list-group-item-action">
+                <i class="bi bi-shield-lock"></i> الصلاحيات والأدوار
+            </a>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-building"></i> معلومات المؤسسة
+            </div>
+            <div class="card-body">
+                @if (Model != null)
+                {
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>الاسم:</strong> @Model.NameArabic</p>
+                            <p><strong>رقم الترخيص:</strong> @Model.LicenseNumber</p>
+                            <p><strong>تاريخ بداية الاشتراك:</strong> @Model.SubscriptionStartDate?.ToString("yyyy-MM-dd")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>تاريخ نهاية الاشتراك:</strong> @Model.SubscriptionEndDate?.ToString("yyyy-MM-dd")</p>
+                            <p><strong>الحالة:</strong> @(Model.IsActive ? "نشط" : "غير نشط")</p>
+                            <p><strong>عدد المدارس:</strong> @Model.Schools.Count</p>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">لا توجد بيانات</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

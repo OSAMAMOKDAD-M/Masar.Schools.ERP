@@ -1,0 +1,70 @@
+@model School
+@{
+    ViewData["Title"] = "حذف المدرسة";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-trash"></i> حذف المدرسة
+        </h1>
+        <p class="text-muted">هل أنت متأكد من حذف هذه المدرسة؟</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <i class="bi bi-exclamation-triangle"></i> تأكيد الحذف
+            </div>
+            <div class="card-body">
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <strong>تحذير:</strong> حذف المدرسة سيؤدي إلى حذف جميع البيانات المرتبطة بها.
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>اسم المدرسة:</strong> @Model.NameArabic
+                    </div>
+                    <div class="mb-3">
+                        <strong>الكود:</strong> @Model.Code
+                    </div>
+                    <div class="mb-3">
+                        <strong>عدد الطلاب:</strong> @Model.Students.Count
+                    </div>
+                    <div class="mb-3">
+                        <strong>عدد الموظفين:</strong> @Model.Employees.Count
+                    </div>
+
+                    @if (Model.Students.Count > 0 || Model.Employees.Count > 0)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="bi bi-x-circle"></i>
+                            <strong>لا يمكن الحذف:</strong> المدرسة تحتوي على طلاب أو موظفين.
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> رجوع
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> تأكيد الحذف
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> رجوع
+                            </a>
+                        </div>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

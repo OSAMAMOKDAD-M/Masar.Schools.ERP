@@ -1,0 +1,112 @@
+@model List<Masar.Schools.ERP.Domain.DTOs.MedicalItemDto>
+
+@{
+    ViewData["Title"] = "صيدلية العيادة والمخزون";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3"><i class="bi bi-box-seam"></i> صيدلية العيادة والمخزون</h2>
+            <a asp-action="CreateMedicalItem" class="btn btn-primary float-end">
+                <i class="bi bi-plus-circle"></i> إضافة دواء/مستلزم
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <a asp-action="LowStockItems" class="btn btn-warning w-100">
+                <i class="bi bi-exclamation-triangle"></i> الكميات المنخفضة
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="ExpiredItems" class="btn btn-danger w-100">
+                <i class="bi bi-trash"></i> منتهية الصلاحية
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="NearExpiryItems" class="btn btn-info w-100">
+                <i class="bi bi-clock"></i> قرب من الانتهاء
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>اسم الدواء/المستلزم</th>
+                                <th>النوع</th>
+                                <th>الكمية المتاحة</th>
+                                <th>الوحدة</th>
+                                <th>تاريخ الانتهاء</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Any())
+                            {
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.ItemName</td>
+                                        <td>@item.ItemType</td>
+                                        <td>
+                                            @if (item.AvailableQuantity <= item.MinimumStockLevel)
+                                            {
+                                                <span class="badge bg-danger">@item.AvailableQuantity</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">@item.AvailableQuantity</span>
+                                            }
+                                        </td>
+                                        <td>@item.Unit</td>
+                                        <td>@item.ExpiryDate?.ToString("yyyy-MM-dd")</td>
+                                        <td>
+                                            @if (item.IsExpired)
+                                            {
+                                                <span class="badge bg-danger">منتهي</span>
+                                            }
+                                            else if (item.NearExpiry)
+                                            {
+                                                <span class="badge bg-warning">قرب من الانتهاء</span>
+                                            }
+                                            else if (!item.IsActive)
+                                            {
+                                                <span class="badge bg-secondary">غير نشط</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">نشط</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-action="DispenseItem" asp-route-id="@item.Id" class="btn btn-sm btn-info">
+                                                <i class="bi bi-dash-circle"></i> صرف
+                                            </a>
+                                            <a asp-action="EditMedicalItem" asp-route-id="@item.Id" class="btn btn-sm btn-warning">
+                                                <i class="bi bi-pencil"></i> تعديل
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center">لا توجد بيانات</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

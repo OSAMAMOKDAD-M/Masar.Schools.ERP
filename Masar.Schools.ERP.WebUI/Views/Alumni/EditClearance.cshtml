@@ -1,0 +1,281 @@
+@model Masar.Schools.ERP.Domain.DTOs.UpdateGraduationClearanceRecordDto
+
+@{
+    ViewData["Title"] = "تعديل الإبراء";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3"><i class="bi bi-pencil"></i> تعديل سجل الإبراء</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="EditClearance" method="post">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="StudentId" />
+
+                        <h5>الحالة العامة</h5>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="ClearanceStatus" class="form-label">الحالة</label>
+                                <select asp-for="ClearanceStatus" class="form-control">
+                                    <option value="Pending">Pending - معلق</option>
+                                    <option value="Cleared">Cleared - موافق</option>
+                                    <option value="Rejected">Rejected - مرفوض</option>
+                                </select>
+                                <span asp-validation-for="ClearanceStatus" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ClearanceStatusArabic" class="form-label">الحالة (عربي)</label>
+                                <input asp-for="ClearanceStatusArabic" class="form-control" />
+                                <span asp-validation-for="ClearanceStatusArabic" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h5>الإبراء المالي</h5>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input asp-for="FinancialCleared" class="form-check-input" />
+                                    <label asp-for="FinancialCleared" class="form-check-label">موافق</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="FinancialClearanceDate" class="form-label">تاريخ الإبراء</label>
+                                <input asp-for="FinancialClearanceDate" class="form-control" type="date" />
+                                <span asp-validation-for="FinancialClearanceDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="OutstandingBalance" class="form-label">الرصيد المتبقي</label>
+                                <input asp-for="OutstandingBalance" class="form-control" type="number" step="0.01" />
+                                <span asp-validation-for="OutstandingBalance" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label asp-for="FinancialClearanceNotes" class="form-label">ملاحظات (إنجليزي)</label>
+                                <textarea asp-for="FinancialClearanceNotes" class="form-control" rows="2"></textarea>
+                                <span asp-validation-for="FinancialClearanceNotes" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label asp-for="FinancialClearanceNotesArabic" class="form-label">ملاحظات (عربي)</label>
+                                <textarea asp-for="FinancialClearanceNotesArabic" class="form-control" rows="2"></textarea>
+                                <span asp-validation-for="FinancialClearanceNotesArabic" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h5>الإبراء الإداري</h5>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input asp-for="AdministrativeCleared" class="form-check-input" />
+                                    <label asp-for="AdministrativeCleared" class="form-check-label">موافق</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="AdministrativeClearanceDate" class="form-label">تاريخ الإبراء</label>
+                                <input asp-for="AdministrativeClearanceDate" class="form-control" type="date" />
+                                <span asp-validation-for="AdministrativeClearanceDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input asp-for="ReturnedLibraryBooks" class="form-check-input" />
+                                    <label asp-for="ReturnedLibraryBooks" class="form-check-label">إرجاع الكتب</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input asp-for="ReturnedEquipment" class="form-check-input" />
+                                    <label asp-for="ReturnedEquipment" class="form-check-label">إرجاع المعدات</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label asp-for="AdministrativeClearanceNotes" class="form-label">ملاحظات (إنجليزي)</label>
+                                <textarea asp-for="AdministrativeClearanceNotes" class="form-control" rows="2"></textarea>
+                                <span asp-validation-for="AdministrativeClearanceNotes" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label asp-for="AdministrativeClearanceNotesArabic" class="form-label">ملاحظات (عربي)</label>
+                                <textarea asp-for="AdministrativeClearanceNotesArabic" class="form-control" rows="2"></textarea>
+                                <span asp-validation-for="AdministrativeClearanceNotesArabic" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h5>الإبراء الأكاديمي</h5>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input asp-for="AcademicCleared" class="form-check-input" />
+                                    <label asp-for="AcademicCleared" class="form-check-label">موافق</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="AcademicClearanceDate" class="form-label">تاريخ الإبراء</label>
+                                <input asp-for="AcademicClearanceDate" class="form-control" type="date" />
+                                <span asp-validation-for="AcademicClearanceDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input asp-for="AllGradesRecorded" class="form-check-input" />
+                                    <label asp-for="AllGradesRecorded" class="form-check-label">جميع الدرجات مسجلة</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input asp-for="AllRequirementsMet" class="form-check-input" />
+                                    <label asp-for="AllRequirementsMet" class="form-check-label">جميع المتطلبات مستوفاة</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label asp-for="AcademicClearanceNotes" class="form-label">ملاحظات (إنجليزي)</label>
+                                <textarea asp-for="AcademicClearanceNotes" class="form-control" rows="2"></textarea>
+                                <span asp-validation-for="AcademicClearanceNotes" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label asp-for="AcademicClearanceNotesArabic" class="form-label">ملاحظات (عربي)</label>
+                                <textarea asp-for="AcademicClearanceNotesArabic" class="form-control" rows="2"></textarea>
+                                <span asp-validation-for="AcademicClearanceNotesArabic" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h5>إبراء العيادة</h5>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input asp-for="ClinicCleared" class="form-check-input" />
+                                    <label asp-for="ClinicCleared" class="form-check-label">موافق</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ClinicClearanceDate" class="form-label">تاريخ الإبراء</label>
+                                <input asp-for="ClinicClearanceDate" class="form-control" type="date" />
+                                <span asp-validation-for="ClinicClearanceDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label asp-for="ClinicClearanceNotes" class="form-label">ملاحظات (إنجليزي)</label>
+                                <textarea asp-for="ClinicClearanceNotes" class="form-control" rows="2"></textarea>
+                                <span asp-validation-for="ClinicClearanceNotes" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label asp-for="ClinicClearanceNotesArabic" class="form-label">ملاحظات (عربي)</label>
+                                <textarea asp-for="ClinicClearanceNotesArabic" class="form-control" rows="2"></textarea>
+                                <span asp-validation-for="ClinicClearanceNotesArabic" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h5>الموافقة النهائية</h5>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input asp-for="FinalApproval" class="form-check-input" />
+                                    <label asp-for="FinalApproval" class="form-check-label">موافق نهائياً</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="FinalApprovalDate" class="form-label">تاريخ الموافقة</label>
+                                <input asp-for="FinalApprovalDate" class="form-control" type="date" />
+                                <span asp-validation-for="FinalApprovalDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label asp-for="FinalApprovalNotes" class="form-label">ملاحظات (إنجليزي)</label>
+                                <textarea asp-for="FinalApprovalNotes" class="form-control" rows="2"></textarea>
+                                <span asp-validation-for="FinalApprovalNotes" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label asp-for="FinalApprovalNotesArabic" class="form-label">ملاحظات (عربي)</label>
+                                <textarea asp-for="FinalApprovalNotesArabic" class="form-control" rows="2"></textarea>
+                                <span asp-validation-for="FinalApprovalNotesArabic" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h5>ملاحظات عامة</h5>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label asp-for="Notes" class="form-label">ملاحظات (إنجليزي)</label>
+                                <textarea asp-for="Notes" class="form-control" rows="2"></textarea>
+                                <span asp-validation-for="Notes" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label asp-for="NotesArabic" class="form-label">ملاحظات (عربي)</label>
+                                <textarea asp-for="NotesArabic" class="form-control" rows="2"></textarea>
+                                <span asp-validation-for="NotesArabic" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> حفظ التعديلات
+                            </button>
+                            <a asp-action="ClearanceDetails" asp-route-id="@Model.Id" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> إلغاء
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

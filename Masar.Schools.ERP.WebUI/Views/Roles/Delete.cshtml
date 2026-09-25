@@ -1,0 +1,40 @@
+@model Masar.Schools.ERP.WebUI.Controllers.DeleteRoleViewModel
+@{
+    ViewData["Title"] = "حذف الدور";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> تأكيد الحذف</h5>
+                </div>
+                <div class="card-body">
+                    <p class="lead">هل أنت متأكد من حذف هذا الدور؟</p>
+
+                    <dl class="row">
+                        <dt class="col-sm-4">اسم الدور:</dt>
+                        <dd class="col-sm-8">@Model.Name</dd>
+
+                        <dt class="col-sm-4">الوصف:</dt>
+                        <dd class="col-sm-8">@Model.DescriptionArabic</dd>
+                    </dl>
+
+                    <form asp-action="DeleteConfirmed" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-right"></i> إلغاء
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> نعم، احذف
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

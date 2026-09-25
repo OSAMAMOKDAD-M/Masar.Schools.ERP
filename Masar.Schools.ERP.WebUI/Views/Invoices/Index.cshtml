@@ -1,0 +1,148 @@
+@model List<StudentInvoice>
+@{
+    ViewData["Title"] = "الفواتير";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-receipt"></i> الفواتير والتحصيل
+        </h1>
+        <p class="text-muted">إدارة الفواتير والسندات ومتابعة حالة ZATCA</p>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="row mb-4">
+    <div class="col-12">
+        <a asp-action="CreatePayment" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> إنشاء فاتورة جديدة
+        </a>
+        <a asp-controller="Reports" asp-action="Index" class="btn btn-info">
+            <i class="bi bi-file-earmark-bar-graph"></i> تقارير مالية
+        </a>
+    </div>
+</div>
+
+<!-- Summary Stats -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <h3>@Model.Count</h3>
+                <p class="mb-0">إجمالي الفواتير</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h3>@Model.Sum(i => i.TotalAmount).ToString("N0")</h3>
+                <p class="mb-0">إجمالي المبالغ</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body text-center">
+                <h3>@Model.Sum(i => i.Payments.Sum(p => p.Amount)).ToString("N0")</h3>
+                <p class="mb-0">المدفوع</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body text-center">
+                <h3>@(Model.Sum(i => i.TotalAmount) - Model.Sum(i => i.Payments.Sum(p => p.Amount))).ToString("N0")</h3>
+                <p class="mb-0">المتبقي</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Invoices Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>رقم الفاتورة</th>
+                                <th>الطالب</th>
+                                <th>ولي الأمر</th>
+                                <th>التاريخ</th>
+                                <th>المبلغ</th>
+                                <th>الضريبة</th>
+                                <th>الإجمالي</th>
+                                <th>الحالة</th>
+                                <th>ZATCA</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var invoice in Model.OrderByDescending(i => i.IssueDate))
+                            {
+                                <tr>
+                                    <td>@invoice.InvoiceNumber</td>
+                                    <td>
+                                        <strong>@invoice.StudentAccount?.Student?.FullNameArabic</strong><br>
+                                        <small class="text-muted">@invoice.StudentAccount?.Student?.StudentNumber</small>
+                                    </td>
+                                    <td>@invoice.StudentAccount?.Student?.Guardian?.FullNameArabic</td>
+                                    <td>@invoice.IssueDate.ToString("yyyy-MM-dd")</td>
+                                    <td>@invoice.NetAmount.ToString("N2")</td>
+                                    <td>@invoice.TaxAmount.ToString("N2")</td>
+                                    <td>@invoice.TotalAmount.ToString("N2")</td>
+                                    <td>
+                                        @if (invoice.Status == InvoiceStatus.Paid)
+                                        {
+                                            <span class="status-badge success">مدفوع</span>
+                                        }
+                                        else if (invoice.Status == InvoiceStatus.Issued)
+                                        {
+                                            <span class="status-badge warning">معلق</span>
+                                        }
+                                        else if (invoice.Status == InvoiceStatus.Draft)
+                                        {
+                                            <span class="status-badge secondary">مسودة</span>
+                                        }
+                                        else if (invoice.Status == InvoiceStatus.Overdue)
+                                        {
+                                            <span class="status-badge danger">متأخر</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge">@invoice.Status</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(invoice.UUID))
+                                        {
+                                            <span class="status-badge success">
+                                                <i class="bi bi-check-circle"></i> معتمد
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge warning">غير معتمد</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-action="ZatcaStatus" asp-route-id="@invoice.InvoiceId" class="btn btn-sm btn-info">
+                                            <i class="bi bi-file-earmark-text"></i> ZATCA
+                                        </a>
+                                        <a asp-action="StudentStatement" asp-route-id="@invoice.StudentAccountId" class="btn btn-sm btn-success">
+                                            <i class="bi bi-file-earmark-spreadsheet"></i> كشف
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

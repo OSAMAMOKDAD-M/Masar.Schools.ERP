@@ -1,0 +1,69 @@
+@model List<Masar.Schools.ERP.Domain.DTOs.StockTransactionDto>
+
+@{
+    ViewData["Title"] = "حركات المخزون";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">حركات المخزون</h3>
+                    <div class="card-tools">
+                        <a asp-action="CreateTransaction" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> حركة جديدة
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>رقم الحركة</th>
+                                <th>التاريخ</th>
+                                <th>الصنف</th>
+                                <th>النوع</th>
+                                <th>الكمية</th>
+                                <th>المخزن</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                @foreach (var transaction in Model)
+                                {
+                                    <tr>
+                                        <td>@transaction.TransactionNumber</td>
+                                        <td>@transaction.TransactionDate.ToString("yyyy-MM-dd")</td>
+                                        <td>@transaction.ItemName</td>
+                                        <td>
+                                            <span class="badge bg-@(transaction.TransactionType == "Receipt" ? "success" : "danger")">
+                                                @transaction.TransactionTypeArabic
+                                            </span>
+                                        </td>
+                                        <td>@transaction.Quantity</td>
+                                        <td>@transaction.WarehouseName</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info">
+                                                <i class="bi bi-eye"></i> عرض
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center">لا توجد حركات مخزون</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,192 @@
+@model Masar.Schools.ERP.Domain.DTOs.TransportStatisticsDto
+@{
+    ViewData["Title"] = "نظام النقل والحافلات";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">لوحة إحصائيات النقل</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Buses Statistics -->
+                        <div class="col-md-3">
+                            <div class="info-box bg-info">
+                                <span class="info-box-icon"><i class="fas fa-bus"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">إجمالي الحافلات</span>
+                                    <span class="info-box-number">@Model.TotalBuses</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-success">
+                                <span class="info-box-icon"><i class="fas fa-check-circle"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">حافلات نشطة</span>
+                                    <span class="info-box-number">@Model.ActiveBuses</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-warning">
+                                <span class="info-box-icon"><i class="fas fa-tools"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">في الصيانة</span>
+                                    <span class="info-box-number">@Model.BusesInMaintenance</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-danger">
+                                <span class="info-box-icon"><i class="fas fa-dollar-sign"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">تكلفة الوقود</span>
+                                    <span class="info-box-number">@Model.TotalFuelCost.ToString("N0")</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <!-- Routes Statistics -->
+                        <div class="col-md-3">
+                            <div class="info-box bg-primary">
+                                <span class="info-box-icon"><i class="fas fa-route"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">إجمالي الخطوط</span>
+                                    <span class="info-box-number">@Model.TotalRoutes</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-success">
+                                <span class="info-box-icon"><i class="fas fa-play-circle"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">خطوط نشطة</span>
+                                    <span class="info-box-number">@Model.ActiveRoutes</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-info">
+                                <span class="info-box-icon"><i class="fas fa-user-tie"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">سائقين نشطين</span>
+                                    <span class="info-box-number">@Model.ActiveDrivers</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-primary">
+                                <span class="info-box-icon"><i class="fas fa-user-shield"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">مشرفين نشطين</span>
+                                    <span class="info-box-number">@Model.ActiveSupervisors</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <!-- Subscriptions Statistics -->
+                        <div class="col-md-3">
+                            <div class="info-box bg-info">
+                                <span class="info-box-icon"><i class="fas fa-users"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">إجمالي الاشتراكات</span>
+                                    <span class="info-box-number">@Model.TotalSubscriptions</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-success">
+                                <span class="info-box-icon"><i class="fas fa-user-check"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">اشتراكات نشطة</span>
+                                    <span class="info-box-number">@Model.ActiveSubscriptions</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-warning">
+                                <span class="info-box-icon"><i class="fas fa-exclamation-triangle"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">حوادث نشطة</span>
+                                    <span class="info-box-number">@Model.ActiveIncidents</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-danger">
+                                <span class="info-box-icon"><i class="fas fa-wrench"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">تكلفة الصيانة</span>
+                                    <span class="info-box-number">@Model.TotalMaintenanceCost.ToString("N0")</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">إجراءات سريعة</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <a href="@Url.Action("Buses", "Transport")" class="btn btn-primary btn-block">
+                                <i class="fas fa-bus"></i> إدارة الحافلات
+                            </a>
+                        </div>
+                        <div class="col-md-2">
+                            <a href="@Url.Action("Routes", "Transport")" class="btn btn-info btn-block">
+                                <i class="fas fa-route"></i> خطوط السير
+                            </a>
+                        </div>
+                        <div class="col-md-2">
+                            <a href="@Url.Action("Drivers", "Transport")" class="btn btn-success btn-block">
+                                <i class="fas fa-user-tie"></i> السائقين
+                            </a>
+                        </div>
+                        <div class="col-md-2">
+                            <a href="@Url.Action("Supervisors", "Transport")" class="btn btn-warning btn-block">
+                                <i class="fas fa-user-shield"></i> المشرفين
+                            </a>
+                        </div>
+                        <div class="col-md-2">
+                            <a href="@Url.Action("Schedules", "Transport")" class="btn btn-secondary btn-block">
+                                <i class="fas fa-calendar-alt"></i> جداول الحافلات
+                            </a>
+                        </div>
+                        <div class="col-md-2">
+                            <a href="@Url.Action("Subscriptions", "Transport")" class="btn btn-dark btn-block">
+                                <i class="fas fa-users"></i> اشتراكات الطلاب
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-refresh statistics every 30 seconds
+        setInterval(function() {
+            location.reload();
+        }, 30000);
+    </script>
+}

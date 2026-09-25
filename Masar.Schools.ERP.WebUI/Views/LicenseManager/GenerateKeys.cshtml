@@ -1,0 +1,143 @@
+@model KeyPairViewModel
+@{
+    ViewData["Title"] = "توليد مفاتيح جديدة";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 class="text-end mb-3">توليد مفاتيح جديدة</h2>
+            <div class="btn-group">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-right"></i> العودة للتراخيص
+                </a>
+                <a asp-action="Generate" class="btn btn-primary">
+                    <i class="fas fa-key"></i> توليد زوج مفاتيح جديد
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">المفتاح الخاص (Private Key)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">المفتاح الخاص:</label>
+                        <textarea class="form-control" rows="10" readonly>@Model.PrivateKey</textarea>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button onclick="copyPrivateKey()" class="btn btn-outline-success">
+                            <i class="fas fa-copy"></i> نسخ المفتاح الخاص
+                        </button>
+                        <button onclick="downloadPrivateKey()" class="btn btn-outline-primary">
+                            <i class="fas fa-download"></i> تحميل المفتاح الخاص
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">المفتاح العام (Public Key)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">المفتاح العام:</label>
+                        <textarea class="form-control" rows="10" readonly>@Model.PublicKey</textarea>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button onclick="copyPublicKey()" class="btn btn-outline-success">
+                            <i class="fas fa-copy"></i> نسخ المفتاح العام
+                        </button>
+                        <button onclick="downloadPublicKey()" class="btn btn-outline-primary">
+                            <i class="fas fa-download"></i> تحميل المفتاح العام
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">معلومات مهمة</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>تحذير هام:</strong>
+                        <p class="mb-0 mt-2">
+                            المفتاح الخاص (Private Key) يجب حفظه في مكان آمن جداً. لا تشاركه مع أي شخص.
+                        </p>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>الاستخدام:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>المفتاح الخاص يستخدم لتوقيع التراخيص</li>
+                            <li>المفتاح العام يُستخدم للتحقق من التراخيص</li>
+                            <li>تأكد من حفظ نسخة احتياطية من المفتاح الخاص</li>
+                        </ul>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="fas fa-shield-alt"></i>
+                        <strong>أمان:</strong>
+                        <p class="mb-0 mt-2">
+                            يُنصح بحفظ المفاتيح في مكان آمن مثل Azure Key Vault أو Vault.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function copyPrivateKey() {
+            navigator.clipboard.writeText('@Model.PrivateKey').then(() => {
+                alert('تم نسخ المفتاح الخاص إلى الحافظة بنجاح');
+            });
+        }
+
+        function copyPublicKey() {
+            navigator.clipboard.writeText('@Model.PublicKey').then(() => {
+                alert('تم نسخ المفتاح العام إلى الحافظة بنجاح');
+            });
+        }
+
+        function downloadPrivateKey() {
+            const blob = new Blob(['@Model.PrivateKey'], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'private_key_' + new Date().toISOString().slice(0,10) + '.txt';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        function downloadPublicKey() {
+            const blob = new Blob(['@Model.PublicKey'], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'public_key_' + new Date().toISOString().slice(0,10) + '.txt';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+    </script>
+}

@@ -1,0 +1,390 @@
+@model Masar.Schools.ERP.WebUI.Controllers.ManageUserPermissionsViewModel
+@{
+    ViewData["Title"] = "إدارة صلاحيات المستخدم";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var permissionsByModule = Masar.Schools.ERP.Domain.Constants.PermissionConstants.GetPermissionsByModule();
+    var moduleNames = new Dictionary<string, string>
+    {
+        ["Students"] = "الطلاب",
+        ["Guardians"] = "أولياء الأمور",
+        ["Employees"] = "الموظفون",
+        ["Attendance"] = "الحضور",
+        ["Grades"] = "المراحل الدراسية",
+        ["Invoices"] = "الفواتير",
+        ["Financial"] = "المالية",
+        ["Transport"] = "النقل",
+        ["Clinic"] = "العيادة",
+        ["Canteen"] = "المقصف",
+        ["Timetable"] = "الجدول المدرسي",
+        ["Behavior"] = "السلوك",
+        ["Reports"] = "التقارير",
+        ["Settings"] = "الإعدادات",
+        ["Chat"] = "المحادثات",
+        ["Admin"] = "الإدارة"
+    };
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="text-end">إدارة صلاحيات المستخدم</h2>
+            <p class="text-muted mb-0">
+                <strong>@Model.UserName</strong> (@Model.UserEmail)
+            </p>
+        </div>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> العودة
+        </a>
+    </div>
+
+    <!-- شريط الأدوات العلوي -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">قالب جاهز</label>
+                    <select class="form-select" id="presetSelect">
+                        <option value="">اختر قالب رول جاهز</option>
+                        @foreach (var preset in Model.AvailablePresets)
+                        {
+                            <option value="@preset">@GetPresetDisplayName(preset)</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">البحث</label>
+                    <input type="text" class="form-control" id="searchInput" placeholder="ابحث عن صلاحية...">
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" onclick="selectAll()">
+                            <i class="bi bi-check-all"></i> تحديد الكل
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="unselectAll()">
+                            <i class="bi bi-x-square"></i> إلغاء التحديد
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- شبكة الشاشات -->
+    <form asp-action="UpdateUserPermissions" method="post" id="permissionsForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="UserId" />
+
+        <div class="row g-3" id="modulesGrid">
+            @foreach (var module in permissionsByModule)
+            {
+                var moduleName = module.Key;
+                var modulePermissions = module.Value;
+                var moduleDisplayName = moduleNames.ContainsKey(moduleName) ? moduleNames[moduleName] : moduleName;
+
+                <div class="col-lg-6 col-xl-4 module-card" data-module="@moduleName">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 fw-bold">
+                                <i class="bi bi-grid"></i> @moduleDisplayName
+                            </h6>
+                            <div class="form-check">
+                                <input class="form-check-input module-checkbox" type="checkbox" 
+                                       data-module="@moduleName"
+                                       onchange="toggleModule('@moduleName')">
+                                <label class="form-check-label ms-1 small">اختيار الموديول</label>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-2">
+                                @foreach (var permission in modulePermissions)
+                                {
+                                    var permissionName = permission.Split('.')[1];
+                                    var permissionDisplayName = GetPermissionDisplayName(permissionName);
+
+                                    <div class="col-6 permission-item" data-permission="@permission">
+                                        <div class="form-check">
+                                            <input class="form-check-input permission-checkbox" 
+                                                   type="checkbox" 
+                                                   name="SelectedPermissions" 
+                                                   value="@permission"
+                                                   data-module="@moduleName"
+                                                   @(Model.CurrentPermissions.Contains(permission) ? "checked" : "")>
+                                            <label class="form-check-label small">
+                                                @permissionDisplayName
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div id="noResults" class="text-center py-5" style="display: none;">
+            <i class="bi bi-search fs-1 text-muted"></i>
+            <p class="text-muted mt-2">لا توجد نتائج مطابقة للبحث</p>
+        </div>
+
+        <!-- زر الحفظ العائم -->
+        <div class="position-fixed bottom-0 start-0 end-0 bg-light border-top p-3 shadow">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-muted">الصلاحيات المحددة: </span>
+                        <span class="badge bg-primary" id="selectedCount">0</span>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="bi bi-save"></i> حفظ التغييرات
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+function selectAll() {
+    document.querySelectorAll('.permission-checkbox').forEach(cb => cb.checked = true);
+    document.querySelectorAll('.module-checkbox').forEach(cb => cb.checked = true);
+    updateSelectedCount();
+}
+
+function unselectAll() {
+    document.querySelectorAll('.permission-checkbox').forEach(cb => cb.checked = false);
+    document.querySelectorAll('.module-checkbox').forEach(cb => cb.checked = false);
+    updateSelectedCount();
+}
+
+function toggleModule(moduleName) {
+    const moduleCheckbox = document.querySelector(`.module-checkbox[data-module="${moduleName}"]`);
+    const moduleItems = document.querySelectorAll(`.permission-checkbox[data-module="${moduleName}"]`);
+    
+    moduleItems.forEach(cb => cb.checked = moduleCheckbox.checked);
+    updateSelectedCount();
+}
+
+function updateSelectedCount() {
+    const count = document.querySelectorAll('.permission-checkbox:checked').length;
+    document.getElementById('selectedCount').textContent = count;
+}
+
+// Search functionality
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const query = e.target.value.toLowerCase();
+    const moduleCards = document.querySelectorAll('.module-card');
+    const permissionItems = document.querySelectorAll('.permission-item');
+    
+    if (!query) {
+        moduleCards.forEach(card => card.style.display = '');
+        permissionItems.forEach(item => item.style.display = '');
+        document.getElementById('noResults').style.display = 'none';
+        return;
+    }
+    
+    let hasResults = false;
+    
+    moduleCards.forEach(card => {
+        const moduleName = card.dataset.module;
+        const matchingPermissions = card.querySelectorAll('.permission-item');
+        let hasMatchingPermissions = false;
+        
+        matchingPermissions.forEach(item => {
+            const permission = item.dataset.permission;
+            if (permission.toLowerCase().includes(query)) {
+                item.style.display = '';
+                hasMatchingPermissions = true;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        if (hasMatchingPermissions) {
+            card.style.display = '';
+            hasResults = true;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    document.getElementById('noResults').style.display = hasResults ? 'none' : 'block';
+});
+
+// Preset functionality
+document.getElementById('presetSelect').addEventListener('change', async function(e) {
+    const presetName = e.target.value;
+    if (!presetName) return;
+
+    try {
+        const response = await fetch(`/Settings/RolesAndPermissions/GetPresetPermissionsJson?presetName=${presetName}`);
+
+        if (!response.ok) {
+            throw new Error(`HTTP Error: ${response.status} - ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        if (data.error) {
+            alert(`خطأ: ${data.error}`);
+            return;
+        }
+
+        if (data.permissions && data.permissions.length > 0) {
+            unselectAll();
+
+            data.permissions.forEach(permission => {
+                const checkbox = document.querySelector(`.permission-checkbox[value="${permission}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+
+            // Update module checkboxes
+            document.querySelectorAll('.module-checkbox').forEach(cb => {
+                const moduleName = cb.dataset.module;
+                const moduleCheckboxes = document.querySelectorAll(`.permission-checkbox[data-module="${moduleName}"]`);
+                const allChecked = Array.from(moduleCheckboxes).every(cb => cb.checked);
+                cb.checked = allChecked;
+            });
+
+            updateSelectedCount();
+        } else {
+            alert('القالب المختار لا يحتوي على صلاحيات');
+        }
+    } catch (error) {
+        console.error('Error applying preset:', error);
+        alert(`حدث خطأ في تطبيق القالب: ${error.message}\n\nالقالب المختار: ${presetName}`);
+    }
+});
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    updateSelectedCount();
+});
+</script>
+
+<style>
+.permission-checkbox:checked + label {
+    font-weight: 600;
+    color: #0d6efd;
+}
+
+.position-fixed {
+    z-index: 1000;
+}
+</style>
+
+<footer class="footer text-muted border-top py-3 text-center bg-light mt-5 mb-5">
+    <div class="container-fluid">
+        <span>© 2026 <strong>نظام مَسَار للمدارس</strong> - جميع الحقوق محفوظة - شركة مسار للبرمجيات mokdadvipr@gmail.com .. 01006765664 (نسخة 1.0.0)</span>
+    </div>
+</footer>
+
+@functions {
+    private string GetPresetDisplayName(string presetName)
+    {
+        return presetName switch
+        {
+            "Teacher" => "معلم",
+            "FinancialManager" => "مدير مالي",
+            "Accountant" => "محاسب",
+            "Receptionist" => "موظف استقبال",
+            "BusSupervisor" => "مشرف حافلة",
+            "InventoryManager" => "مدير مخزون",
+            "SchoolNurse" => "ممرضة مدرسية",
+            "HRManager" => "مدير موارد بشرية",
+            "SchoolAdmin" => "مدير مدرسة",
+            "SuperAdmin" => "مدير النظام",
+            _ => presetName
+        };
+    }
+
+    private string GetPermissionDisplayName(string permissionName)
+    {
+        return permissionName switch
+        {
+            "View" => "عرض",
+            "Create" => "إضافة",
+            "Edit" => "تعديل",
+            "Delete" => "حذف",
+            "Promote" => "ترقية",
+            "ViewDocuments" => "عرض الوثائق",
+            "ManageDocuments" => "إدارة الوثائق",
+            "ViewAcademic" => "عرض الأكاديمي",
+            "ManageAcademic" => "إدارة الأكاديمي",
+            "Export" => "تصدير",
+            "Import" => "استيراد",
+            "LinkStudent" => "ربط طالب",
+            "UnlinkStudent" => "فك ربط طالب",
+            "ViewContact" => "عرض التواصل",
+            "ManageContact" => "إدارة التواصل",
+            "ManageLeaves" => "إدارة الإجازات",
+            "ViewSalary" => "عرض الراتب",
+            "ManageSalary" => "إدارة الراتب",
+            "ViewAttendance" => "عرض الحضور",
+            "ManageAttendance" => "إدارة الحضور",
+            "TakeAttendance" => "تسجيل حضور",
+            "LiveLog" => "سجل حي",
+            "ManualEntry" => "إدخال يدوي",
+            "EditAttendance" => "تعديل حضور",
+            "ViewReports" => "عرض تقارير",
+            "ManageNotifications" => "إدارة إشعارات",
+            "ManageLevels" => "إدارة مستويات",
+            "AssignClasses" => "تعيين فصول",
+            "Pay" => "دفع",
+            "Refund" => "استرداد",
+            "ViewLedger" => "عرض دفتر",
+            "ManageAccounts" => "إدارة حسابات",
+            "CreateJournal" => "إنشاء قيد",
+            "EditJournal" => "تعديل قيد",
+            "DeleteJournal" => "حذف قيد",
+            "ZatcaSubmit" => "إرسال ZATCA",
+            "ManageBuses" => "إدارة حافلات",
+            "ManageRoutes" => "إدارة مسارات",
+            "ManageDrivers" => "إدارة سائقين",
+            "AssignStudents" => "تعيين طلاب",
+            "TrackLive" => "تتبع حي",
+            "ViewSchedule" => "عرض جدول",
+            "ManageVisits" => "إدارة زيارات",
+            "ManageMedicine" => "إدارة أدوية",
+            "ViewRecords" => "عرض سجلات",
+            "CreatePrescription" => "إنشاء وصفة",
+            "ManageInsurance" => "إدارة تأمين",
+            "ManageItems" => "إدارة عناصر",
+            "ManageSales" => "إدارة مبيعات",
+            "ManageInventory" => "إدارة مخزون",
+            "ManageSuppliers" => "إدارة موردين",
+            "ManageClasses" => "إدارة فصول",
+            "ManageSubjects" => "إدارة مواد",
+            "AssignTeachers" => "تعيين معلمين",
+            "RecordIncident" => "تسجيل حادث",
+            "ManageCategories" => "إدارة فئات",
+            "IssueWarning" => "إصدار تحذير",
+            "IssueReward" => "إصدار مكافأة",
+            "StudentReports" => "تقارير طلاب",
+            "FinancialReports" => "تقارير مالية",
+            "AttendanceReports" => "تقارير حضور",
+            "AcademicReports" => "تقارير أكاديمية",
+            "CustomReports" => "تقارير مخصصة",
+            "ExportReports" => "تصدير تقارير",
+            "ManageSchool" => "إدارة مدرسة",
+            "ManageBranches" => "إدارة فروع",
+            "ManageUsers" => "إدارة مستخدمين",
+            "ManageRoles" => "إدارة أدوار",
+            "ManagePermissions" => "إدارة صلاحيات",
+            "SystemConfig" => "إعدادات نظام",
+            "BackupRestore" => "نسخ احتياطي",
+            "SendMessage" => "إرسال رسالة",
+            "ManageRooms" => "إدارة غرف",
+            "ManageMembers" => "إدارة أعضاء",
+            "ViewHistory" => "عرض سجل",
+            "ManageTenants" => "إدارة مستأجرين",
+            "SystemLogs" => "سجلات نظام",
+            "ManageLicenses" => "إدارة تراخيص",
+            "SuperAdmin" => "سوبر أدمن",
+            "OverrideClosedPeriods" => "تجاوز الفترات المغلقة",
+            _ => permissionName
+        };
+    }
+}

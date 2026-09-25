@@ -1,0 +1,122 @@
+@model List<Guardian>
+@{
+    ViewData["Title"] = "أولياء الأمور";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3">
+            <i class="bi bi-person-hearts"></i> إدارة أولياء الأمور
+        </h1>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-person-plus"></i> إضافة ولي أمر جديد
+        </a>
+    </div>
+</div>
+
+<!-- Search and Filter Panel -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-funnel"></i> البحث والتصفية
+                </h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Index" method="get" class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>بحث</label>
+                            <input type="text" name="SearchTerm" class="form-control" placeholder="الاسم، الهوية، الهاتف، البريد" value="@ViewContext.HttpContext.Request.Query["SearchTerm"]">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>المستأجر</label>
+                            <select name="TenantId" class="form-control" asp-items="ViewBag.Tenants">
+                                <option value="">الكل</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>المدرسة</label>
+                            <select name="SchoolId" class="form-control" asp-items="ViewBag.Schools">
+                                <option value="">الكل</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>الفصل</label>
+                            <select name="ClassRoomId" class="form-control" asp-items="ViewBag.ClassRooms">
+                                <option value="">الكل</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>أقل عدد أبناء</label>
+                            <input type="number" name="MinChildren" class="form-control" placeholder="0" min="0" value="@ViewContext.HttpContext.Request.Query["MinChildren"]">
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>رقم الهوية</th>
+                                <th>رقم الهاتف</th>
+                                <th>المهنة</th>
+                                <th>عدد الأبناء</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var guardian in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@guardian.FullNameArabic</strong><br>
+                                        <small class="text-muted">@guardian.FullName</small>
+                                    </td>
+                                    <td>@guardian.NationalId</td>
+                                    <td>@guardian.PhoneNumber</td>
+                                    <td>@guardian.OccupationArabic</td>
+                                    <td>@guardian.Students.Count</td>
+                                    <td>
+                                        <a asp-action="Details" asp-route-id="@guardian.Id" class="btn btn-sm btn-info" title="عرض التفاصيل">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="LinkStudent" asp-route-guardianId="@guardian.Id" class="btn btn-sm btn-success" title="ربط طالب">
+                                            <i class="bi bi-link"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
